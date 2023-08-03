@@ -1,0 +1,91 @@
+﻿@model Doris.ViewModel.OrderViewModel
+@{
+    var i = 1;
+    var typepay = "Chuyển khoản";
+    switch (Model.Order.TypePay)
+    {
+        case 1:
+            typepay = "Chuyển khoản";
+            break;
+        case 2:
+            typepay = "Tiền mặt";
+            break;
+    }
+}
+<style>
+    .avatar-pro {
+        width: 130px;
+        height: auto;
+    }
+</style>
+<div class="load-order-view shadow-border">
+    <h2>Đơn hàng: @Model.Order.MaDonHang - [@Html.DisplayFor(a => a.Order.Status)]</h2>
+    <table class="list_table tablecenter table order-view">
+        <tr>
+            <th>STT</th>
+            <th>Hình ảnh</th>
+            <th>Tên sản phẩm</th>
+            <th>Số lượng</th>
+            <th>Giá</th>
+            <th>Thành tiền</th>
+        </tr>
+        @foreach (var detail in Model.Order.OrderDetails)
+        {
+            var sotien = detail.Quantity * detail.Price;
+            <tr>
+                <td>@i</td>
+                <td><img class="img-fluid" src="@Path.Combine("/images/products/", detail.Product.ListImage.Split(',')[0])?w=50" /></td>
+                <td>@detail.Product.Name</td>
+                <td>
+                    @detail.Quantity
+                </td>
+                <td>@Html.DisplayFor(a => detail.Price) đ</td>
+                <td>@Convert.ToDecimal(sotien).ToString("N0") đ</td>
+            </tr>
+            i++;
+        }
+        <tr>
+            <td colspan="5">Ship:</td>
+            <td>@Model.Order.ShipFee.ToString("N0")đ</td>
+        </tr>
+        <tr>
+            <td colspan="5">Tổng tiền:</td>
+            <td>@Model.Order.TotalFee().ToString("N0")đ</td>
+        </tr>
+    </table>
+    <h2>Thông tin khách hàng</h2>
+    <div style="overflow: hidden">
+        <table class="form_table table order-view">
+            <tr>
+                <td>Ngày đặt hàng</td>
+                <td>@Model.Order.CreateDate.ToString("dd/MM/yyyy HH:mm")</td>
+            </tr>
+            <tr>
+                <td>Họ và tên</td>
+                <td>@Model.Order.CustomerInfo.Fullname</td>
+            </tr>
+            <tr>
+                <td>Điện thoại</td>
+                <td>@Model.Order.CustomerInfo.Mobile</td>
+            </tr>
+            <tr>
+                <td>Email</td>
+                <td>@Model.Order.CustomerInfo.Email</td>
+            </tr>
+            <tr>
+                <td>Địa chỉ</td>
+                <td>@Model.Order.CustomerInfo.Address, @Model.Order.District.Name, @Model.Order.City.Name</td>
+            </tr>
+            <tr>
+                <td colspan="2" style="font-weight: bold">Yêu cầu thêm</td>
+            </tr>
+            <tr>
+                <td class="text-left" colspan="2">@Model.Order.CustomerInfo.Body</td>
+            </tr>
+        </table>
+    </div>
+    <h2>Thanh toán</h2>
+    <div class="box_content mt-0">
+        <p class="mb-1">Hình thức thanh toán: <strong>@typepay</strong></p>
+    </div>
+</div>

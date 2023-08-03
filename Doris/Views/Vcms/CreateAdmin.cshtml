@@ -1,0 +1,44 @@
+﻿@model Doris.Models.Admin
+@{
+    ViewBag.Title = "Thêm quản trị";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+@if (ViewBag.Result == "success")
+{
+    <div id="AlertBox" class="alert alert-success"><strong>Thêm mới admin thành công</strong></div>}
+@if (ViewBag.Result == "update")
+{
+    <div id="AlertBox" class="alert alert-success"><strong>Cập nhật admin thành công</strong></div>}
+<a class="btn quick-link" href="#list-admin"><i class="far fa-list mr-1"></i> Danh sách quản trị viên</a>
+<div class="box_content px-300">
+    @using (Html.BeginForm())
+    {
+        @Html.ValidationSummary(true)
+        <table class="form_table">
+            <tbody>
+                <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.Username)</td>
+                    <td class="form_text">
+                        @Html.EditorFor(model => model.Username)
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.Password)</td>
+                    <td class="form_text">
+                        @Html.EditorFor(model => model.Password)
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form_name">@Html.LabelFor(model => model.Active)</td>
+                    <td class="form_text">@Html.CheckBoxFor(model => model.Active, new { @checked = "checked" })</td>
+                </tr>
+                <tr>
+                    <td class="form_name"></td>
+                    <td class="form_text">
+                        <input type="submit" class="btn quick-link" value="Thêm mới">
+                    </td>
+                </tr>
+            </tbody>
+        </table>}
+</div>
+@Html.Action("ListAdmin", "Vcms")

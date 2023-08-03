@@ -1,0 +1,94 @@
+﻿@model Doris.ViewModel.InsertProductCatViewModel
+@{
+    ViewBag.Title = "Thêm danh mục";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<h2>Thêm mới danh mục</h2>
+@if (ViewBag.ArticleCat == "success")
+{
+    <div id="AlertBox" class="alert alert-success"><strong>Thêm mới danh mục thành công</strong></div>
+}
+@if (ViewBag.ArticleCat == "update")
+{
+    <div id="AlertBox" class="alert alert-success"><strong>Cập nhật danh mục thành công</strong></div>
+}
+<a class="btn quick-link" id="create-cat" href="#list-cat"><i class="far fa-list mr-1"></i> Danh sách danh mục</a>
+<div class="box_content">
+    <div class="row">
+        <div class="col-sm-12 col-lg-8">
+            @using (Html.BeginForm("ProductCategory", "ProductVcms", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                @Html.ValidationSummary(true)
+                <table class="form_table form-table-cat">
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(a => Model.ProductCategory.ParentId)</td>
+                        <td class="form_text">@Html.DropDownListFor(a => Model.ParentId, (SelectList)Model.RootCats, "Danh mục cha", new { @class = "form_control w300" })</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(a => Model.ProductCategory.CategoryName)</td>
+                        <td class="form_text" colspan="2">@Html.EditorFor(a => Model.ProductCategory.CategoryName)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(a => Model.ProductCategory.Description)</td>
+                        <td class="form_text" colspan="2">@Html.EditorFor(a => Model.ProductCategory.Description)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(a => Model.ProductCategory.Image)</td>
+                        <td class="form_text" colspan="2">
+                            @Html.TextBoxFor(a => Model.ProductCategory.Image, new { type = "file" })
+                            <span class="red-warring">
+                                Chấp nhận ảnh jpg, png, gif, jpeg < 4MB
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(a => Model.ProductCategory.CoverImage)</td>
+                        <td class="form_text" colspan="2">
+                            @Html.TextBoxFor(a => Model.ProductCategory.CoverImage, new { type = "file" })
+                            <span class="red-warring">
+                                Chấp nhận ảnh jpg, png, gif, jpeg < 4MB
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(a => Model.ProductCategory.Body)</td>
+                        <td class="form_text" colspan="2">@Html.EditorFor(a => Model.ProductCategory.Body)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(a => Model.ProductCategory.Url)</td>
+                        <td class="form_text" colspan="2">@Html.EditorFor(a => Model.ProductCategory.Url)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(a => Model.ProductCategory.CategorySort)</td>
+                        <td class="form_text" colspan="2">@Html.EditorFor(a => Model.ProductCategory.CategorySort)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(a => Model.ProductCategory.ShowMenu)</td>
+                        <td class="form_text" colspan="2">@Html.EditorFor(a => Model.ProductCategory.ShowMenu)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(a => Model.ProductCategory.CategoryActive)</td>
+                        <td class="form_text" colspan="2">@Html.CheckBoxFor(a => Model.ProductCategory.CategoryActive, new { @checked = "checked" })</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(a => Model.ProductCategory.TitleMeta)</td>
+                        <td class="form_text" colspan="2">@Html.EditorFor(a => Model.ProductCategory.TitleMeta)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(a => Model.ProductCategory.DescriptionMeta)</td>
+                        <td class="form_text" colspan="2">@Html.EditorFor(a => Model.ProductCategory.DescriptionMeta)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name"></td>
+                        <td class="form_text">
+                            <input type="submit" class="btn quick-link" value="Thêm mới" />
+                        </td>
+                    </tr>
+                </table>
+            }
+        </div>
+        <div class="col-sm-12 col-lg-12">
+            @Html.Action("ListCategory", "ProductVcms")
+        </div>
+    </div>
+</div>

@@ -1,0 +1,90 @@
+﻿@model Doris.Models.Product
+@using Doris.Models
+@{ 
+    var email = ViewContext.RouteData.Values["MemberEmail"].ToString();
+    Level level;
+}
+
+<div class="product-item">
+    @if (Model.New)
+    {
+        <div class="new">New</div>
+    }
+    @if (Model.Hot)
+    {
+        <img src="~/Content/images/img-main/hot-deal.png" alt="Hot Deal" class="hot-deal" />
+    }
+    <a href="@Url.Action("ProductDetail", new { url = Model.Url })" class="product-img">
+        @if (Model.ListImage != null)
+        {
+            <img data-src="@Path.Combine("/images/products/", Model.ListImage.Split(',')[0])" src="~/Content/images/img-main/base64.gif" alt="@Model.Name" class="lazyload" />
+        }
+    </a>
+    <div class="brand-name" title="@Model.Brand.BrandName">
+        @Model.Brand.BrandName
+    </div>
+    <div class="subject">
+        <a href="@Url.Action("ProductDetail", new { url = Model.Url })" title="@Model.Name">
+            @Model.Name
+        </a>
+    </div>
+    @if (email != "")
+    {
+        level = (Level)Enum.Parse(typeof(Level), ViewContext.RouteData.Values["Level"].ToString());
+        <div class="box-price">
+            @if (Model.Price > 0)
+            {
+                decimal percent, discount;
+                if (Model.PriceDiamond > 0 && level == Level.Diamond)
+                {
+                    percent = (decimal)Model.PriceDiamond / (decimal)Model.Price;
+                    discount = 100 - Math.Truncate(percent * 100);
+                    <div class="price">@Convert.ToDecimal(Model.PriceDiamond).ToString("N0")đ</div>
+                    <div class="discount">-@discount%</div>
+                }
+                else if (Model.PricePlatinum > 0 && level == Level.Platinum)
+                {
+                    percent = (decimal)Model.PricePlatinum / (decimal)Model.Price;
+                    discount = 100 - Math.Truncate(percent * 100);
+                    <div class="price">@Convert.ToDecimal(Model.PricePlatinum).ToString("N0")đ</div>
+                    <div class="discount">-@discount%</div>
+                }
+                else if (Model.PriceGold > 0 && level == Level.Gold)
+                {
+                    percent = (decimal)Model.PriceGold / (decimal)Model.Price;
+                    discount = 100 - Math.Truncate(percent * 100);
+                    <div class="price">@Convert.ToDecimal(Model.PriceGold).ToString("N0")đ</div>
+                    <div class="discount">-@discount%</div>
+                }
+                else if (Model.PriceSilver > 0 && level == Level.Silver)
+                {
+                    percent = (decimal)Model.PriceSilver / (decimal)Model.Price;
+                    discount = 100 - Math.Truncate(percent * 100);
+                    <div class="price">@Convert.ToDecimal(Model.PriceSilver).ToString("N0")đ</div>
+                    <div class="discount">-@discount%</div>
+                }
+                else if (Model.PriceBronze > 0 && level == Level.Bronze)
+                {
+                    percent = (decimal)Model.PriceBronze / (decimal)Model.Price;
+                    discount = 100 - Math.Truncate(percent * 100);
+                    <div class="price">@Convert.ToDecimal(Model.PriceBronze).ToString("N0")đ</div>
+                    <div class="discount">-@discount%</div>
+                }
+                else
+                {
+                    <div class="price">@Convert.ToDecimal(Model.Price).ToString("N0")đ</div>
+                }
+            }
+            else
+            {
+                <div class="price">Liên hệ</div>
+            }
+        </div>
+    }
+    else
+    {
+        <a href="@Url.Action("Login", "User")" class="price-lock">
+            <i class="fa-solid fa-lock-keyhole"></i> Đăng nhập để xem giá
+        </a>
+    }
+</div>

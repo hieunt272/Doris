@@ -1,0 +1,60 @@
+﻿@model Doris.ViewModel.InsertCityViewModel
+
+@{
+    ViewBag.Title = "Cập nhật Thành phố";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .form_name {
+        width: 200px;
+    }
+</style>
+<h2 class="module_name">Cập nhật Thành phố</h2>
+<a class="btn quick-link" href="@Url.Action("City", "Vcms")"><i class="far fa-list mr-1"></i> Thêm mới</a>
+<div class="box_content">
+    @using (Html.BeginForm())
+    {
+        @Html.HiddenFor(model => model.City.Id)
+        @Html.ValidationSummary(true)
+        <div class="row">
+            <div class="col-lg-8">
+                <table class="form_table">
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.City.Name)</td>
+                        <td class="form_text">@Html.EditorFor(model => model.City.Name)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.ShipFee)</td>
+                        <td class="form_text">@Html.EditorFor(model => model.ShipFee)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.City.Sort)</td>
+                        <td class="form_text">@Html.EditorFor(model => model.City.Sort)</td>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.City.Active)</td>
+                        <td class="form_text">@Html.EditorFor(model => model.City.Active) Có/Không</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name"></td>
+                        <td class="form_text">
+                            <input type="submit" class="btn quick-link" value="Cập nhật" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    }
+</div>
+@Html.Action("ListCity")
+@section scripts{
+    <script src="~/Scripts/jquery.maskMoney.min.js"></script>
+    <script>
+        $(function () {
+            $(".input-number").maskMoney({
+                precision: 0,
+                thousands: ','
+            });
+        });
+    </script>
+}

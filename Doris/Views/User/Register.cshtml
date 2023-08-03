@@ -1,0 +1,84 @@
+﻿@model Doris.ViewModel.RegisterViewModel
+@using Doris.Models
+@{
+    var config = (ConfigSite)HttpContext.Current.Application["ConfigSite"];
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Login</title>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/style.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <section class="wrap-account">
+        <div class="box-left">
+            @if (config.Image != null)
+            {
+                <img src="@Path.Combine("/images/configs/", config.Image)" alt="@config.Title" class="logo-img" />
+            }
+            <div class="title">
+                Nền tảng mua bán sỉ<br />
+                <b>mỹ phẩm chính hãng</b>
+            </div>
+            <img src="~/Content/images/img-main/device.png" alt="" class="device-img" />
+        </div>
+        <div class="box-right">
+            <div class="title-account">Đăng ký</div>
+            <div class="form-account">
+                @using (Html.BeginForm())
+                {
+                    @Html.ValidationSummary(true)
+                    @Html.AntiForgeryToken()
+
+                    <div class="form-group">
+                        @Html.LabelFor(a => a.FullName)
+                        @Html.TextBoxFor(a => a.FullName, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(a => a.FullName)
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(a => a.Email)
+                        @Html.TextBoxFor(a => a.Email, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(a => a.Email)
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(a => a.PhoneNumber)
+                        @Html.TextBoxFor(a => a.PhoneNumber, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(a => a.PhoneNumber)
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(a => a.Password)
+                        @Html.PasswordFor(a => a.Password, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(a => a.Password)
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(a => a.ConfirmPassword)
+                        @Html.PasswordFor(a => a.ConfirmPassword, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(a => a.ConfirmPassword)
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(a => a.LinkShop)
+                        @Html.TextBoxFor(a => a.LinkShop, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(a => a.LinkShop)
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(a => a.Code)
+                        @Html.TextBoxFor(a => a.Code, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(a => a.Code)
+                    </div>
+                    <button type="submit">
+                        Đăng ký
+                    </button>
+                }
+            </div>
+            <div class="text-account">
+                Bạn đã có tài khoản? <a href="@Url.Action("Login")">Đăng nhập</a>
+            </div>
+        </div>
+    </section>
+    @Scripts.Render("~/bundles/jquery", "~/bundles/jqueryval")
+</body>
+</html>

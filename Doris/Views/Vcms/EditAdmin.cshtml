@@ -1,0 +1,33 @@
+﻿@model Doris.ViewModel.EditAdminViewModel
+@{
+    ViewBag.Title = "Cập nhật quản trị";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<a class="btn quick-link" href="@Url.Action("CreateAdmin","Vcms")"><i class="far fa-list mr-1"></i> Danh sách quản trị viên</a>
+<div class="box_content px-300">
+    @using (Html.BeginForm())
+    {
+        @Html.ValidationSummary(true)
+        @Html.HiddenFor(model => model.Id)
+        <table class="form_table">
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Username)</td>
+                <td class="form_text">@Html.EditorFor(model => model.Username)</td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Password)</td>
+                <td class="form_text">@Html.EditorFor(model => model.Password)</td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Active)</td>
+                <td class="form_text">@Html.EditorFor(model => model.Active)</td>
+            </tr>
+            <tr>
+                <td class="form_name"></td>
+                <td class="form_text">
+                    <input type="submit" class="btn quick-link" value="Cập nhật" />
+                </td>
+            </tr>
+        </table>}
+</div>
+@Html.Action("ListAdmin", "Vcms")

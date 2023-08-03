@@ -1,0 +1,82 @@
+﻿@model Doris.ViewModel.ListUserViewModel
+@using Doris.Models
+@{
+    var i = 1;
+    ViewBag.Title = "Danh sách người dùng";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+}
+<h2>Danh sách người dùng</h2>
+@if (ViewBag.Result == "update")
+{
+    <div id="AlertBox" class="alert alert-success"><strong>Cập nhật người dùng thành công</strong></div>
+}
+
+<div class="box_content mt-4">
+    <form action="@Url.Action("ListUser")" method="get">
+        <div class="row mb-3">
+            <div class="col-lg-4">
+                <label>Mã cửa hàng</label>
+                @Html.TextBoxFor(a => a.Name, new { @class = "w300 mb-0" })
+            </div>
+            <div class="col-lg-4 align-self-end">
+                <button type="submit" class="btn-search">Tìm kiếm</button>
+            </div>
+        </div>
+    </form>
+    <p>Có tổng số <strong>@Model.Users.TotalItemCount</strong> người dùng</p>
+    <table class="list_table tablecenter table-striped">
+        <tbody>
+            <tr>
+                <th>STT</th>
+                <th>Tên đăng nhập</th>
+                <th>Họ và tên</th>
+                <th>Số điện thoại</th>
+                <th>Email</th>
+                <th>Mã cửa hàng</th>
+                <th>Hoạt động</th>
+                <th></th>
+            </tr>
+            @foreach (var user in Model.Users)
+            {
+                <tr data-id="@user.Id">
+                    <td>@i</td>
+                    <td class="left">@user.Username</td>
+                    <td>@user.FullName</td>
+                    <td>@user.PhoneNumber</td>
+                    <td>@user.Email</td>
+                    <td>@user.ShopCode</td>
+                    <td>@Html.DisplayFor(a => user.Active)</td>
+                    <td class="list-icon">
+                        @Html.ActionLink("Sửa", "EditUser", new { userId = user.Id }) -
+                        @*@Html.ActionLink("Đổi mật khẩu", "UserChangePassword", new { userId = user.Id }) -*@
+                        <a href="javascript:;" class="red-warring" onclick="deleteUser('@user.Id')">Xóa</a>
+                    </td>
+                </tr>
+                i++;
+            }
+        </tbody>
+    </table>
+</div>
+
+<script type="text/javascript">
+    function deleteUser(id) {
+        if (confirm("Bạn có chắc chắn xóa người dùng này không?")) {
+            $.post("/Vcms/DeleteUser", { userId: id }, function (data) {
+                if (data) {
+                    $.toast({
+                        text: 'Xóa quản người dùng thành công',
+                        position: 'bottom-right',
+                        icon: 'success',
+                    })
+                    $("tr[data-id='" + id + "']").fadeOut();
+                } else {
+                    $.toast({
+                        text: 'Quá trình thực hiện không thành công. Hãy thử lại',
+                        icon: 'error',
+                    })
+                }
+            });
+        }
+    }
+</script>

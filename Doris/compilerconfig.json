@@ -1,0 +1,14 @@
+﻿[
+  {
+    "outputFile": "Content/adminSite.css",
+    "inputFile": "Content/adminSite.less"
+  },
+  {
+    "outputFile": "Content/style.css",
+    "inputFile": "Content/style.scss"
+  },
+  {
+    "outputFile": "Content/login.css",
+    "inputFile": "Content/login.less"
+  }
+]

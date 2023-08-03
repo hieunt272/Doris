@@ -1,0 +1,130 @@
+﻿@model Doris.ViewModel.InsertProductCatViewModel
+@{
+    ViewBag.Title = "Cập nhật danh mục";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<h2>Cập nhật danh mục</h2>
+<a class="btn quick-link" id="create-cat" href="#list-cat"><i class="far fa-list mr-1"></i> Danh sách danh mục</a>
+<div class="box_content">
+    <div class="row">
+        <div class="col-sm-12 col-lg-8">
+            @using (Html.BeginForm("UpdateCategory", "ProductVcms", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                @Html.ValidationSummary(true)
+                @Html.HiddenFor(model => model.ProductCategory.Id)
+                <table class="form_table form-table-cat">
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(a => Model.ProductCategory.ParentId)</td>
+                        <td class="form_text">@Html.DropDownListFor(a => Model.ParentId, (SelectList)Model.RootCats, "Danh mục cha", new { @class = "form_control w300" })</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(a => Model.ProductCategory.CategoryName)</td>
+                        <td class="form_text" colspan="2">@Html.EditorFor(a => Model.ProductCategory.CategoryName)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(a => Model.ProductCategory.Description)</td>
+                        <td class="form_text" colspan="2">@Html.EditorFor(a => Model.ProductCategory.Description)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.ProductCategory.Image)</td>
+                        <td class="form_text" colspan="2">
+                            @Html.TextBoxFor(model => model.ProductCategory.Image, new { type = "file" })
+                            <span class="red-warring">Chấp nhận ảnh jpg, png, gif, jpeg < 4MB</span>
+                        </td>
+                    </tr>
+                    @if (Model.ProductCategory.Image != null)
+                    {
+                        <tr id="ImgPreview">
+                            <td class="form_name"></td>
+                            <td class="form_text" colspan="2">
+                                <img class="img-border mb-2" src="@Path.Combine("/images/productCategory/", Model.ProductCategory.Image)" />
+                                <br /><a href="javascript:;" onclick="$('#ImgPreview').hide(); $('#CurrentFile').val('');"><img src="/Content/admin/icon-delete-red.png" alt="" style="vertical-align: middle; margin-top: 0; height: 10px;" /> Xóa ảnh</a>
+                                <input type="hidden" name="CurrentFile" id="CurrentFile" value="@Model.ProductCategory.Image" />
+                            </td>
+                        </tr>
+
+                    }
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.ProductCategory.CoverImage)</td>
+                        <td class="form_text" colspan="2">
+                            @Html.TextBoxFor(model => model.ProductCategory.CoverImage, new { type = "file" })
+                            <span class="red-warring">Chấp nhận ảnh jpg, png, gif, jpeg < 4MB</span>
+                        </td>
+                    </tr>
+                    @if (Model.ProductCategory.CoverImage != null)
+                    {
+                        <tr id="ImgPreview2">
+                            <td class="form_name"></td>
+                            <td class="form_text" colspan="2">
+                                <img class="img-border mb-2" src="@Path.Combine("/images/productCategory/", Model.ProductCategory.CoverImage)" />
+                                <br /><a href="javascript:;" onclick="$('#ImgPreview2').hide(); $('#CurrentFile2').val('');"><img src="/Content/admin/icon-delete-red.png" alt="" style="vertical-align: middle; margin-top: 0; height: 10px;" /> Xóa ảnh</a>
+                                <input type="hidden" name="CurrentFile2" id="CurrentFile2" value="@Model.ProductCategory.CoverImage" />
+                            </td>
+                        </tr>
+
+                    }
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(a => Model.ProductCategory.Body)</td>
+                        <td class="form_text" colspan="2">@Html.EditorFor(a => Model.ProductCategory.Body)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(a => Model.ProductCategory.Url)</td>
+                        <td class="form_text" colspan="2">@Html.EditorFor(a => Model.ProductCategory.Url)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(a => Model.ProductCategory.CategorySort)</td>
+                        <td class="form_text" colspan="2">@Html.EditorFor(a => Model.ProductCategory.CategorySort)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(a => Model.ProductCategory.ShowMenu)</td>
+                        <td class="form_text" colspan="2">@Html.EditorFor(a => Model.ProductCategory.ShowMenu)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(a => Model.ProductCategory.CategoryActive)</td>
+                        <td class="form_text" colspan="2">@Html.CheckBoxFor(a => Model.ProductCategory.CategoryActive, new { @checked = "checked" })</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(a => Model.ProductCategory.TitleMeta)</td>
+                        <td class="form_text" colspan="2">@Html.EditorFor(a => Model.ProductCategory.TitleMeta)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(a => Model.ProductCategory.DescriptionMeta)</td>
+                        <td class="form_text" colspan="2">@Html.EditorFor(a => Model.ProductCategory.DescriptionMeta)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name"></td>
+                        <td class="form_text">
+                            <input type="submit" class="btn quick-link" value="Cập nhật" />
+                        </td>
+                    </tr>
+                </table>
+            }
+        </div>
+        <div class="col-sm-12 col-lg-12">
+            @Html.Action("ListCategory", "ProductVcms")
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#thumb').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(input.files[0]); // convert to base64 string
+            }
+        }
+        $("#Image").change(function () {
+            readURL(this);
+        });
+        function triggerImage() {
+            $('.file-select').trigger('click');
+        }
+        function changeImage(event) {
+            $('#image-name').html($('.file-select').val());
+        }
+    </script>
+}

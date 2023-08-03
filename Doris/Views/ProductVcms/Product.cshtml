@@ -1,0 +1,224 @@
+﻿@model Doris.ViewModel.InsertProductViewModel
+@{
+    ViewBag.Title = "Thêm sản phẩm";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>Thêm sản phẩm</h2>
+<a class="btn quick-link" href="@Url.Action("ListProduct")"><i class="far fa-list mr-1"></i> Danh sách sản phẩm</a>
+<div class="box_content">
+    @using (Html.BeginForm("Product", "ProductVcms", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <div class="row">
+            <div class="col-lg-8 pr-lg-5">
+                @Html.ValidationSummary(true)
+                <table class="form_table">
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.Product.Name)</td>
+                        <td class="form_text">@Html.EditorFor(model => model.Product.Name)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.Price)</td>
+                        <td class="form_text">@Html.EditorFor(model => model.Price)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.WholesalePrice)</td>
+                        <td class="form_text">@Html.EditorFor(model => model.WholesalePrice)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.PriceBronze)</td>
+                        <td class="form_text">@Html.EditorFor(model => model.PriceBronze)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.PriceSilver)</td>
+                        <td class="form_text">@Html.EditorFor(model => model.PriceSilver)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.PriceGold)</td>
+                        <td class="form_text">@Html.EditorFor(model => model.PriceGold)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.PricePlatinum)</td>
+                        <td class="form_text">@Html.EditorFor(model => model.PricePlatinum)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.PriceDiamond)</td>
+                        <td class="form_text">@Html.EditorFor(model => model.PriceDiamond)</td>
+                    </tr>
+                    @*<tr>
+            <td class="form_name">@Html.LabelFor(model => model.Product.Description)</td>
+            <td class="form_text">@Html.EditorFor(model => model.Product.Description)</td>
+        </tr>*@
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.Product.ListImage)</td>
+                        <td class="form_text">
+                            <div class="alert alert-info">
+                                <p class="btn btn-success fileinput-button">
+                                    <i class="glyphicon glyphicon-plus"></i>
+                                    <span>Chọn ảnh...</span>
+                                    <input type="file" id="fileupload" name="files[]" accept="image/*" multiple="" />
+                                </p><br />
+                                - Chọn ảnh để upload: (gif, png, jpg, jpeg < 4MB)<br />
+                                - Kích thước: 800x 800px<br />
+                                - Ảnh đầu tiên sẽ là ảnh đại diện<br />
+                            </div>
+                            <div id="progress" class="progress">
+                                <div class="progress-bar progress-bar-success"></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="form_name"></td>
+                        <td class="form_text">
+                            <ul id="ListImages"></ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.Product.Body)</td>
+                        <td class="form_text">@Html.EditorFor(model => model.Product.Body)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.Product.Url)</td>
+                        <td class="form_text">@Html.EditorFor(model => model.Product.Url)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.Product.TitleMeta)</td>
+                        <td class="form_text">@Html.EditorFor(model => model.Product.TitleMeta)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.Product.DescriptionMeta)</td>
+                        <td class="form_text">@Html.EditorFor(model => model.Product.DescriptionMeta)</td>
+                    </tr>
+
+                    <tr>
+                        <td class="form_name"></td>
+                        <td class="form_text">
+                            <input type="submit" class="btn quick-link" value="Thêm mới" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-lg-4">
+                <table class="form_table">
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.Product.ProductCategoryId)</td>
+                        <td class="form_text">
+                            <select name="CategoryId" class="form_control w300" required="" onchange="loadProperty(this.value)">
+                                <option value="">Danh mục sản phẩm</option>
+                                @foreach (var category in Model.Categories.Where(a => a.ParentId == null))
+                                {
+                                    <option value="@category.Id">@category.CategoryName</option>
+                                    foreach (var child in Model.Categories.Where(a => a.ParentId == category.Id))
+                                    {
+                                        <option value="@child.Id">-- @child.CategoryName</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.Product.BrandId)</td>
+                        <td class="form_text">
+                            <select name="BrandId" class="form_control w300" required="">
+                                <option value="">Thương hiệu</option>
+                                @foreach (var brand in Model.Brands)
+                                {
+                                    <option value="@brand.Id">@brand.BrandName</option>
+                                }
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.Product.New)</td>
+                        <td class="form_text">@Html.CheckBoxFor(model => model.Product.New)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.Product.BestSeller)</td>
+                        <td class="form_text">@Html.CheckBoxFor(model => model.Product.BestSeller)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.Product.Hot)</td>
+                        <td class="form_text">@Html.CheckBoxFor(model => model.Product.Hot)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.Product.Wholesale)</td>
+                        <td class="form_text">@Html.CheckBoxFor(model => model.Product.Wholesale)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.Product.Home)</td>
+                        <td class="form_text">@Html.CheckBoxFor(model => model.Product.Home)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.Product.Active)</td>
+                        <td class="form_text">@Html.CheckBoxFor(model => model.Product.Active, new { @checked = "checked" })</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.Product.Sort)</td>
+                        <td class="form_text">@Html.EditorFor(model => model.Product.Sort)</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    }
+</div>
+@section scripts{
+    <script src="~/Scripts/jquery.maskMoney.min.js"></script>
+    <script>
+        $(function () {
+            $("#ListImages").sortable();
+            $("#ListImages").disableSelection();
+
+            $(".input-number").maskMoney({
+                precision: 0,
+                thousands: ','
+            });
+        });
+        var i = 1;
+        $("#fileupload").fileupload({
+            add: function (e, data) {
+                var uploadErrors = [];
+                var acceptFileTypes = /^image\/(gif|jpe?g|png)$/i;
+                if (data.originalFiles[0]["type"].length && !acceptFileTypes.test(data.originalFiles[0]["type"])) {
+                    uploadErrors.push("Chỉ chấp nhận định dạng jpeg, jpg, png, gif");
+                }
+                if (data.originalFiles[0]["size"] > 4000000) {
+                    uploadErrors.push("Dung lượng ảnh lớn hơn 4MB");
+                }
+                var totalImg = $("#ListImages .thumb-img-box").length;
+                if (totalImg >= 10) {
+                    uploadErrors.push("Chỉ đăng tối đa 10 ảnh");
+                }
+                if (uploadErrors.length > 0) {
+                    alert(uploadErrors.join("\n"));
+                    return false;
+                } else {
+                    data.submit();
+                }
+                return true;
+            },
+            url: "/Uploader/Upload?folder=products&r=" + Math.random(),
+            dataType: "json",
+            done: function (e, data) {
+                $.each(data.result.files, function (index, file) {
+                    $('#ListImages').append('<li><input type="hidden" name="Pictures" value ="' + file.name + '" /><img src="/images/products/' + file.name + '?w=80&h=80"/><a href="javascript:;" id="' + i + '" onclick="delfile(' + i + ')"><img src="/content/admin/icon-delete.png" alt="" style="vertical-align:middle" /></a></li>');
+                });
+                i = i + 1;
+                $("#progress").fadeOut(2000);
+            },
+            start: function () {
+                $("#progress .progress-bar").css("width", "0");
+                $("#progress").show();
+            },
+            progressall: function (e, data) {
+                var progress = parseInt(data.loaded / data.total * 100, 10);
+                $("#progress .progress-bar").css("width", progress + "%");
+            }
+        }).prop('disabled', !$.support.fileInput).parent().addClass($.support.fileInput ? undefined : 'disabled');
+
+        function delfile(divid) {
+            if (confirm('Bạn có chắc xóa ảnh này?')) {
+                $('#' + divid).parent().fadeOut().remove();
+            }
+        }
+    </script>
+}

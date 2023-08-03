@@ -1,0 +1,395 @@
+﻿@model Doris.ViewModel.HomeViewModel
+@using Doris.Models
+@{
+    var config = (ConfigSite)HttpContext.Current.Application["ConfigSite"];
+    ViewBag.Title = config.Title;
+    ViewBag.Description = config.Description;
+    ViewBag.Canonical = Request.Url?.GetLeftPart(UriPartial.Authority) + Url.Action("Index");
+
+    var email = ViewContext.RouteData.Values["MemberEmail"].ToString();
+    Level level;
+    var fb = Model.Banners.FirstOrDefault(a => a.GroupId == 1 && a.Image != null);
+    if (fb != null)
+    {
+        ViewBag.ImageShare = Request.Url?.GetLeftPart(UriPartial.Authority) + Path.Combine("/images/banners/", fb.Image);
+    }
+}
+
+@if (Model.Banners.Any(a => a.GroupId == 1))
+{
+    <section class="banner">
+        @foreach (var item in Model.Banners.Where(a => a.GroupId == 1))
+        {
+            if (item.Image != null)
+            {
+                <div class="banner-item">
+                    <img src="@Path.Combine("/images/banners/", item.Image)" alt="@item.BannerName" />
+                    <div class="container">
+                        <div class="banner-content">
+                            <div class="content">
+                                @Html.Raw(item.Content)
+                            </div>
+                            @if (item.Url != null)
+                            {
+                                <a href="@item.Url" class="btn-buy">Mua ngay</a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </section>
+}
+@if (Model.NewProducts.Any())
+{
+    <section class="product">
+        <div class="container">
+            <div class="title-section">
+                Hàng mới về
+            </div>
+            <div class="row row-cols-lg-5">
+                @foreach (var item in Model.NewProducts)
+                {
+                    <div class="col">
+                        <div class="product-item">
+                            @if (item.New)
+                            {
+                                <div class="new">New</div>
+                            }
+                            <a href="@Url.Action("ProductDetail", new { url = item.Url })" class="product-img">
+                                @if (item.ListImage != null)
+                                {
+                                    <img data-src="@Path.Combine("/images/products/", item.ListImage.Split(',')[0])" src="~/Content/images/img-main/base64.gif" alt="@item.Name" class="lazyload" />
+                                }
+                            </a>
+                            <div class="brand-name" title="@item.Brand.BrandName">@item.Brand.BrandName</div>
+                            <div class="subject">
+                                <a href="@Url.Action("ProductDetail", new { url = item.Url })" title="@item.Brand.BrandName">
+                                    @item.Name
+                                </a>
+                            </div>
+                            @if (email != "")
+                            {
+                                level = (Level)Enum.Parse(typeof(Level), ViewContext.RouteData.Values["Level"].ToString());
+                                <div class="box-price">
+                                    @if (item.Price > 0)
+                                    {
+                                        decimal percent, discount;
+                                        if (item.PriceDiamond > 0 && level == Level.Diamond)
+                                        {
+                                            percent = (decimal)item.PriceDiamond / (decimal)item.Price;
+                                            discount = 100 - Math.Truncate(percent * 100);
+                                            <div class="price">@Convert.ToDecimal(item.PriceDiamond).ToString("N0")đ</div>
+                                            <div class="discount">-@discount%</div>
+                                        }
+                                        else if (item.PricePlatinum > 0 && level == Level.Platinum)
+                                        {
+                                            percent = (decimal)item.PricePlatinum / (decimal)item.Price;
+                                            discount = 100 - Math.Truncate(percent * 100);
+                                            <div class="price">@Convert.ToDecimal(item.PricePlatinum).ToString("N0")đ</div>
+                                            <div class="discount">-@discount%</div>
+                                        }
+                                        else if (item.PriceGold > 0 && level == Level.Gold)
+                                        {
+                                            percent = (decimal)item.PriceGold / (decimal)item.Price;
+                                            discount = 100 - Math.Truncate(percent * 100);
+                                            <div class="price">@Convert.ToDecimal(item.PriceGold).ToString("N0")đ</div>
+                                            <div class="discount">-@discount%</div>
+                                        }
+                                        else if (item.PriceSilver > 0 && level == Level.Silver)
+                                        {
+                                            percent = (decimal)item.PriceSilver / (decimal)item.Price;
+                                            discount = 100 - Math.Truncate(percent * 100);
+                                            <div class="price">@Convert.ToDecimal(item.PriceSilver).ToString("N0")đ</div>
+                                            <div class="discount">-@discount%</div>
+                                        }
+                                        else if (item.PriceBronze > 0 && level == Level.Bronze)
+                                        {
+                                            percent = (decimal)item.PriceBronze / (decimal)item.Price;
+                                            discount = 100 - Math.Truncate(percent * 100);
+                                            <div class="price">@Convert.ToDecimal(item.PriceBronze).ToString("N0")đ</div>
+                                            <div class="discount">-@discount%</div>
+                                        }
+                                        else
+                                        {
+                                            <div class="price">@Convert.ToDecimal(item.Price).ToString("N0")đ</div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <div class="price">Liên hệ</div>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("Login", "User")" class="price-lock">
+                                    <i class="fa-solid fa-lock-keyhole"></i> Đăng nhập để xem giá
+                                </a>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="text-right">
+                <a href="@Url.Action("NewProduct")" class="btn-view">Xem tất cả</a>
+            </div>
+        </div>
+    </section>
+}
+@if (Model.ProductHots.Any())
+{
+    <section class="product product-sale">
+        <div class="container">
+            <div class="title-section">
+                Khuyến mãi hot
+            </div>
+            <div class="row row-cols-lg-5">
+                @foreach (var item in Model.ProductHots)
+                {
+                    <div class="col">
+                        <div class="product-item">
+                            <a href="@Url.Action("ProductDetail", new { url = item.Url })" class="product-img">
+                                @if (item.ListImage != null)
+                                {
+                                    <img data-src="@Path.Combine("/images/products/", item.ListImage.Split(',')[0])" src="~/Content/images/img-main/base64.gif" alt="@item.Name" class="lazyload" />
+                                }
+                            </a>
+                            <div class="brand-name" title="@item.Brand.BrandName">@item.Brand.BrandName</div>
+                            <div class="subject">
+                                <a href="@Url.Action("ProductDetail", new { url = item.Url })" title="@item.Name">
+                                    @item.Name
+                                </a>
+                            </div>
+                            @if (email != "")
+                            {
+                                level = (Level)Enum.Parse(typeof(Level), ViewContext.RouteData.Values["Level"].ToString());
+                                <div class="box-price">
+                                    @if (item.Price > 0)
+                                    {
+                                        decimal percent, discount;
+                                        if (item.PriceDiamond > 0 && level == Level.Diamond)
+                                        {
+                                            percent = (decimal)item.PriceDiamond / (decimal)item.Price;
+                                            discount = 100 - Math.Truncate(percent * 100);
+                                            <div class="price">@Convert.ToDecimal(item.PriceDiamond).ToString("N0")đ</div>
+                                            <div class="discount">-@discount%</div>
+                                        }
+                                        else if (item.PricePlatinum > 0 && level == Level.Platinum)
+                                        {
+                                            percent = (decimal)item.PricePlatinum / (decimal)item.Price;
+                                            discount = 100 - Math.Truncate(percent * 100);
+                                            <div class="price">@Convert.ToDecimal(item.PricePlatinum).ToString("N0")đ</div>
+                                            <div class="discount">-@discount%</div>
+                                        }
+                                        else if (item.PriceGold > 0 && level == Level.Gold)
+                                        {
+                                            percent = (decimal)item.PriceGold / (decimal)item.Price;
+                                            discount = 100 - Math.Truncate(percent * 100);
+                                            <div class="price">@Convert.ToDecimal(item.PriceGold).ToString("N0")đ</div>
+                                            <div class="discount">-@discount%</div>
+                                        }
+                                        else if (item.PriceSilver > 0 && level == Level.Silver)
+                                        {
+                                            percent = (decimal)item.PriceSilver / (decimal)item.Price;
+                                            discount = 100 - Math.Truncate(percent * 100);
+                                            <div class="price">@Convert.ToDecimal(item.PriceSilver).ToString("N0")đ</div>
+                                            <div class="discount">-@discount%</div>
+                                        }
+                                        else if (item.PriceBronze > 0 && level == Level.Bronze)
+                                        {
+                                            percent = (decimal)item.PriceBronze / (decimal)item.Price;
+                                            discount = 100 - Math.Truncate(percent * 100);
+                                            <div class="price">@Convert.ToDecimal(item.PriceBronze).ToString("N0")đ</div>
+                                            <div class="discount">-@discount%</div>
+                                        }
+                                        else
+                                        {
+                                            <div class="price">@Convert.ToDecimal(item.Price).ToString("N0")đ</div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <div class="price">Liên hệ</div>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("Login", "User")" class="price-lock">
+                                    <i class="fa-solid fa-lock-keyhole"></i> Đăng nhập để xem giá
+                                </a>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="text-right">
+                <a href="@Url.Action("Promotion")" class="btn-view">Xem tất cả</a>
+            </div>
+        </div>
+    </section>
+}
+@if (Model.Products.Any())
+{
+    <section class="product">
+        <div class="container">
+            <div class="title-section">
+                Danh sách sản phẩm
+            </div>
+            <div class="row row-cols-lg-5">
+                @foreach (var item in Model.Products)
+                {
+                    <div class="col">
+                        <div class="product-item">
+                            <a href="@Url.Action("ProductDetail", new { url = item.Url })" class="product-img">
+                                @if (item.ListImage != null)
+                                {
+                                    <img data-src="@Path.Combine("/images/products/", item.ListImage.Split(',')[0])" src="~/Content/images/img-main/base64.gif" alt="@item.Name" class="lazyload" />
+                                }
+                            </a>
+                            <div class="brand-name" title="@item.Brand.BrandName">@item.Brand.BrandName</div>
+                            <div class="subject">
+                                <a href="@Url.Action("ProductDetail", new { url = item.Url })" title="@item.Name">
+                                    @item.Name
+                                </a>
+                            </div>
+                            @if (email != "")
+                            {
+                                level = (Level)Enum.Parse(typeof(Level), ViewContext.RouteData.Values["Level"].ToString());
+                                <div class="box-price">
+                                    @if (item.Price > 0)
+                                    {
+                                        decimal percent, discount;
+                                        if (item.PriceDiamond > 0 && level == Level.Diamond)
+                                        {
+                                            percent = (decimal)item.PriceDiamond / (decimal)item.Price;
+                                            discount = 100 - Math.Truncate(percent * 100);
+                                            <div class="price">@Convert.ToDecimal(item.PriceDiamond).ToString("N0")đ</div>
+                                            <div class="discount">-@discount%</div>
+                                        }
+                                        else if (item.PricePlatinum > 0 && level == Level.Platinum)
+                                        {
+                                            percent = (decimal)item.PricePlatinum / (decimal)item.Price;
+                                            discount = 100 - Math.Truncate(percent * 100);
+                                            <div class="price">@Convert.ToDecimal(item.PricePlatinum).ToString("N0")đ</div>
+                                            <div class="discount">-@discount%</div>
+                                        }
+                                        else if (item.PriceGold > 0 && level == Level.Gold)
+                                        {
+                                            percent = (decimal)item.PriceGold / (decimal)item.Price;
+                                            discount = 100 - Math.Truncate(percent * 100);
+                                            <div class="price">@Convert.ToDecimal(item.PriceGold).ToString("N0")đ</div>
+                                            <div class="discount">-@discount%</div>
+                                        }
+                                        else if (item.PriceSilver > 0 && level == Level.Silver)
+                                        {
+                                            percent = (decimal)item.PriceSilver / (decimal)item.Price;
+                                            discount = 100 - Math.Truncate(percent * 100);
+                                            <div class="price">@Convert.ToDecimal(item.PriceSilver).ToString("N0")đ</div>
+                                            <div class="discount">-@discount%</div>
+                                        }
+                                        else if (item.PriceBronze > 0 && level == Level.Bronze)
+                                        {
+                                            percent = (decimal)item.PriceBronze / (decimal)item.Price;
+                                            discount = 100 - Math.Truncate(percent * 100);
+                                            <div class="price">@Convert.ToDecimal(item.PriceBronze).ToString("N0")đ</div>
+                                            <div class="discount">-@discount%</div>
+                                        }
+                                        else
+                                        {
+                                            <div class="price">@Convert.ToDecimal(item.Price).ToString("N0")đ</div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <div class="price">Liên hệ</div>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("Login", "User")" class="price-lock">
+                                    <i class="fa-solid fa-lock-keyhole"></i> Đăng nhập để xem giá @*2023/07/27/avatar-875.png*@
+                                </a>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="text-right">
+                <a href="@Url.Action("AllProduct")" class="btn-view">Xem tất cả</a>
+            </div>
+        </div>
+    </section>
+}
+@if (Model.Banners.Any(a => a.GroupId == 2))
+{
+    <section class="banner-center">
+        <div class="container">
+            <div class="banner-center-list">
+                @foreach (var item in Model.Banners.Where(a => a.GroupId == 2))
+                {
+                    <div class="banner-center-item">
+                        @if (item.Content != null)
+                        {
+                            <div class="content">
+                                @Html.Raw(item.Content)
+                            </div>
+                        }
+                        @if (item.Url != null)
+                        {
+                            <a href="@item.Url" class="btn-buy">Mua ngay</a>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+}
+@if (Model.Brands.Any())
+{
+    <section class="brands">
+        @foreach (var item in Model.Brands)
+        {
+            <a href="@Url.Action("BrandDetail", new { url = item.Url })" class="brand-item">
+                @if (item.Image != null)
+                {
+                    <img data-src="@Path.Combine("/images/brands/", item.Image)" src="~/Content/images/img-main/base64.gif" alt="@item.BrandName" class="lazyload" />
+                }
+            </a>
+        }
+    </section>
+}
+<section class="subcribe home">
+    <div class="container">
+        <div class="title">Đăng ký thành viên</div>
+        <form class="subcribe-form">
+            @Html.AntiForgeryToken()
+            <input type="text" name="keywords" class="form-control" placeholder="Email / Số điện thoại" autocomplete="off" required />
+            <button type="submit">Gửi</button>
+        </form>
+    </div>
+</section>
+@if (config.ListImage != null)
+{
+    var arrImg = config.ListImage.Split(',');
+    <section class="photos">
+        @foreach (var image in arrImg)
+        {
+            <div class="photo-item">
+                <img data-src="@Path.Combine("/images/configs/", image)" src="~/Content/images/img-main/base64.gif" alt="Thư viện ảnh" class="lazyload" />
+            </div>
+        }
+        <div class="box-content">
+            <div class="sub-text">instagram</div>
+            <div class="title">DorisDoris</div>
+            <div class="tag">#doris</div>
+        </div>
+    </section>
+}
+@section scripts {
+    <script>
+        homeJs();
+    </script>
+}

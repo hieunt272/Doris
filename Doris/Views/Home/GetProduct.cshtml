@@ -1,0 +1,25 @@
+﻿@model Doris.ViewModel.CategoryProductViewModel
+@using PagedList.Mvc 
+
+<div class="count-product">(@Model.Products.Count()) _ Sản phẩm</div>
+@if (Model.Products.Any())
+{
+    <div class="row row-cols-lg-5">
+        @foreach (var item in Model.Products)
+        {
+            <div class="col-lg">
+                @Html.Partial("_ProductItem", item)
+            </div>
+        }
+    </div>
+}
+else
+{
+    <p class="alert alert-success small">Nội dung hiện chưa được cập nhật. Vui lòng quay lại sau !!!!</p>
+}
+@if (Model.Products.PageCount > 1)
+{
+    <div class="text-right">
+        @Html.PagedListPager(Model.Products, page => Url.Action("BestSeller", new { page, catId = Model.CatId, brandId = Model.BrandId, sort = Model.Sort }))
+    </div>
+}

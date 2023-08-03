@@ -1,0 +1,16 @@
+﻿@model Doris.ViewModel.GetBrandViewModel
+
+@if (Model.Brands.Any())
+{
+    foreach (var item in Model.Brands)
+    {
+        <div class="col">
+            <a href="@Url.Action("BrandDetail", new { url = item.Url })" class="brand-item-mb">
+                @if (item.Image != null)
+                {
+                    <img src="@Path.Combine("/images/brands/", item.Image)" alt="@item.BrandName" />
+                }
+            </a>
+        </div>
+    }
+}

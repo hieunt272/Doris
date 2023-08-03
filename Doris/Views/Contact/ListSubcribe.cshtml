@@ -1,0 +1,67 @@
+﻿@model Doris.ViewModel.ListSubcribeViewModel
+@using PagedList.Mvc
+@{
+    ViewBag.Title = "Danh sách đăng ký nhận bản tin";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<h2>Danh sách đăng ký nhận bản tin</h2>
+<a class="btn quick-link" href="@Url.Action("Index","Vcms")"><i class="fal fa-home mr-1"></i>Về trang chính</a>
+<div class="box_content">
+    <div class="form-search-list">
+        <form action="@Url.Action("ListSubscribe")" method="get" class="ml-0">
+            <p>
+                Tìm email @Html.TextBoxFor(a => a.Name, new { @class = "w300" })
+                <button type="submit" class="btn-search">Tìm kiếm</button>
+            </p>
+        </form>
+    </div>
+    <p>Có tổng số <strong>@Model.Subcribes.TotalItemCount</strong> email đăng ký</p>
+    <table class="list_table tablecenter table-striped">
+        <tbody>
+            <tr>
+                <th style="width: 150px">Ngày gửi</th>
+                <th style="width: 300px">Email</th>
+                <th style="width: 100px"></th>
+            </tr>
+            @foreach (var contact in Model.Subcribes)
+            {
+                <tr data-id="@contact.Id">
+                    <td>@contact.CreateDate.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@contact.Email</td>
+                    <td><a href="javascript:;" onclick="deleteSub('@contact.Id')">Xóa</a></td>
+                </tr>
+            }
+            @if (Model.Subcribes.PageCount > 1)
+            {
+                <tr>
+                    <td colspan="3">@Html.PagedListPager(Model.Subcribes, page => Url.Action("ListSubcribe", new { page, name = Model.Name }))</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+@section scripts
+{
+    <script type="text/javascript">
+        function deleteSub(id) {
+            if (confirm("Bạn có chắc chắn xóa liên hệ này không?")) {
+                $.post("/Contact/DeleteSubcribe", { subId: id }, function (data) {
+                    if (data) {
+                        $.toast({
+                            text: 'Xóa đăng ký thành công',
+                            position: 'bottom-right',
+                            icon: 'success',
+                        })
+                        $("tr[data-id='" + id + "']").fadeOut();
+                    }
+                    else {
+                        $.toast({
+                            text: 'Quá trình thực hiện không thành công. Hãy thử lại',
+                            icon: 'error',
+                        })
+                    }
+                });
+            }
+        }
+    </script>
+}

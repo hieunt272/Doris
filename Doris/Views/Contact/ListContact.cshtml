@@ -1,0 +1,79 @@
+﻿@model Doris.ViewModel.ListContactViewModel
+@using PagedList.Mvc
+@{
+    ViewBag.Title = "Danh sách liên hệ";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<h2>Danh sách liên hệ</h2>
+<a class="btn quick-link" href="@Url.Action("Index","Vcms")"><i class="fal fa-home mr-1"></i>Về trang chính</a>
+<div class="box_content">
+    <div class="form-search-list">
+        <form action="@Url.Action("ListContact")" method="get" class="ml-0">
+            <p>
+                Tìm theo tên @Html.TextBoxFor(a => a.Name, new { @class = "w300" })
+                <button type="submit" class="btn-search">Tìm kiếm</button>
+            </p>
+        </form>
+    </div>
+    <p>Có tổng số <strong>@Model.Contacts.TotalItemCount</strong> liên hệ</p>
+    <table class="list_table tablecenter table-striped">
+        <tbody>
+            <tr>
+                <th style="width: 100px">Ngày gửi</th>
+                <th style="width: 150px">Họ và tên</th>
+                <th>Khu vực</th>
+                <th>Email</th>
+                <th>Số điện thoại</th>
+                <th>Code</th>
+                <th style="width: 350px">Lời nhắn</th>
+                <th style="width: 60px"></th>
+            </tr>
+            @foreach (var contact in Model.Contacts)
+            {
+                <tr data-id="@contact.Id">
+                    <td>@contact.CreateDate.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>
+                        <strong>@contact.FullName</strong>
+                    </td>
+                    <td>@contact.Region</td>
+                    <td>@contact.Email</td>
+                    <td>@contact.Mobile</td>
+                    <td>@contact.Code</td>
+                    <td>@contact.Body</td>
+                    <td><a href="javascript:;" onclick="deletecontact('@contact.Id')">Xóa</a></td>
+                </tr>
+            }
+            @if (Model.Contacts.PageCount > 1)
+            {
+                <tr>
+                    <td colspan="7">@Html.PagedListPager(Model.Contacts, page => Url.Action("ListContact", new { page, name = Model.Name }))</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+@section scripts
+{
+    <script type="text/javascript">
+        function deletecontact(id) {
+            if (confirm("Bạn có chắc chắn xóa liên hệ này không?")) {
+                $.post("/Contact/DeleteContact", { contactId: id }, function (data) {
+                    if (data) {
+                        $.toast({
+                            text: 'Xóa liên hệ thành công',
+                            position: 'bottom-right',
+                            icon: 'success',
+                        })
+                        $("tr[data-id='" + id + "']").fadeOut();
+                    }
+                    else {
+                        $.toast({
+                            text: 'Quá trình thực hiện không thành công. Hãy thử lại',
+                            icon: 'error',
+                        })
+                    }
+                });
+            }
+        }
+    </script>
+}

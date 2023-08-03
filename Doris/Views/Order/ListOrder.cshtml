@@ -1,0 +1,229 @@
+﻿@model Doris.ViewModel.ListOrderViewModel
+@using PagedList.Mvc
+@{
+    ViewBag.Title = "Danh sách đơn đặt hàng";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<h2>Danh sách đơn đặt hàng</h2>
+<div class="box_content mt-0">
+    <form action="@Url.Action("ListOrder")" method="get">
+        <table class="form_table">
+            <tr>
+                <td>Mã đơn hàng</td>
+                <td>@Html.TextBoxFor(a => a.MaDonhang, new { @class = "form_control" })</td>
+                <td>Tên khách hàng</td>
+                <td>@Html.TextBoxFor(a => a.CustomerName, new { @class = "form_control" })</td>
+            </tr> 
+            <tr>
+                <td>Điện thoại khách hàng</td>
+                <td>@Html.TextBoxFor(a => a.CustomerMobile, new { @class = "form_control" })</td>
+                <td>Email khách hàng</td>
+                <td>@Html.TextBoxFor(a => a.CustomerEmail, new { @class = "form_control" })</td>
+            </tr>
+            <tr>
+                <td>Ngày đặt hàng từ</td>
+                <td>@Html.TextBoxFor(a => a.FromDate, new { @class = "form_control datepicker" })</td>
+                <td>Đến ngày</td>
+                <td>@Html.TextBoxFor(a => a.ToDate, new { @class = "form_control datepicker" })</td>
+            </tr>
+            <tr>
+                <td>Trạng thái đơn hàng</td>
+                <td>
+                    <select name="status" class="form-control">
+                        <option value="0">Tất cả đơn hàng</option>
+                        <option value="1" @if (Model.Status == 1) { @Html.Raw("selected=selected") }>Đang xử lý</option>
+                        <option value="2" @if (Model.Status == 2) { @Html.Raw("selected=selected") }>Chờ thanh toán</option>
+                        <option value="3" @if (Model.Status == 3) { @Html.Raw("selected=selected") }>Đã thanh toán</option>
+                        <option value="4" @if (Model.Status == 4) { @Html.Raw("selected=selected") }>Hủy đơn</option>
+                    </select>
+                </td>
+                <td>Thành phố</td>
+                <td>@Html.DropDownListFor(a => a.CityId, Model.CitySelectList, "Tất cả", new { @class = "form_control w300" })</td>
+            </tr>
+        </table>
+        <div>
+            <button type="submit" class="btn-search">TÌM KIẾM</button>
+        </div>
+    </form>
+    <hr/>
+    <p>Có tổng số <strong>@Model.Orders.TotalItemCount</strong> đơn hàng</p>
+    <table class="list_table tablecenter">
+        <tr>
+            <th style="width: 40px">Mã ĐH</th>
+            <th>Thông tin đơn hàng</th>
+            <th>Mã cửa hàng</th>
+            <th>Tổng tiền<br />(VNĐ)</th>
+            <th>Trạng thái xử lý</th>
+            <th>Ghi chú</th>
+            <th style="width: 100px;"></th>
+        </tr>
+        @foreach (var order in Model.Orders)
+        {
+            var colorStats = "";
+            if (order.Status == 2)
+            {
+                colorStats = "process-order";
+            }
+            else if (order.Status == 3)
+            {
+                colorStats = "payment-order";
+            }
+            var congno = order.TotalFee() - order.ThanhToanTruoc;
+            <tr data-id="@order.Id">
+                <td><a href="javascript:;" onclick="loadOrder(@order.Id)" class="@colorStats">@order.MaDonHang</a></td>
+                <td class="left">
+                    <p><strong>Người mua</strong> @order.CustomerInfo.Fullname</p>
+                    <p><strong>Địa chỉ</strong> @order.CustomerInfo.Address, @order.District.Name, @order.City.Name</p>
+                    <p><strong>Điện thoại</strong> @order.CustomerInfo.Mobile</p>
+                    <p><strong>Email</strong> @order.CustomerInfo.Email</p>
+                    <p><strong>Ngày đặt:</strong> @order.CreateDate.ToString("dd/MM/yyyy HH:mm")</p>
+                </td>
+                <td><strong>@order.User.ShopCode</strong></td>
+                <td><strong style="font-size: 16px;">@order.TotalFee().ToString("N0")</strong></td>
+                <td>
+                    <select name="Status" onchange="updateOrder(@order.Id, this.value)" class="form_control">
+                        <option value="1">Đang xử lý</option>
+                        <option value="2" @if (order.Status == 2) { @Html.Raw("selected='selected'") }>Chờ thanh toán</option>
+                        <option value="3" @if (order.Status == 3) { @Html.Raw("selected='selected'") }>Đã thanh toán</option>
+                        <option value="4" @if (order.Status == 4) { @Html.Raw("selected='selected'") }>Hủy đơn</option>
+                    </select>
+                </td>
+                <td>
+                    <p class="left">
+                        Tiền hàng: <strong>@order.Total().ToString("N0")</strong><br /><br />
+                        Phí Ship: <input type="text" class="form_control w100 input-number" name="ShipFee" value="@order.ShipFee" min="0" /><br />
+                        Đã thanh toán: <input type="text" class="form_control w100 input-number" name="ThanhToanTruoc" value="@order.ThanhToanTruoc" min="0" /><br />
+                        Công nợ: <strong>@Convert.ToInt32(congno).ToString("N0")</strong>
+                    </p>
+                    <p>
+                        <textarea name="Notice" rows="4" class="form_control" placeholder="Ghi chú">@order.CustomerInfo.Body</textarea>
+                    </p>
+                    <button type="button" class="btn btn-primary" onclick="updateNoticeOrder(@order.Id)">Cập nhật</button>
+                </td>
+                <td>
+                    @*<a href="javascript:;" data-fancybox data-type="iframe" data-src="@Url.Action("ViewHoaDon", new{orderId = order.Id})">[In HĐ]</a><br /><br />*@
+                    <a href="javascript:;" onclick="loadOrder(@order.Id)">[Xem đơn]</a><br /><br />
+                    @if (order.Status == 4)
+                    {
+                        <a href="javascript:;" onclick="parmanentDeleteOrder(@order.Id)">[Xóa đơn]</a>
+                    }
+                    else
+                    {
+                        <a href="javascript:;" onclick="deleteOrder(@order.Id)">[Hủy đơn]</a>
+                    }
+                </td>
+            </tr>
+        }
+        @if (Model.Orders.PageCount > 1)
+        {
+            <tr>
+                <td colspan="7">@Html.PagedListPager(Model.Orders, page => Url.Action("ListOrder", new { page, status = Model.Status, name = Model.CustomerName, email = Model.CustomerEmail, mobile = Model.CustomerMobile, formdate = Model.FromDate, todate = Model.ToDate, cityId = Model.CityId, pagesize = Model.PageSize }))</td>
+            </tr>
+        }
+    </table>
+</div>
+<div id="contactDetails"></div>
+@section scripts
+{
+    <script src="~/Scripts/jquery.maskMoney.min.js"></script>
+    <script>
+        $(".datepicker").datepicker({
+            dateFormat: 'dd/mm/yy'
+        });
+        $(function () {
+            $(".input-number").maskMoney({
+                precision: 0,
+                thousands: ','
+            });
+        });
+        function updateOrder(id, status) {
+            $.post("/Order/UpdateOrder", { orderId: id, status }, function (data) {
+                if (data) {
+                    alert("Cập nhật đơn hàng thành công");
+                    location.reload();
+                } else {
+                    alert("Quá trình thực hiện không thành công. Hãy thử lại");
+                }
+            });
+        }
+        function updatePayment(id, payment) {
+            $.post("/Order/UpdateOrder", { orderId: id, payment }, function (data) {
+                if (data) {
+                    alert("Cập nhật đơn hàng thành công");
+                    location.reload();
+                } else {
+                    alert("Quá trình thực hiện không thành công. Hãy thử lại");
+                }
+            });
+        }
+        function updateNoticeOrder(id) {
+            var divId = $("tr[data-id='" + id + "']");
+            var notice = divId.find("textarea").val();
+            var thanhtoan = divId.find("input[name=ThanhToanTruoc]").val();
+            var shipFee = divId.find("input[name=ShipFee]").val();
+
+            var thanhtoantruoc = thanhtoan.replace(/\,/g, "");
+            var ship = shipFee.replace(/\,/g, "");
+            if (thanhtoantruoc < 0) {
+                alert("Số tiền thanh toán trước phải lơn hơn bằng 0");
+            }
+            if (ship < 0) {
+                alert("Số tiền ship phải lơn hơn bằng 0");
+            }
+
+            $.post("/Order/UpdateOrderNotice", { orderId: id, notice: notice, thanhtoantruoc: thanhtoantruoc, ship: ship }, function (data) {
+                if (data) {
+                    alert("Cập nhật đơn hàng thành công");
+                    location.reload();
+                } else {
+                    alert("Quá trình thực hiện không thành công. Hãy thử lại");
+                }
+            });
+        }
+        function deleteOrder(id) {
+            if (confirm("Bạn có chắc chắn hủy đơn hàng này không?")) {
+                $.post("/Order/DeleteOrder", { orderId: id }, function (data) {
+                    if (data) {
+                        alert("Hủy đơn hàng thành công");
+                        $("tr[data-id='" + id + "']").fadeOut();
+                    } else {
+                        alert("Quá trình thực hiện không thành công. Hãy thử lại");
+                    }
+                });
+            }
+        }
+        function parmanentDeleteOrder(id) {
+            if (confirm("Bạn có chắc chắn Xóa đơn hàng này không?")) {
+                $.post("/Order/ParmanentDeleteOrder", { orderId: id }, function (data) {
+                    if (data) {
+                        alert("Xóa đơn hàng thành công");
+                        $("tr[data-id='" + id + "']").fadeOut();
+                    } else {
+                        alert("Quá trình thực hiện không thành công. Hãy thử lại");
+                    }
+                });
+            }
+        }
+        function loadOrder(id) {
+            $.get("/Order/LoadOrder", { orderId: id }, function (data) {
+                $("#contactDetails").html(data);
+                $("#contactDetails").dialog("open");
+            });
+        }
+        $(function () {
+            $("#contactDetails").dialog({
+                autoOpen: false,
+                modal: true,
+                width: 800,
+                show: {
+                    effect: "blind",
+                    duration: 1000
+                },
+                hide: {
+                    effect: "explode",
+                    duration: 1000
+                }
+            });
+        });
+    </script>
+}

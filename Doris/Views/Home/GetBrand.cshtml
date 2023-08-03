@@ -1,0 +1,22 @@
+﻿@model Doris.ViewModel.GetBrandViewModel
+
+<div class="col-5">
+    <div class="char-brand">@Model.Char</div>
+    <ul class="ul-reset brand-list">
+        @foreach (var item in Model.Brands)
+        {
+            <li>
+                <a href="@Url.Action("Brand", "Home", new { url = item.Url })">@item.BrandName</a>
+            </li>
+        }
+    </ul>
+</div>
+<div class="col-7">
+    @foreach (var item in Model.Brands.Where(a => a.CoverImage != null).Take(2))
+    {
+        if (item.CoverImage != null)
+        {
+            <img src="@Path.Combine("/images/brands/", item.CoverImage)" alt="@item.BrandName" class="brand-img" />
+        }
+    }
+</div>

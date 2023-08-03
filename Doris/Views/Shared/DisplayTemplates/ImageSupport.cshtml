@@ -1,0 +1,8 @@
+﻿@if (Model == null)
+{
+    <p>Không có ảnh</p>
+}
+else
+{
+    <img src="@Path.Combine("/images/supports/", Model)?w=150" alt="" width="150" />
+}

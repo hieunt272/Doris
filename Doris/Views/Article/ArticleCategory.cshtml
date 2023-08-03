@@ -1,0 +1,88 @@
+﻿@model Doris.Models.ArticleCategory
+@{
+    ViewBag.Title = "Thêm danh mục";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<h2>Thêm danh mục</h2>
+@if (ViewBag.ArticleCat == "success")
+{
+    <div id="AlertBox" class="alert alert-success"><strong>Thêm mới danh mục thành công</strong></div>
+}
+@if (ViewBag.ArticleCat == "update")
+{
+    <div id="AlertBox" class="alert alert-success"><strong>Cập nhật danh mục thành công</strong></div>
+}
+<a class="btn quick-link" id="create-cat" href="#list-cat"><i class="far fa-list mr-1"></i> Danh sách danh mục</a>
+<div class="box_content">
+    <div class="row">
+        <div class="col-sm-12 col-lg-12">
+            @using (Html.BeginForm("ArticleCategory", "Article", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                @Html.ValidationSummary(true)
+                <table class="form_table form-table-cat">
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(a => Model.ParentId)</td>
+                        <td class="form_text">@Html.DropDownListFor(a => Model.ParentId, (SelectList)ViewBag.RootCats, "Danh mục cha", new { @class = "form_control w300" })</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.TypePost)</td>
+                        <td class="form_text">@Html.EnumDropDownListFor(model => model.TypePost, new { @class = "form_control w300" })</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(a => Model.CategoryName)</td>
+                        <td class="form_text">@Html.EditorFor(a => Model.CategoryName)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(a => Model.Description)</td>
+                        <td class="form_text">
+                            @Html.EditorFor(a => Model.Description)
+                            @Html.ValidationMessageFor(a => Model.Description)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(a => Model.Image)</td>
+                        <td class="form_text">
+                            @Html.TextBoxFor(a => Model.Image, new { type = "file" })
+                            <span class="red-warring">
+                                Chấp nhận ảnh jpg, png, gif, jpeg < 4MB
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(a => Model.CategorySort)</td>
+                        <td class="form_text">@Html.EditorFor(a => Model.CategorySort)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(a => Model.ShowFooter)</td>
+                        <td class="form_text">@Html.CheckBoxFor(a => Model.ShowFooter)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(a => Model.CategoryActive)</td>
+                        <td class="form_text">@Html.CheckBoxFor(a => Model.CategoryActive, new { @checked = "checked" })</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(a => Model.Url)</td>
+                        <td class="form_text">@Html.EditorFor(a => Model.Url)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(a => Model.TitleMeta)</td>
+                        <td class="form_text">@Html.EditorFor(a => Model.TitleMeta)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(a => Model.DescriptionMeta)</td>
+                        <td class="form_text">@Html.EditorFor(a => Model.DescriptionMeta)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name"></td>
+                        <td class="form_text">
+                            <input type="submit" class="btn quick-link" value="Thêm mới" />
+                        </td>
+                    </tr>
+                </table>
+            }
+        </div>
+        <div class="col-sm-12 col-lg-12">
+            @Html.Action("ListCategory", "Article")
+        </div>
+    </div>
+</div>

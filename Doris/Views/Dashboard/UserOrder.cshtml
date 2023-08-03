@@ -1,0 +1,61 @@
+﻿@{
+    ViewBag.Title = "Quản lý đơn hàng";
+}
+
+<section class="user-page bg-second">
+    <div class="w30">
+        @Html.Action("UserNav", "Dashboard")
+    </div>
+    <div class="w70">
+        <div class="user-box order-nav">
+            <nav>
+                <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                    <button class="nav-link active" data-toggle="tab" type="button" value="1">
+                        Đang xử lý
+                    </button>
+                    <button class="nav-link" data-toggle="tab" type="button" value="2">
+                        Đang giao hàng
+                    </button>
+                    <button class="nav-link" data-toggle="tab" type="button" value="3">
+                        Đã thanh toán
+                    </button>
+                    <button class="nav-link" data-toggle="tab" type="button" value="4">
+                        Đã hủy
+                    </button>
+                </div>
+            </nav>
+        </div>
+        <div id="list-item-sort" class="mt-4">
+            @Html.Action("GetUserOrder")
+        </div>
+    </div>
+</section>
+@section scripts{
+    <script>
+        userOrder("/Dashboard/GetUserOrder")
+
+        function cancelOrder(id) {
+            if (confirm("Bạn có chắc chắn hủy đơn hàng này không?")) {
+                $.post("/Dashboard/CancelOrder", { orderId: id }, function (data) {
+                    if (data) {
+                        $.toast({
+                            text: 'Đang hủy đơn hàng',
+                            position: 'bottom-right',
+                            icon: 'success',
+                        })
+                        $("div[data-id='" + id + "']").fadeOut();
+                        function reload() {
+                            location.reload();
+                        }
+                        setTimeout(reload, 1500);
+                    } else {
+                        $.toast({
+                            text: 'Quá trình thực hiện không thành công. Hãy thử lại',
+                            icon: 'error',
+                        })
+                    }
+                });
+            }
+        }
+    </script>
+}

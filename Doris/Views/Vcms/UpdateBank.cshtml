@@ -1,0 +1,57 @@
+﻿@model Doris.Models.Bank
+@{
+    ViewBag.Title = "Cập nhật Thông tin thanh toán";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<h2>Cập nhật Ví điện tử</h2>
+<a class="btn quick-link" id="create-cat" href="#list-cat"><i class="far fa-list mr-1"></i> Danh sách thông tin thanh toán</a>
+<div class="box_content">
+    <div class="row">
+        <div class="col-sm-12 col-lg-12">
+            @using (Html.BeginForm("UpdateBank", "Vcms", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                @Html.ValidationSummary(true)
+                @Html.HiddenFor(model => model.Id)
+                <table class="form_table form-table-cat">
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.Name)</td>
+                        <td class="form_text">@Html.EditorFor(model => model.Name)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.Image)</td>
+                        <td class="form_text">
+                            @Html.TextBoxFor(model => model.Image, new { type = "file" })
+                        </td>
+                    </tr>
+                    @if (Model.Image != null)
+                    {
+                        <tr>
+                            <td class="form_name"></td>
+                            <td class="form_text">
+                                <img class="img-border mb-2" src="@Path.Combine("/images/banks/", Model.Image)" />
+                                <input type="hidden" name="CurrentFile" id="CurrentFile" value="@Model.Image" />
+                            </td>
+                        </tr>
+                    }
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.Sort)</td>
+                        <td class="form_text">@Html.EditorFor(model => model.Sort)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.Active)</td>
+                        <td class="form_text">@Html.CheckBoxFor(model => model.Active, new { @checked = "checked" })</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name"></td>
+                        <td class="form_text">
+                            <input type="submit" class="btn quick-link" value="Cập nhật" />
+                        </td>
+                    </tr>
+                </table>
+            }
+        </div>
+        <div class="col-sm-12 col-lg-12">
+            @Html.Action("ListBank", "Vcms")
+        </div>
+    </div>
+</div>

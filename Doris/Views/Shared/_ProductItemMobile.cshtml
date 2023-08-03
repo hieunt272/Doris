@@ -1,0 +1,58 @@
+﻿@model Doris.Models.Product
+@using Doris.Models
+@{
+    var email = ViewContext.RouteData.Values["MemberEmail"].ToString();
+    Level level;
+}
+
+<div class="product-item-mb">
+    <a href="@Url.Action("ProductDetail", new { url = Model.Url })" class="product-img">
+        @if (Model.ListImage != null)
+        {
+            <img src="@Path.Combine("/images/products/", Model.ListImage.Split(',')[0])" alt="@Model.Name" />
+        }
+    </a>
+    <div class="body">
+        <a href="@Url.Action("BrandDetail", new { url = Model.Url })" class="brand-name">
+            @Model.Brand.BrandName
+        </a>
+        <div class="subject">
+            <a href="@Url.Action("ProductDetail", new { url = Model.Url })">
+                @Model.Name
+            </a>
+        </div>
+        <div class="box-price">
+            <div class="price">
+                @if (email != "")
+                {
+                    level = (Level)Enum.Parse(typeof(Level), ViewContext.RouteData.Values["Level"].ToString());
+                    if (Model.PriceDiamond > 0 && level == Level.Diamond)
+                    {
+                        <div class="price-sale">@Convert.ToDecimal(Model.Price).ToString("N0") đ</div>
+                    }
+                    else if (Model.PricePlatinum > 0 && level == Level.Platinum)
+                    {
+                        <div class="price-sale">@Convert.ToDecimal(Model.Price).ToString("N0") đ</div>
+                    }
+                    else if (Model.PriceGold > 0 && level == Level.Gold)
+                    {
+                        <div class="price-sale">@Convert.ToDecimal(Model.Price).ToString("N0") đ</div>
+
+                    }
+                    else if (Model.PriceSilver > 0 && level == Level.Silver)
+                    {
+                        <div class="price-sale">@Convert.ToDecimal(Model.Price).ToString("N0") đ</div>
+                    }
+                    else if (Model.PriceBronze > 0 && level == Level.Bronze)
+                    {
+                        <div class="price-sale">@Convert.ToDecimal(Model.Price).ToString("N0") đ</div>
+                    }
+                }
+                @if (Model.Price > 0)
+                {
+                    <div class="price">@Convert.ToDecimal(Model.Price).ToString("N0") đ</div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

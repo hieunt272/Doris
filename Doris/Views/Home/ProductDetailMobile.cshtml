@@ -1,0 +1,161 @@
+﻿@model Doris.ViewModel.ProductDetailViewModel
+@using Doris.Models
+@{
+    ViewBag.Title = Model.Product.TitleMeta ?? Model.Product.Name;
+    ViewBag.Description = Model.Product.DescriptionMeta ?? Model.Product.Description;
+    ViewBag.Canonical = Request.Url?.GetLeftPart(UriPartial.Authority) + Url.Action("ProductDetail", new { url = Model.Product.Url });
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var email = ViewContext.RouteData.Values["MemberEmail"].ToString();
+    Level level;
+    if (Model.Product.ListImage != null)
+    {
+        ViewBag.ImageShare = Request.Url?.GetLeftPart(UriPartial.Authority) + Path.Combine("/images/products/", Model.Product.ListImage.Split(',')[0]);
+    }
+    int price = 0;
+    if (email != "")
+    {
+        level = (Level)Enum.Parse(typeof(Level), ViewContext.RouteData.Values["Level"].ToString());
+        if (Model.Product.PriceDiamond > 0 && level == Level.Diamond)
+        {
+            price = Convert.ToInt32(Model.Product.PriceDiamond);
+        }
+        else if (Model.Product.PricePlatinum > 0 && level == Level.Platinum)
+        {
+            price = Convert.ToInt32(Model.Product.PricePlatinum);
+        }
+        else if (Model.Product.PriceGold > 0 && level == Level.Gold)
+        {
+            price = Convert.ToInt32(Model.Product.PriceGold);
+        }
+        else if (Model.Product.PriceSilver > 0 && level == Level.Silver)
+        {
+            price = Convert.ToInt32(Model.Product.PriceSilver);
+        }
+        else if (Model.Product.PriceBronze > 0 && level == Level.Bronze)
+        {
+            price = Convert.ToInt32(Model.Product.PriceBronze);
+        }
+        else
+        {
+            price = Convert.ToInt32(Model.Product.Price);
+        }
+    }
+}
+
+<link href="~/Content/swiper-bundle.css" rel="stylesheet" />
+<section class="product-detail-mb page-pb-2">
+    @if (Model.Product.ListImage != null)
+    {
+        var arrImg = Model.Product.ListImage.Split(',');
+        <div class="swiper">
+            <div class="swiper-wrapper">
+                @foreach (var img in arrImg)
+                {
+                    <div class="swiper-slide">
+                        <img src="@Path.Combine("/images/products/", img)" alt="@Model.Product.Name" />
+                    </div>
+                }
+            </div>
+            <div class="swiper-pagination"></div>
+        </div>
+    }
+    <div class="container">
+        <div class="brand-name">@Model.Product.Brand.BrandName</div>
+        <div class="product-name">@Model.Product.Name</div>
+        <div class="box-price">
+            <div class="price-sale">
+                @if (email != "")
+                {
+                    @price.ToString("N0")
+                }
+                else
+                {
+                    @Convert.ToDecimal(Model.Product.Price).ToString("N0") @:đ
+                }
+                <img src="~/Content/images/img-main/icon-user.png" alt="User" />
+            </div>
+            <div class="price">Giá bán lẻ: @Convert.ToDecimal(Model.Product.Price).ToString("N0") đ</div>
+        </div>
+        <div class="price-apply">Giá sỉ áp dụng cho đơn hàng tối thiểu 2 triệu</div>
+        <div class="wholesale-price">
+            Giá sỉ tốt nhất chỉ từ @Convert.ToDecimal(Model.Product.WholesalePrice).ToString("N0") đ
+            <i class="fa-regular fa-angle-right"></i>
+        </div>
+        <div class="policy-user">
+            <div class="content">
+                <div class="text">Chính sách dành cho Cộng tác viên</div>
+                <div class="sub-text">Nhận hoa hồng @Model.Comission.ToString("N0")đ không cần bỏ vốn</div>
+            </div>
+            <a href="#">Tìm hiểu thêm <i class="fa-regular fa-angle-right"></i></a>
+        </div>
+        @if (Model.Products.Any())
+        {
+            <div class="title-related">Sản phẩm tương tự khác</div>
+            <div class="product-related product-slide">
+                @foreach (var item in Model.Products)
+                {
+                    @Html.Partial("_ProductItemMobile", item)
+                }
+            </div>
+        }
+        <div class="product-policy">
+            <div class="media">
+                <img src="~/Content/images/img-main/bill.png" alt="Bill" />
+                <div class="media-body">
+                    <div class="title">Hàng chính hãng hỗ trợ đơn VAT</div>
+                    <div class="content">
+                        Bạn có thể yêu cầu Doris xuất hóa đơn cho sản phẩm này. Vui lòng nhập thông tin hóa đơn tại phần thanh toán
+                    </div>
+                </div>
+            </div>
+            <div class="media">
+                <img src="~/Content/images/img-main/delivery.png" alt="Delivery" />
+                <div class="media-body">
+                    <div class="title">Thời gian vận chuyển</div>
+                    <div class="content">
+                        Giao hàng trong nội thành HCM: 01 - 02 ngày<br />
+                        Giao hàng tới các thành phố lớn (Hà Nội, Đà Nẵng...): 02 - 04 ngày<br />
+                        Giao hàng tới các khu vực ngoại tỉnh và liên tỉnh: 04 - 07 ngày
+                    </div>
+                </div>
+            </div>
+            <div class="media">
+                <img src="~/Content/images/img-main/partner.png" alt="Policy" />
+                <div class="media-body">
+                    <div class="title">Chính sách</div>
+                    <div class="content">
+                        Yêu cầu đổi trả trong vòng 3 ngày cho sản phẩm lỗi/hư hỏng
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="content-detail">
+            @Html.Raw(Model.Product.Body)
+        </div>
+    </div>
+</section>
+<section class="site-footer">
+    <div class="container">
+        <form id="formBookProduct">
+            <div class="quantity">
+                <input type="text" value="1" min="1" id="number" name="quantity" class="input-number" maxlength="4" />
+            </div>
+            <button type="submit" class="add-cart">Thêm vào giỏ</button>
+        </form>
+    </div>
+</section>
+@section scripts{
+    <script src="~/Scripts/swiper-bundle.min.js"></script>
+    <script src="~/Scripts/jquery.nice-number.js"></script>
+    <script>
+        var swiper = new Swiper('.swiper', {
+            pagination: {
+                el: '.swiper-pagination',
+                type: 'fraction',
+            },
+        });
+
+        $(".input-number").niceNumber();
+    </script>
+}

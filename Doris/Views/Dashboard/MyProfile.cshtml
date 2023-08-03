@@ -1,0 +1,149 @@
+﻿@model Doris.ViewModel.ProfileViewModel
+@{
+    ViewBag.Title = "Hồ sơ của tôi";
+}
+
+<section class="notify">
+    Nhập hàng giá sỉ, chiết khấu cao đến 60% !
+</section>
+<section class="my-profile">
+    <div class="container">
+        @if (ViewBag.Result == "success")
+        {
+            <div id="AlertBox" class="success">
+                <i class="fa-solid fa-check"></i> Lưu thông tin thành công
+            </div>
+        }
+        <div class="title">Hồ sơ của tôi</div>
+        <div class="sub-text">Quản lý thông tin hồ sơ để bảo mật tài khoản</div>
+        @using (Html.BeginForm("MyProfile", "Dashboard", FormMethod.Post, new { @class = "profile-form", enctype = "multipart/form-data" }))
+        {
+            @Html.ValidationSummary(true)
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(a => a.UserId)
+
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="form-group form-row">
+                        <div class="col-3">
+                            Tên đăng nhập
+                        </div>
+                        <div class="col-9">
+                            @Model.Username
+                        </div>
+                    </div>
+                    <div class="form-group form-row">
+                        <div class="col-3 d-flex align-items-center">
+                            @Html.LabelFor(m => m.FullName)
+                        </div>
+                        <div class="col-9">
+                            @Html.TextBoxFor(m => m.FullName, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(a => a.FullName)
+                        </div>
+                    </div>
+                    <div class="form-group form-row">
+                        <div class="col-3 d-flex align-items-center">
+                            @Html.LabelFor(m => m.Email)
+                        </div>
+                        <div class="col-9">
+                            <div class="secret-value">
+                                <span class="mail-secret">@Model.Email</span><span class="btn-change">Thay đổi</span>
+                            </div>
+                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control input-hidden" })
+                            @Html.ValidationMessageFor(a => a.Email)
+                        </div>
+                    </div>
+                    <div class="form-group form-row">
+                        <div class="col-3 d-flex align-items-center">
+                            @Html.LabelFor(m => m.PhoneNumber)
+                        </div>
+                        <div class="col-9">
+                            <div class="secret-value">
+                                <span class="phone-secret">@Model.PhoneNumber</span><span class="btn-change">Thay đổi</span>
+                            </div>
+                            @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control input-hidden" })
+                            @Html.ValidationMessageFor(a => a.PhoneNumber)
+                        </div>
+                    </div>
+                    <div class="form-group form-row">
+                        <div class="col-3 d-flex align-items-center">
+                            Giới tính
+                        </div>
+                        <div class="col-9">
+                            <label class="label-gender">
+                                <input type="radio" name="Gender" value="0" @if (Model.Gender == 0) { @Html.Raw("checked='checked'") }>
+                                <span class="checkmark"></span>
+                                Nam
+                            </label>
+                            <label class="label-gender">
+                                <input type="radio" name="Gender" value="1" @if (Model.Gender == 1) { @Html.Raw("checked='checked'") }>
+                                <span class="checkmark"></span>
+                                Nữ
+                            </label>
+                            <label class="label-gender">
+                                <input type="radio" name="Gender" value="2" @if (Model.Gender == 2) { @Html.Raw("checked='checked'") }>
+                                <span class="checkmark"></span>
+                                Khác
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group form-row">
+                        <div class="col-3 d-flex align-items-center">
+                            Ngày sinh
+                        </div>
+                        <div class="col-9">
+                            <div class="birthday">
+                                <select name="Day">
+                                    @for (var i = 1; i <= 31; i++)
+                                    {
+                                        <option value="@i" @if (Model.Day == i) { @Html.Raw("selected='selected'") }>@i</option>
+                                    }
+                                </select>
+                                <select name="Month">
+                                    @for (var i = 1; i <= 12; i++)
+                                    {
+                                        <option value="@i" @if (Model.Month == i) { @Html.Raw("selected='selected'") }>Tháng @i</option>
+                                    }
+                                </select>
+                                <select name="Year">
+                                    @for (var i = 1960; i <= DateTime.Now.Year; i++)
+                                    {
+                                        <option value="@i" @if (Model.Year == i) { @Html.Raw("selected='selected'") }>@i</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group form-row">
+                        <div class="col-3"></div>
+                        <div class="col-9">
+                            <button type="submit" class="btn-save">Lưu</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="box-avatar">
+                        @if (Model.Avatar != null)
+                        {
+                            <img src="@Path.Combine("/images/users/", Model.Avatar)" alt="@Model.FullName" class="avatar" />
+                        }
+                        else
+                        {
+                            <i class="fa-light fa-circle-user icon-avatar"></i>
+                        }
+                        <label class="label-file">
+                            Chọn ảnh
+                            <input type="file" name="Avatar" hidden />
+                        </label>
+                        <div>Dung lượng file tối đa 1MB <br /> Định dạng: JPG, PNG</div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+@section scripts {
+    <script>
+        profile();
+    </script>
+}

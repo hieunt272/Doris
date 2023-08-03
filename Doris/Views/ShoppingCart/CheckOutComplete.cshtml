@@ -1,0 +1,37 @@
+﻿@using Doris.Models
+@{
+    ViewBag.Title = "Đặt hàng thành công";
+    var config = (ConfigSite)HttpContext.Current.Application["ConfigSite"];
+}
+
+<section class="bg-breadcrumb">
+    <div class="container">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index")">Trang chủ</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Đặt hàng thành công</li>
+        </ol>
+    </div>
+</section>
+<section class="container">
+    <div class="row">
+        <div class="col-lg-6 offset-lg-3">
+            <div class="alert alert-success shadow box-complete">
+                <p>Cảm ơn quý khách đã mua hàng tại @config.Title</p>
+                <p>
+                    Mã đơn hàng: <strong>@ViewBag.OrderId</strong>
+                </p>
+                <p>Chúng tôi đã gửi email xác nhận đơn hàng tới địa chỉ email của bạn.</p>
+                <p>
+                    Nhân viên chăm sóc khách hàng của <strong>@config.Title</strong>
+                    sẽ gọi điện xác minh lại đơn hàng của bạn sau khi nhận được đơn đặt hàng.
+                </p>
+                @Html.Raw(config.BankInfo)
+                <p>
+                    Để được hỗ trợ thêm vui lòng liên hệ Hotline
+                    <a class="bold" href="tel:@config.Hotline">@config.Hotline</a> hoặc <br /> Email
+                    <a class="bold" href="mailto:@config.Email">@config.Email</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</section>

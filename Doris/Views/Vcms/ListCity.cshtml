@@ -1,0 +1,75 @@
+﻿@model IEnumerable<Doris.Models.City>
+<h2>Danh sách thành phố</h2>
+<div class="box_content mt-0">
+    <table class="list_table">
+        <tr>
+            <th>STT</th>
+            <th>Thành phố</th>
+            <th>Phí Ship</th>
+            <th>Hoạt động</th>
+            <th></th>
+        </tr>
+        @foreach (var city in Model)
+        {
+            <tr data-id="@city.Id">
+                <td><input type="number" name="Sort" value="@city.Sort" class="form_control w100" /></td>
+                <td>@city.Name</td>
+                <td>@Html.EditorFor(a => city.ShipFee)</td>
+                <td>@Html.EditorFor(a => city.Active, new { htmlAttributes = new { id = "Active" }})</td>
+                <td>
+                    <a href="javascript:;" onclick="updateCity('@city.Id')">Cập nhật - </a>
+                    @Html.ActionLink("Sửa", "EditCity", new { cityId = city.Id }) -
+                    <a href="javascript:;" onclick="deleteCity('@city.Id')">Xóa</a>
+                </td>
+            </tr>
+        }
+    </table>
+</div>
+<script src="~/Scripts/jquery.maskMoney.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $(".input-number").maskMoney({
+            precision: 0,
+            thousands: ','
+        });
+    });
+
+    function deleteCity(id) {
+        if (confirm("Bạn có chắc chắn xóa thành phố này không?")) {
+            $.post("/Vcms/DeleteCity", { cityId: id }, function (data) {
+                if (data) {
+                    alert("Bạn xóa thành công thành phố này");
+                    $("tr[data-id='" + id + "']").fadeOut();
+                } else {
+                    alert("Quá trình thực hiện xảy ra lỗi. Hãy thử lại.");
+                }
+            });
+        }
+    }
+
+    function updateCity(id) {
+        var divId = $("tr[data-id='" + id + "']");
+        var sort = divId.find("input[name=Sort]").val();
+        var active = divId.find("input#Active").prop("checked");
+        var shipFee = divId.find("input#city_ShipFee").val();
+
+        if (sort == "") {
+            alert("Bạn hãy nhập số thứ tự");
+        }
+
+        $.post("/Vcms/UpdateCity", { cityId: id, sort, active, shipFee }, function (data) {
+            if (data) {
+                $.toast({
+                    text: 'Cập nhật thành công',
+                    position: 'bottom-right',
+                    icon: 'success',
+                })
+            } else {
+                $.toast({
+                    text: 'Quá trình thực hiện không thành công. Hãy thử lại',
+                    icon: 'error',
+                })
+            }
+        });
+    }
+</script>

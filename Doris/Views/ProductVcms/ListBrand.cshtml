@@ -1,0 +1,145 @@
+﻿@model Doris.ViewModel.ListBrandViewModel
+@using PagedList.Mvc
+@{
+    ViewBag.Title = "Danh sách thương hiệu";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<h2>Danh sách thương hiệu</h2>
+@if (ViewBag.Result == "success")
+{
+    <div id="AlertBox" class="alert alert-success"><strong>Thêm mới thương hiệu thành công</strong></div>
+}
+@if (ViewBag.Result == "update")
+{
+    <div id="AlertBox" class="alert alert-success"><strong>Cập nhật thương hiệu thành công</strong></div>
+}
+<a class="btn quick-link" href="@Url.Action("Brand")"><i class="fal fa-plus-circle mr-1"></i>Thêm thương hiệu</a>
+<div class="box_content">
+    <form action="@Url.Action("ListBrand")" method="get">
+        <div class="row">
+            <div class="col-3">
+                <label>Từ khóa</label>
+                @Html.TextBoxFor(a => a.Name, new { @class = "form_control" })
+            </div>
+            <div class="col-3 d-flex align-items-end">
+                <button type="submit" class="btn-search">Tìm kiếm</button>
+            </div>
+        </div>
+    </form>
+    <p>Có tổng số <strong>@Model.Brands.TotalItemCount</strong> thương hiệu</p>
+    <form id="productList">
+        <table class="list_table tablecenter table-striped">
+            <tbody>
+                <tr>
+                    <th style="width: 100px">STT</th>
+                    <th style="width: 50px">Hình ảnh</th>
+                    <th style="width: 50px">Ảnh bìa</th>
+                    <th>Tên thương hiệu</th>
+                    <th>Hiện trang chủ</th>
+                    <th>Thương hiệu bán chạy</th>
+                    <th>Hoạt động</th>
+                    <th style="width: 140px;"></th>
+                </tr>
+                @foreach (var brand in Model.Brands)
+                {
+                    <tr data-id="@brand.Id">
+                        <td>
+                            <input type="number" name="Sort" value="@brand.Sort" class="form_control w100" />
+                        </td>
+                        <td>
+                            @if (brand.Image != null)
+                            {
+                                <img class="img-border" src="@Path.Combine("/images/brands/", brand.Image)?w=100&h=100" alt="@brand.BrandName" />
+                            }
+                            else
+                            {
+                                @:NO PICTURE
+                            }
+                        </td>
+                        <td>
+                            @if (brand.CoverImage != null)
+                            {
+                                <img class="img-border" src="@Path.Combine("/images/brands/", brand.CoverImage)?w=100&h=100" alt="@brand.BrandName" />
+                            }
+                            else
+                            {
+                                @:NO PICTURE
+                            }
+                        </td>
+                        <td class="left">
+                            <div>
+                                <a href="@Url.Action("UpdateBrand", new { brandId = brand.Id })">
+                                    <strong>@brand.BrandName</strong>
+                                </a>
+                            </div>
+                        </td>
+                        <td>@Html.EditorFor(a => brand.Home, new { htmlAttributes = new { id = "Home" } })</td>
+                        <td>@Html.EditorFor(a => brand.Hot, new { htmlAttributes = new { id = "Hot" } })</td>
+                        <td>@Html.EditorFor(a => brand.Active, new { htmlAttributes = new { id = "Active" } })</td>
+                        <td>
+                            <a href="javascript:;" onclick="updateBrand('@brand.Id')">Cập nhật - </a>
+                            @Html.ActionLink("Sửa", "UpdateBrand", new { brandId = brand.Id })
+                            - <a href="javascript:;" onclick="deleteBrand('@brand.Id')" class="red-warring">Xóa</a>
+                        </td>
+                    </tr>
+                }
+                @if (Model.Brands.PageCount > 1)
+                {
+                    <tr>
+                        <td colspan="9">@Html.PagedListPager(Model.Brands, page => Url.Action("ListBrand", new { page, name = Model.Name }))</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </form>
+</div>
+@section scripts
+{
+    <script type="text/javascript">
+        function deleteBrand(id) {
+            if (confirm("Bạn có chắc chắn xóa thương hiệu này không?")) {
+                $.post("/ProductVcms/DeleteBrand", { brandId: id }, function (data) {
+                    if (data) {
+                        $.toast({
+                            text: 'Xóa thương hiệu thành công',
+                            position: 'bottom-right',
+                            icon: 'success',
+                        })
+                        $("tr[data-id='" + id + "']").fadeOut();
+                    }
+                    else {
+                        $.toast({
+                            text: 'Quá trình thực hiện không thành công. Hãy thử lại',
+                            icon: 'error',
+                        })
+                    }
+                });
+            }
+        }
+
+        function updateBrand(id) {
+            var elm = $('tr[data-id="' + id + '"]');
+            var sort = elm.find("input[name=Sort]").val();
+            var active = elm.find("input#Active").prop("checked");
+            var home = elm.find("input#Home").prop("checked");
+            var hot = elm.find("input#Hot").prop("checked");
+
+            $.post("/ProductVcms/QuickUpdateBrand", { brandId: id, sort, active, home, hot },
+                function (data) {
+                    if (data) {
+                        $.toast({
+                            text: 'Cập nhật thành công',
+                            position: 'bottom-right',
+                            icon: 'success',
+                        })
+                    } else {
+                        $.toast({
+                            text: 'Quá trình thực hiện không thành công. Hãy thử lại',
+                            position: 'bottom-right',
+                            icon: 'error',
+                        })
+                    };
+                });
+        };
+    </script>
+}

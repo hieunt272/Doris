@@ -1,0 +1,219 @@
+﻿@model Doris.ViewModel.ProductDetailViewModel
+@using Doris.Models
+@{
+    ViewBag.Title = Model.Product.TitleMeta ?? Model.Product.Name;
+    ViewBag.Description = Model.Product.DescriptionMeta ?? Model.Product.Description;
+    ViewBag.Canonical = Request.Url?.GetLeftPart(UriPartial.Authority) + Url.Action("ProductDetail", new { url = Model.Product.Url });
+
+    var email = ViewContext.RouteData.Values["MemberEmail"].ToString();
+    Level level;
+    if (Model.Product.ListImage != null)
+    {
+        ViewBag.ImageShare = Request.Url?.GetLeftPart(UriPartial.Authority) + Path.Combine("/images/products/", Model.Product.ListImage.Split(',')[0]);
+    }
+    int price = 0;
+    if (email != "")
+    {
+        level = (Level)Enum.Parse(typeof(Level), ViewContext.RouteData.Values["Level"].ToString());
+        if (Model.Product.PriceDiamond > 0 && level == Level.Diamond)
+        {
+            price = Convert.ToInt32(Model.Product.PriceDiamond);
+        }
+        else if (Model.Product.PricePlatinum > 0 && level == Level.Platinum)
+        {
+            price = Convert.ToInt32(Model.Product.PricePlatinum);
+        }
+        else if (Model.Product.PriceGold > 0 && level == Level.Gold)
+        {
+            price = Convert.ToInt32(Model.Product.PriceGold);
+        }
+        else if (Model.Product.PriceSilver > 0 && level == Level.Silver)
+        {
+            price = Convert.ToInt32(Model.Product.PriceSilver);
+        }
+        else if (Model.Product.PriceBronze > 0 && level == Level.Bronze)
+        {
+            price = Convert.ToInt32(Model.Product.PriceBronze);
+        }
+        else
+        {
+            price = Convert.ToInt32(Model.Product.Price);
+        }
+    }
+}
+
+<section class="bg-breadcrumb">
+    <div class="container">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index")">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("AllProduct")">Danh mục</a></li>
+            <li class="breadcrumb-item">
+                <a href="@Url.Action("ProductCategory", "Home", new { url = Model.Product.ProductCategory.Url })">
+                    @Model.Product.ProductCategory.CategoryName
+                </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">@Model.Product.Name</li>
+        </ol>
+    </div>
+</section>
+<section class="container">
+    <div class="product-detail">
+        <div class="row">
+            <div class="col-lg-6">
+                @if (Model.Product.ListImage != null)
+                {
+                    var imgArr = Model.Product.ListImage.Split(',');
+                    <div class="box-slider-for">
+                        <div class="slider-for">
+                            @foreach (var img in imgArr)
+                            {
+                                <a href="@Path.Combine("/images/products/", img)" data-fancybox="detail" class="slider-for-item">
+                                    <img src="@Path.Combine("/images/products/", img)" alt="@Model.Product.Name" />
+                                </a>
+                            }
+                        </div>
+                        @if (Model.Product.Hot)
+                        {
+                            <img src="~/Content/images/img-main/hot-deal.png" alt="Hot Deal" class="hot-deal" />
+                        }
+                    </div>
+                    <div class="slider-nav">
+                        @foreach (var img in imgArr)
+                        {
+                            <div class="slider-nav-item">
+                                <img src="@Path.Combine("/images/products/", img)" alt="@Model.Product.Name" />
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+            <div class="col-lg-6">
+                <div class="box-right">
+                    <div class="product-info">
+                        <h2 class="brand-name">@Model.Product.Brand.BrandName</h2>
+                        <div class="product-name">@Model.Product.Name</div>
+                    </div>
+                    <div class="box-book">
+                        <div class="box-price">
+                            @if (email != "")
+                            {
+                                level = (Level)Enum.Parse(typeof(Level), ViewContext.RouteData.Values["Level"].ToString());
+                                if (Model.Product.Price > 0)
+                                {
+                                    <div class="root-price">
+                                        <span>Giá niêm yết: @Convert.ToDecimal(Model.Product.Price).ToString("N0")đ</span>
+                                    </div>
+                                    <div class="root-price">
+                                        @if (Model.Product.PriceDiamond > 0 && level == Level.Diamond)
+                                        {
+                                            <span class="text-main">Hạng Kim Cương: @Convert.ToDecimal(Model.Product.PriceDiamond).ToString("N0")đ</span>
+                                            <img src="~/Content/images/img-main/diamond.png" alt="Ranking" />
+                                        }
+                                        else if (Model.Product.PricePlatinum > 0 && level == Level.Platinum)
+                                        {
+                                            <span class="text-main">Hạng Bạch Kim: @Convert.ToDecimal(Model.Product.PricePlatinum).ToString("N0")đ</span>
+                                            <img src="~/Content/images/img-main/icon-platinum.png" alt="Ranking" />
+                                        }
+                                        else if (Model.Product.PriceGold > 0 && level == Level.Gold)
+                                        {
+                                            <span class="text-main">Hạng Vàng: @Convert.ToDecimal(Model.Product.PriceGold).ToString("N0")đ</span>
+                                            <img src="~/Content/images/img-main/icon-gold.png" alt="Ranking" />
+                                        }
+                                        else if (Model.Product.PriceSilver > 0 && level == Level.Silver)
+                                        {
+                                            <span class="text-main">Hạng Bạc: @Convert.ToDecimal(Model.Product.PriceSilver).ToString("N0")đ</span>
+                                            <img src="~/Content/images/img-main/icon-silver.png" alt="Ranking" />
+                                        }
+                                        else if (Model.Product.PriceBronze > 0 && level == Level.Bronze)
+                                        {
+                                            <span class="text-main">Hạng Đồng: @Convert.ToDecimal(Model.Product.PriceBronze).ToString("N0")đ</span>
+                                            <img src="~/Content/images/img-main/icon-bronze.png" alt="Ranking" />
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="root-price">
+                                        <span>Giá niêm yết: Liên hệ</span>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("Login", "User")" class="price-lock d-inline-block">
+                                    <i class="fa-solid fa-lock-keyhole"></i> Đăng nhập để xem giá sỉ
+                                </a>
+                            }
+                        </div>
+                        @if (Model.Product.Price > 0)
+                        {
+                            <form class="book-form" id="formBookProduct">
+                                <input type="hidden" name="ProductId" value="@Model.Product.Id" />
+                                <div class="price-total">
+                                    <div class="price-info">
+                                        <span class="title">Số lượng:</span>
+                                        <input type="text" value="1" min="1" id="number" name="quantity" class="input-number" maxlength="4" />
+                                    </div>
+                                    <div class="price-info">
+                                        <span class="title">Đơn giá:</span>
+                                        <span class="price">
+                                            @if (email != "")
+                                            {
+                                                @price.ToString("N0")@:đ
+                                                <input type="hidden" id="priceHidden" value="@price" />
+                                            }
+                                            else
+                                            {
+                                                <i class="fa-solid fa-lock-keyhole fa-xs"></i>
+                                            }
+                                        </span>
+                                    </div>
+                                    <div class="price-info">
+                                        <span class="title">Thành tiền:</span>
+                                        <span class="price text-main">
+                                            @if (email != "")
+                                            {
+                                                <span id="totalPrice">@price.ToString("N0")đ</span>
+                                            }
+                                            else
+                                            {
+                                                <i class="fa-solid fa-lock-keyhole fa-xs"></i>
+                                            }
+                                        </span>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn-book">
+                                    Thêm <br /> vào giỏ
+                                </button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="product-info-title">
+            Thông tin sản phẩm
+        </div>
+        <div class="content-detail">
+            @if (Model.Product.Body != null)
+            {
+                @Html.Raw(Model.Product.Body)
+            }
+            else
+            {
+                <p class="alert alert-success small">Nội dung hiện chưa được cập nhật. Vui lòng quay lại sau !!!!</p>
+            }
+        </div>
+        @if (Model.Product.Body != null)
+        {
+            <div class="toggle-btn">Thu gọn</div>
+        }
+    </div>
+    @Html.Action("SubcribeForm")
+</section>
+@section scripts {
+    <script src="~/Scripts/jquery.nice-number.js"></script>
+    <script>
+        productDetail();
+    </script>
+}

@@ -1,0 +1,254 @@
+﻿@model Doris.ViewModel.HomeViewModel
+@using Doris.Models
+@{
+    var config = (ConfigSite)HttpContext.Current.Application["ConfigSite"];
+    ViewBag.Title = config.Title;
+    ViewBag.Description = config.Description;
+    ViewBag.Canonical = Request.Url?.GetLeftPart(UriPartial.Authority) + Url.Action("Index");
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var email = ViewContext.RouteData.Values["MemberEmail"].ToString();
+    Level level;
+    var fb = Model.Banners.FirstOrDefault(a => a.GroupId == 1);
+    if (fb != null)
+    {
+        ViewBag.ImageShare = Request.Url?.GetLeftPart(UriPartial.Authority) + Path.Combine("/images/banners/", fb.Image);
+    }
+}
+
+@if (Model.Banners.Any(a => a.GroupId == 1))
+{
+    <section class="banner-mb banner-main">
+        @foreach (var item in Model.Banners.Where(a => a.GroupId == 1))
+        {
+            <a href="@item.Url" class="banner-item">
+                @if (item.ImageMobile != null)
+                {
+                    <img src="@Path.Combine("/images/banners/", item.ImageMobile)" alt="@item.BannerName" />
+                }
+            </a>
+        }
+    </section>
+}
+<section class="container bg-pink page-pb">
+    <div class="login-notice">
+        @if (email != "")
+        {
+            <div class="icon">
+                <img src="~/Content/images/img-main/unlock.png" alt="Unlock" />
+            </div>
+            <a href="#" class="notice">
+                <div class="title">Thăng hạng thành viên</div>
+                <div class="sub-title">Nhận nhiều ưu đãi hơn khi thăng hạng Thành Viên</div>
+            </a>
+            <a href="#" class="link">
+                <i class="fa-solid fa-chevron-right"></i>
+            </a>
+        }
+        else
+        {
+            <div class="icon">
+                <img src="~/Content/images/img-main/lock.png" alt="Lock" />
+            </div>
+            <a href="@Url.Action("Login", "User")" class="notice">
+                <div class="title">Bạn chưa đăng nhập</div>
+                <div class="sub-title">Đăng nhập để xem giá sỉ và nhận ngay các ưu đãi dành riêng cho Thành Viên</div>
+            </a>
+            <a href="@Url.Action("Login", "User")" class="link">
+                <i class="fa-solid fa-chevron-right"></i>
+            </a>
+        }
+    </div>
+    @if (Model.Brands.Any())
+    {
+        <div class="categories">
+            <div class="title">Thương hiệu</div>
+            <div class="category-slide">
+                @foreach (var item in Model.Brands)
+                {
+                    <a href="@Url.Action("BrandDetail", new { url = item.Url })" class="brand-item-mb">
+                        @if (item.Image != null)
+                        {
+                            <img src="@Path.Combine("/images/brands/", item.Image)" alt="@item.BrandName" />
+                        }
+                    </a>
+                }
+            </div>
+        </div>
+    }
+    <div class="categories">
+        <div class="title">Danh mục</div>
+        <div class="category-slide">
+            <a href="@Url.Action("AllProduct")" class="cat-item">
+                <div class="cat-img">
+                    <img src="~/Content/images/img-main/category-1.png" alt="Danh mục" />
+                </div>
+                <div class="cat-name">Tất cả</div>
+            </a>
+            @if (Model.Categories.Any())
+            {
+                foreach (var item in Model.Categories)
+                {
+                    <a href="@Url.Action("ProductCategory", "Home", new { url = item.Url })" class="cat-item">
+                        <div class="cat-img">
+                            @if (item.Image != null)
+                            {
+                                <img src="@Path.Combine("/images/productCategory/", item.Image)" alt="@item.CategoryName" />
+                            }
+                        </div>
+                        <div class="cat-name">@item.CategoryName</div>
+                    </a>
+                }
+            }
+        </div>
+    </div>
+    @if (Model.Banners.Any(a => a.GroupId == 2))
+    {
+        <div class="banner-mb banner-center-mb">
+            @foreach (var item in Model.Banners.Where(a => a.GroupId == 2))
+            {
+                if (item.ImageMobile != null)
+                {
+                    <a href="@item.Url" class="banner-item">
+                        <img src="@Path.Combine("/images/banners/", item.ImageMobile)" alt="@item.BannerName" />
+                    </a>
+                }
+            }
+        </div>
+    }
+    @if (Model.ProductHots.Any())
+    {
+        <div class="products-mb">
+            <div class="box-title">
+                <div class="title-bold">Khuyến mãi hot</div>
+                @if (email == "")
+                {
+                    <a href="@Url.Action("Login", "User")" class="price-lock">
+                        <i class="fa-solid fa-lock-keyhole"></i> Đăng nhập để xem giá sỉ
+                    </a>
+                }
+                <a href="@Url.Action("Promotion")" class="btn-view-all">
+                    Tất cả
+                </a>
+            </div>
+            <div class="product-slide">
+                @foreach (var item in Model.ProductHots)
+                {
+                    <div class="product-item-mb">
+                        <a href="@Url.Action("ProductDetail", new { url = item.Url })" class="product-img">
+                            @if (item.ListImage != null)
+                            {
+                                <img src="@Path.Combine("/images/products/", item.ListImage.Split(',')[0])" alt="@item.Name" />
+                            }
+                        </a>
+                        <div class="body">
+                            <a href="@Url.Action("BrandDetail", new { url = item.Url })" class="brand-name">
+                                @item.Brand.BrandName
+                            </a>
+                            <div class="subject">
+                                <a href="@Url.Action("ProductDetail", new { url = item.Url })">
+                                    @item.Name
+                                </a>
+                            </div>
+                            <div class="box-price">
+                                <div class="price">
+                                    @if (email != "")
+                                    {
+                                        level = (Level)Enum.Parse(typeof(Level), ViewContext.RouteData.Values["Level"].ToString());
+                                        if (item.PriceDiamond > 0 && level == Level.Diamond)
+                                        {
+                                            <div class="price-sale">@Convert.ToDecimal(item.Price).ToString("N0") đ</div>
+                                        }
+                                        else if (item.PricePlatinum > 0 && level == Level.Platinum)
+                                        {
+                                            <div class="price-sale">@Convert.ToDecimal(item.Price).ToString("N0") đ</div>
+                                        }
+                                        else if (item.PriceGold > 0 && level == Level.Gold)
+                                        {
+                                            <div class="price-sale">@Convert.ToDecimal(item.Price).ToString("N0") đ</div>
+
+                                        }
+                                        else if (item.PriceSilver > 0 && level == Level.Silver)
+                                        {
+                                            <div class="price-sale">@Convert.ToDecimal(item.Price).ToString("N0") đ</div>
+                                        }
+                                        else if (item.PriceBronze > 0 && level == Level.Bronze)
+                                        {
+                                            <div class="price-sale">@Convert.ToDecimal(item.Price).ToString("N0") đ</div>
+                                        }
+                                    }
+                                    @if (item.Price > 0)
+                                    {
+                                        <div class="price">@Convert.ToDecimal(item.Price).ToString("N0") đ</div>
+                                    }
+                                </div>
+                                <div class="icon-hot">
+                                    <img src="~/Content/images/img-main/hot-deal.png" alt="Hot Deal" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+    @if (Model.ProductWholesales.Any())
+    {
+        <div class="products-mb">
+            <div class="box-title">
+                <div class="title">Giá sỉ tốt nhất</div>
+                @if (email == "")
+                {
+                    <a href="@Url.Action("Login", "User")" class="price-lock">
+                        <i class="fa-solid fa-lock-keyhole"></i> Đăng nhập để xem giá sỉ
+                    </a>
+                }
+                <a href="@Url.Action("ProductWholesale")" class="btn-view-all">
+                    Tất cả
+                </a>
+            </div>
+            <div class="product-slide">
+                @foreach (var item in Model.ProductWholesales)
+                {
+                    @Html.Partial("_ProductItemMobile", item)
+                }
+            </div>
+        </div>
+    }
+    @if (Model.Products.Any())
+    {
+        <div class="products-mb">
+            <div class="box-title">
+                <div class="title">Sản phẩm</div>
+                @if (email == "")
+                {
+                    <a href="@Url.Action("Login", "User")" class="price-lock">
+                        <i class="fa-solid fa-lock-keyhole"></i> Đăng nhập để xem giá sỉ
+                    </a>
+                }
+            </div>
+            <div class="row">
+                @foreach (var item in Model.Products)
+                {
+                    <div class="col-6 mb-2">
+                        @Html.Partial("_ProductItemMobile", item)
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</section>
+<div class="modal fade" id="popup" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <img src="~/Content/images/img-main/pop-up.jpg" alt="Pop up" />
+            <div class="btn-close" data-dismiss="modal">x</div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        homeJs();
+    </script>
+}

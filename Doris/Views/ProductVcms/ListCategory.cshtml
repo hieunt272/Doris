@@ -1,0 +1,128 @@
+﻿@model IEnumerable<Doris.Models.ProductCategory>
+
+<style>
+    .img-cat {
+        width: 150px;
+        height: 100px;
+        object-fit: contain;
+    }
+</style>
+
+<table class="list_table tablecenter" id="list-cat">
+    <tr>
+        <th>STT</th>
+        <th style="width: 150px">Hình ảnh</th>
+        <th style="width: 150px">Ảnh bìa</th>
+        <th>Tên danh mục</th>
+        <th>Đường dẫn</th>
+        <th>Hiện menu</th>
+        <th>Hoạt động</th>
+        <th style="width: 140px;"></th>
+    </tr>
+    <tbody id="sortable-cat">
+        @foreach (var category in Model.Where(a => a.ParentId == null))
+        {
+            <tr data-id="@category.Id" style="background: #ededed;">
+                <td style="width: 150px;">
+                    <input type="number" name="Sort" value="@category.CategorySort" class="form_control w100" />
+                </td>
+                <td>
+                    @if (!string.IsNullOrEmpty(category.Image))
+                    {
+                        <img src="@Path.Combine("/images/productCategory/", category.Image)" class="img-cat" />
+                    }
+                </td>
+                <td>
+                    @if (!string.IsNullOrEmpty(category.CoverImage))
+                    {
+                        <img src="@Path.Combine("/images/productCategory/", category.CoverImage)" class="img-cat" />
+                    }
+                </td>
+                <td class="left"><strong>@category.CategoryName</strong></td>
+                <td>@category.Url</td>
+                <td>@Html.EditorFor(a => category.ShowMenu, new { htmlAttributes = new { id = "ShowMenu" } })</td>
+                <td>@Html.EditorFor(a => category.CategoryActive, new { htmlAttributes = new { id = "Active" } })</td>
+                <td>
+                    <a href="javascript:;" onclick="updateCategory('@category.Id')">Cập nhật - </a>
+                    @Html.ActionLink("Sửa", "UpdateCategory", new { catId = category.Id }) -
+                    <a href="javascript:;" onclick="deleteArtCategory('@category.Id')" style="color: red">Xóa</a>
+                </td>
+            </tr>
+            foreach (var child in Model.Where(a => a.ParentId == category.Id))
+            {
+                <tr data-id="@child.Id" style="background: #f7f6f6;">
+                    <td style="width: 150px;">
+                        <input type="number" name="Sort" value="@child.CategorySort" class="form_control w100" />
+                    </td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(child.Image))
+                        {
+                            <img src="@Path.Combine("/images/productCategory/", child.Image)" class="img-cat" />
+                        }
+                    </td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(child.CoverImage))
+                        {
+                            <img src="@Path.Combine("/images/productCategory/", child.CoverImage)" class="img-cat" />
+                        }
+                    </td>
+                    <td class="left"><strong>- @child.CategoryName</strong></td>
+                    <td>@child.Url</td>
+                    <td>@Html.EditorFor(a => child.ShowMenu, new { htmlAttributes = new { id = "ShowMenu" } })</td>
+                    <td>@Html.EditorFor(a => child.CategoryActive, new { htmlAttributes = new { id = "Active" } })</td>
+                    <td>
+                        <a href="javascript:;" onclick="updateCategory('@child.Id')">Cập nhật - </a>
+                        @Html.ActionLink("Sửa", "UpdateCategory", new { catId = child.Id }) -
+                        <a href="javascript:;" onclick="deleteCategory('@child.Id')" style="color: red">Xóa</a>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+<script type="text/javascript">
+    function deleteCategory(id) {
+        if (confirm("Bạn có chắc chắn xóa danh mục này không?")) {
+            $.post("/ProductVcms/DeleteCategory", { catId: id }, function (data) {
+                if (data) {
+                    $.toast({
+                        text: 'Đang xóa danh mục',
+                        position: 'bottom-right',
+                        icon: 'success',
+                    })
+                    $("tr[data-id='" + id + "']").fadeOut();
+                } else {
+                    $.toast({
+                        text: 'Quá trình thực hiện không thành công. Hãy thử lại',
+                        icon: 'error',
+                    })
+                }
+            });
+        }
+    }
+    function updateCategory(id) {
+        var divId = $("tr[data-id='" + id + "']");
+        var sort = divId.find("input[name=Sort]").val();
+        var active = divId.find("input#Active").prop("checked");
+        var menu = divId.find("input#ShowMenu").prop("checked");
+
+        if (sort == "") {
+            alert("Bạn hãy nhập số thứ tự");
+        }
+
+        $.post("/ProductVcms/UpdateProductCat", { productCatId: id, sort, active, menu }, function (data) {
+            if (data) {
+                $.toast({
+                    text: 'Cập nhật thành công',
+                    position: 'bottom-right',
+                    icon: 'success',
+                })
+            } else {
+                $.toast({
+                    text: 'Quá trình thực hiện không thành công. Hãy thử lại',
+                    icon: 'error',
+                })
+            }
+        });
+    }
+</script>

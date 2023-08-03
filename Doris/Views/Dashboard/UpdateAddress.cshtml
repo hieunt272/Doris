@@ -1,0 +1,76 @@
+﻿@model Doris.ViewModel.AddressViewModel
+@{
+    ViewBag.Title = "Cập nhật địa chỉ";
+}
+
+<section class="notify">
+    Nhập hàng giá sỉ, chiết khấu cao đến 60% !
+</section>
+<section class="user">
+    <div class="container">
+        <div class="title-section">Cập nhật địa chỉ</div>
+        <div class="row">
+            <div class="col-lg-5">
+                @Html.Action("UserNav")
+            </div>
+            <div class="col-lg-7">
+                <div class="box-user address-form d-block">
+                    <div class="title">Tạo địa chỉ mới</div>
+                    <div class="sub-text">Vui lòng nhập đủ thông tin</div>
+                    @using (Html.BeginForm())
+                    {
+                        @Html.ValidationSummary(true)
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(a => a.Address.Id)
+
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.Address.Fullname)
+                            @Html.TextBoxFor(m => m.Address.Fullname, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.Address.Fullname)
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.Address.Mobile)
+                            @Html.TextBoxFor(m => m.Address.Mobile, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.Address.Mobile)
+                        </div>
+                        <div class="form-group form-row">
+                            <div class="col-lg-4">
+                                @Html.LabelFor(m => m.CityId)
+                                @Html.DropDownListFor(m => m.CityId, Model.CitySelectList, "Chọn Tỉnh/Thành phố", new { @class = "form-control", data_item = "city" })
+                                @Html.ValidationMessageFor(m => m.CityId)
+                            </div>
+                            <div class="col-lg-4">
+                                @Html.LabelFor(m => m.DistrictId)
+                                @Html.DropDownListFor(m => m.DistrictId, Model.DistrictSelectList, "Chọn Quận/Huyện", new { @class = "form-control", data_item = "district" })
+                                @Html.ValidationMessageFor(m => m.DistrictId)
+                            </div>
+                            <div class="col-lg-4">
+                                @Html.LabelFor(m => m.WardId)
+                                @Html.DropDownListFor(m => m.WardId, Model.WardSelectList, "Chọn Phường/Xã", new { @class = "form-control", data_item = "ward" })
+                                @Html.ValidationMessageFor(m => m.WardId)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.Address.SpecificAddress)
+                            @Html.TextAreaFor(m => m.Address.SpecificAddress, new { @class = "form-control", rows = 4, placeholder = "Vui lòng nhập địa chỉ cụ thể" })
+                            @Html.ValidationMessageFor(m => m.Address.SpecificAddress)
+                        </div>
+                        <div class="input-group">
+                            <button type="submit" class="btn-add">
+                                Cập nhật
+                            </button>
+                            <a href="@Url.Action("Address")" class="btn-add close-form-address">
+                                Đóng
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@section scripts{
+    <script>
+        address();
+    </script>
+}

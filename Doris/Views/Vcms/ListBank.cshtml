@@ -1,0 +1,54 @@
+﻿@model IEnumerable<Doris.Models.Bank>
+@using Doris.Models
+<table class="list_table tablecenter mb-4" id="list-cat">
+    <tr>
+        <th>STT</th>
+        <th>Hình ảnh</th>
+        <th>Thông tin thanh toán</th>
+        <th>Hoạt động</th>
+        <th style="width: 160px"></th>
+    </tr>
+    <tbody id="sortable-cat">
+        @foreach (var bank in Model)
+        {
+            <tr data-id="@bank.Id">
+                <td style="width: 120px;">
+                    @Html.DisplayFor(a => bank.Sort)
+                </td>
+                <td>
+                    @if (bank.Image != null)
+                    {
+                        <img src="@Path.Combine("/images/banks/", bank.Image)" style="width: 150px; height: 100px; object-fit: contain" />
+                    }
+                </td>
+                <td class="left"><strong>@bank.Name</strong></td>
+                <td>@Html.DisplayFor(a => bank.Active)</td>
+                <td>
+                    @Html.ActionLink("Sửa", "UpdateBank", new { bankId = bank.Id }) -
+                    <a href="javascript:;" onclick="deleteBank('@bank.Id')" style="color: red">Xóa</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<script type="text/javascript">
+    function deleteBank(id) {
+        if (confirm("Bạn có chắc chắn xóa ngân hàng này không?")) {
+            $.post("/Vcms/DeleteBank", { bankId: id }, function (data) {
+                if (data) {
+                    $.toast({
+                        text: 'Xóa ngân hàng thành công',
+                        position: 'bottom-right',
+                        icon: 'success',
+                    })
+                    $("tr[data-id='" + id + "']").fadeOut();
+                } else {
+                    $.toast({
+                        text: 'Quá trình thực hiện không thành công. Hãy thử lại',
+                        icon: 'error',
+                    })
+                }
+            });
+        }
+    }
+</script>

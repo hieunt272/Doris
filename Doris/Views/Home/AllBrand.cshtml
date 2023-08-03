@@ -1,0 +1,110 @@
+﻿@model Doris.ViewModel.AllBrandViewModel
+@{
+    ViewBag.Title = "Thương hiệu";
+    ViewBag.Canonical = Request.Url?.GetLeftPart(UriPartial.Authority) + Url.Action("AllBrand");
+    ViewBag.Robots = "noindex";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="brand-page bg-pink page-pb">
+    <div class="container">
+        <div class="title-page">
+            <button onclick="history.back()" class="history-back"><i class="fa-regular fa-arrow-left"></i></button>
+            <div class="title">Thương hiệu</div>
+        </div>
+        <form action="@Url.Action("SearchProduct")" class="header-search-mb">
+            <button type="submit"><i class="fa-light fa-magnifying-glass"></i></button>
+            <input type="text" name="keywords" class="form-control" placeholder="Tìm sản phẩm và Thương hiệu" required autocomplete="off" />
+            <div class="icon-camera">
+                <i class="fa-light fa-camera"></i>
+            </div>
+        </form>
+        @if (Model.BrandHots.Any())
+        {
+            <div class="categories">
+                <div class="title">Thương hiệu bán chạy</div>
+                <div class="category-slide">
+                    @foreach (var item in Model.BrandHots)
+                    {
+                        <a href="@Url.Action("BrandDetail", new { url = item.Url })" class="brand-item-mb">
+                            @if (item.Image != null)
+                            {
+                                <img src="@Path.Combine("/images/brands/", item.Image)" alt="@item.BrandName" />
+                            }
+                        </a>
+                    }
+                </div>
+            </div>
+        }
+        @if (Model.Brands.Any())
+        {
+            <div class="categories">
+                <div class="box-title">
+                    <div class="title">Tất cả thương hiệu</div>
+                    <a href="javascript:;" class="btn-view-all toggle-brand">
+                        <i class="fa-light fa-angles-up"></i><span>Thu gọn</span>
+                    </a>
+                </div>
+                <div class="category-list">
+                    <div class="row row-cols-5" id="list-brand-sort">
+                        @foreach (var item in Model.Brands)
+                        {
+                            <div class="col">
+                                <a href="@Url.Action("BrandDetail", new { url = item.Url })" class="brand-item-mb">
+                                    @if (item.Image != null)
+                                    {
+                                        <img src="@Path.Combine("/images/brands/", item.Image)" alt="@item.BrandName" />
+                                    }
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <ul class="ul-reset char-list-mb">
+                    <li class="show active">ALL</li>
+                    @for (var i = 'A'; i <= 'Z'; i++)
+                    {
+                        <li @if (Model.Brands.Count(a => a.BrandName.StartsWith("" + i + "")) > 0) { @Html.Raw("class='show'") }>@i</li>
+                    }
+                    <li>#</li>
+                </ul>
+            </div>
+        }
+        @if (Model.Categories.Any())
+        {
+            <div class="box-title">
+                <div class="title">Danh mục</div>
+            </div>
+            <div class="row row-cols-5">
+                <div class="col">
+                    <a href="@Url.Action("AllProduct")" class="cat-item">
+                        <div class="cat-img">
+                            <img src="~/Content/images/img-main/category-1.png" alt="Danh mục" />
+                        </div>
+                        <div class="cat-name">Tất cả</div>
+                    </a>
+                </div>
+                @foreach (var item in Model.Categories)
+                {
+                    <div class="col">
+                        <a href="@Url.Action("ProductCategory", "Home", new { url = item.Url })" class="cat-item">
+                            <div class="cat-img">
+                                @if (item.Image != null)
+                                {
+                                    <img src="@Path.Combine("/images/productCategory/", item.Image)" alt="@item.Image" />
+                                }
+                            </div>
+                            <div class="cat-name">@item.CategoryName</div>
+                        </a>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</section>
+
+@section scripts {
+    <script>
+        brand();
+    </script>
+}

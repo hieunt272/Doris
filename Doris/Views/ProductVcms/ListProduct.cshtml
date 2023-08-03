@@ -1,0 +1,205 @@
+﻿@model Doris.ViewModel.ListProductViewModel
+@using PagedList.Mvc
+@using Helpers
+@{
+    ViewBag.Title = "Danh sách sản phẩm";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<h2>Danh sách sản phẩm</h2>
+@if (ViewBag.Result == "success")
+{
+    <div id="AlertBox" class="alert alert-success"><strong>Thêm mới sản phẩm thành công</strong></div>
+}
+@if (ViewBag.Result == "update")
+{
+    <div id="AlertBox" class="alert alert-success"><strong>Cập nhật sản phẩm thành công</strong></div>
+}
+<a class="btn quick-link" href="@Url.Action("Product")"><i class="fal fa-plus-circle mr-1"></i>Thêm sản phẩm</a>
+<div class="box_content">
+    <form action="@Url.Action("ListProduct")" method="get">
+        <div class="row row-cols-5">
+            <div class="col">
+                <label>Danh mục</label>
+                @Html.DropDownListFor(model => model.ParentId, Model.SelectCategories, "Tất cả sản phẩm", new { @class = "form_control", data_item = "root" })
+            </div>
+            <div class="col">
+                <label>Danh mục</label>
+                @Html.DropDownListFor(model => model.CatId, Model.ChildCategoryList, "Tất cả sản phẩm", new { @class = "form_control", data_item = "child" })
+            </div>
+            <div class="col">
+                <label>Thương hiệu</label>
+                @Html.DropDownListFor(model => model.BrandId, Model.SelectBrands, "Thương hiệu", new { @class = "form_control" })
+            </div>
+            <div class="col">
+                <label>Từ khóa</label>
+                @Html.TextBoxFor(a => a.Name, new { @class = "form_control" })
+            </div>
+            <div class="col">
+                <label>Sắp xếp</label>
+                <select class="form_control" name="Sort">
+                    <option value="date-desc" @if (Model.Sort == "date-desc") { @Html.Raw("selected='selected'") }>Mới nhất</option>
+                    <option value="date-asc" @if (Model.Sort == "date-asc") { @Html.Raw("selected='selected'") }>Cũ nhất</option>
+                    <option value="sort-asc" @if (Model.Sort == "sort-asc") { @Html.Raw("selected='selected'") }>STT nhỏ nhất</option>
+                    <option value="sort-desc" @if (Model.Sort == "sort-desc") { @Html.Raw("selected='selected'") }>STT lớn nhất</option>
+                    <option value="hot-asc" @if (Model.Sort == "hot-asc") { @Html.Raw("selected='selected'") }>Sản phẩm nổi bật</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn-search">Tìm kiếm</button>
+        </div>
+    </form>
+    <p>Có tổng số <strong>@Model.Products.TotalItemCount</strong> sản phẩm</p>
+    <form id="productList">
+        <table class="list_table tablecenter table-striped">
+            <tbody>
+                <tr>
+                    <th style="width: 100px">STT</th>
+                    <th style="width: 50px">Hình ảnh</th>
+                    <th style="width: 200px">Tên sản phẩm</th>
+                    <th>Danh mục</th>
+                    <th>Thương hiệu</th>
+                    <th>Giá sản phẩm</th>
+                    <th>Hoạt động</th>
+                    <th style="width: 140px;"></th>
+                </tr>
+                @foreach (var product in Model.Products)
+                {
+                    <tr data-id="@product.Id">
+                        <td>
+                            <input type="hidden" name="ProductId" value="@product.Id" />
+                            <input type="number" name="Sort" value="@product.Sort" class="form_control w100" />
+                        </td>
+                        <td>
+                            @if (product.ListImage != null)
+                            {
+                                <a href="@Url.Action("ProductDetail", "Home", new {url = product.Url})" target="_blank"><img class="img-border" src="@Path.Combine("/images/products/", product.ListImage.Split(',')[0])?w=100&h=100" alt="" /></a>
+                            }
+                            else
+                            {
+                                @:NO PICTURE
+                            }
+                        </td>
+                        <td class="left">
+                            <div>
+                                <a href="@Url.Action("UpdateProduct", new { proId = product.Id })">
+                                    <strong>@product.Name</strong>
+                                </a>
+                            </div>
+                        </td>
+                        <td>@product.ProductCategory.CategoryName</td>
+                        <td>
+                            @product.Brand.BrandName
+                        </td>
+                        <td>
+                            <p class="mb-2">Giá niêm yết: @Html.DisplayFor(m => product.Price)</p>
+                            @if (product.WholesalePrice > 0)
+                            {
+                                <p class="mb-2">Giá sỉ: @Html.DisplayFor(m => product.WholesalePrice)</p>
+                            }
+                            @if (product.PriceBronze > 0)
+                            {
+                                <p class="text-danger mb-2">Giá Hạng Đồng: @Html.DisplayFor(m => product.PriceBronze)</p>
+                            }
+                            @if (product.PriceSilver > 0)
+                            {
+                                <p class="text-danger mb-2">Giá Hạng Bạc: @Html.DisplayFor(m => product.PriceSilver)</p>
+                            }
+                            @if (product.PriceGold > 0)
+                            {
+                                <p class="text-danger mb-2">Giá Hạng Vàng: @Html.DisplayFor(m => product.PriceGold)</p>
+                            }
+                            @if (product.PricePlatinum > 0)
+                            {
+                                <p class="text-danger mb-2">Giá Hạng Bạch Kim: @Html.DisplayFor(m => product.PricePlatinum)</p>
+                            }
+                            @if (product.PriceDiamond > 0)
+                            {
+                                <p class="text-danger mb-2">Giá Hạng Kim Cương: @Html.DisplayFor(m => product.PriceDiamond)</p>
+                            }
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => product.Active)<br />
+                            <span id="statusResult"></span>
+                        </td>
+                        <td>
+                            <a href="javascript:;" onclick="updateInfo('@product.Id')">Cập nhật - </a>
+                            @Html.ActionLink("Sửa", "UpdateProduct", new { proId = product.Id })
+                            - <a href="javascript:;" onclick="deleteProduct('@product.Id')" class="red-warring">Xóa</a>
+                        </td>
+                    </tr>
+                }
+                @if (Model.Products.PageCount > 1)
+                {
+                    <tr>
+                        <td colspan="9">@Html.PagedListPager(Model.Products, page => Url.Action("ListProduct", new { page, catId = Model.CatId, parentId = Model.ParentId, name = Model.Name, sort = Model.Sort }))</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </form>
+</div>
+@section scripts
+{
+    <script type="text/javascript">
+        function deleteProduct(id) {
+            if (confirm("Bạn có chắc chắn xóa sản phẩm này không?")) {
+                $.post("/ProductVcms/DeleteProduct", { proId: id }, function (data) {
+                    if (data) {
+                        $.toast({
+                            text: 'Xóa sản phẩm thành công',
+                            position: 'bottom-right',
+                            icon: 'success',
+                        })
+                        $("tr[data-id='" + id + "']").fadeOut();
+                    }
+                    else {
+                        $.toast({
+                            text: 'Quá trình thực hiện không thành công. Hãy thử lại',
+                            icon: 'error',
+                        })
+                    }
+                });
+            }
+        }
+
+        function updateInfo(id) {
+            var elm = $('tr[data-id="' + id + '"]');
+            var sort = elm.find("input[name=Sort]").val();
+
+            $.post("/ProductVcms/QuickUpdate", { proId: id, sort },
+                function (data) {
+                    if (data) {
+                        $.toast({
+                            text: 'Cập nhật thành công',
+                            position: 'bottom-right',
+                            icon: 'success',
+                        })
+                    } else {
+                        $.toast({
+                            text: 'Quá trình thực hiện không thành công. Hãy thử lại',
+                            position: 'bottom-right',
+                            icon: 'error',
+                        })
+                    };
+                });
+        }
+        $("[data-item=root]").on("change", function (data) {
+            const id = $(this).val();
+            var items = [];
+            items.push("<option value>Hãy chọn danh mục</option>");
+
+            if (id !== "") {
+                $.getJSON("/ProductVcms/GetProductCategory", { parentId: id }, function (data) {
+                    $.each(data,
+                        function (key, val) {
+                            items.push("<option value='" + val.Id + "'>" + val.Name + "</option>");
+                        });
+                    $("[data-item=child]").html(items.join(""));
+                });
+            } else {
+                $("[data-item=child]").html(items.join(""));
+            } 1
+        });
+    </script>
+}

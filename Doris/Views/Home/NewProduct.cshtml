@@ -1,0 +1,75 @@
+﻿@model Doris.ViewModel.CategoryProductViewModel
+@using PagedList.Mvc
+@{
+    ViewBag.Title = "Hàng mới về";
+    ViewBag.Canonical = Request.Url?.GetLeftPart(UriPartial.Authority) + Url.Action("NewProduct");
+    ViewBag.Robots = "noindex";
+}
+
+<section class="filters">
+    <div class="container">
+        <div class="box-filter">
+            <input type="hidden" name="currentUrl" value="@Url.Action("NewProduct")" />
+            <div class="filter-group">
+                <select name="brandId" data-filter="">
+                    <option value="">Thương hiệu</option>
+                    @if (Model.Brands.Any())
+                    {
+                        foreach (var item in Model.Brands)
+                        {
+                            <option value="@item.Id" @if (Model.BrandId == item.Id) { @Html.Raw("selected='selected'") }>@item.BrandName</option>
+                        }
+                    }
+                </select>
+                <select name="catId" data-filter="">
+                    <option value="">Danh mục</option>
+                    @if (Model.Categories.Any())
+                    {
+                        foreach (var item in Model.Categories)
+                        {
+                            <option value="@item.Id" @if (Model.CatId == item.Id) { @Html.Raw("selected='selected'") }>@item.CategoryName</option>
+                        }
+                    }
+                </select>
+            </div>
+            <select name="sort" data-filter="">
+                <option value="all">All</option>
+                <option value="new" @if (Model.Sort == "new") { @Html.Raw("selected='selected'") }>Sản phẩm mới</option>
+                <option value="hot" @if (Model.Sort == "hot") { @Html.Raw("selected='selected'") }>Khuyến mãi hot</option>
+            </select>
+        </div>
+    </div>
+</section>
+<section class="container">
+    <div class="product p-0" id="list-item-sort">
+        <div class="count-product">(@Model.Products.Count()) _ Sản phẩm</div>
+        @if (Model.Products.Any())
+        {
+            <div class="row row-cols-lg-5">
+                @foreach (var item in Model.Products)
+                {
+                    <div class="col-lg">
+                        @Html.Partial("_ProductItem", item)
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p class="alert alert-success small">Nội dung hiện chưa được cập nhật. Vui lòng quay lại sau !!!!</p>
+        }
+        @if (Model.Products.PageCount > 1)
+        {
+            <div class="text-right">
+                @Html.PagedListPager(Model.Products, page => Url.Action("NewProduct", new { page, catId = Model.CatId, brandId = Model.BrandId, sort = Model.Sort }))
+            </div>
+        }
+    </div>
+    @Html.Action("SubcribeForm")
+</section>
+
+@section scripts{
+    <script>
+        Sort("/Home/GetNewProduct");
+    </script>
+}

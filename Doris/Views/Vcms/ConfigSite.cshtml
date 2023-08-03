@@ -1,0 +1,227 @@
+﻿@model Doris.Models.ConfigSite
+@{
+    ViewBag.Title = "Cấu hình Website";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<style>
+    .form_name {
+        width: 135px;
+    }
+</style>
+<a class="btn quick-link" href="@Url.Action("Index","Vcms")"><i class="far fa-list mr-1"></i> Quay lại trang chủ</a>
+<div class="box_content">
+    @if (ViewBag.Result == "success")
+    {
+        <div id="AlertBox" class="alert alert-success"><strong>Cập nhật thông tin thành công</strong></div>}
+    @using (Html.BeginForm("ConfigSite", "Vcms", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.ValidationSummary(true)
+        @Html.HiddenFor(a => a.Id)
+        <table class="form_table">
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Title)</td>
+                <td class="form_text">@Html.EditorFor(model => model.Title)</td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Description)</td>
+                <td class="form_text">@Html.EditorFor(model => model.Description)</td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Image)</td>
+                <td class="form_text">@Html.TextBoxFor(model => model.Image, new { type = "file" }) <span class="red-warring">Kích thươc: 180px - 50px</span></td>
+            </tr>
+            @if (Model.Image != null)
+            {
+                <tr>
+                    <td class="form_name"></td>
+                    <td class="form_text"><img class="img-border" src="@Path.Combine("/images/configs/", Model.Image)?w=150" /></td>
+                </tr>
+            }
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.ImageFooter)</td>
+                <td class="form_text">@Html.TextBoxFor(model => model.ImageFooter, new { type = "file" }) <span class="red-warring">Kích thươc: 180px - 50px</span></td>
+            </tr>
+            @if (Model.ImageFooter != null)
+            {
+                <tr>
+                    <td class="form_name"></td>
+                    <td class="form_text"><img class="img-border" src="@Path.Combine("/images/configs/", Model.ImageFooter)?w=150" /></td>
+                </tr>
+            }
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Favicon)</td>
+                <td class="form_text">@Html.TextBoxFor(model => model.Favicon, new { type = "file" }) <span class="red-warring">Kích thươc: 64px - 64px</span></td>
+            </tr>
+            @if (Model.Favicon != null)
+            {
+                <tr>
+                    <td class="form_name"></td>
+                    <td class="form_text"><img class="img-border" src="@Path.Combine("/images/configs/", Model.Favicon)?w=150" /></td>
+                </tr>
+            }
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.ListImage)</td>
+                <td class="form_text">
+                    <div class="alert alert-info">
+                        <p class="btn btn-success fileinput-button">
+                            <i class="glyphicon glyphicon-plus"></i>
+                            <span>Chọn ảnh...</span>
+                            <input type="file" id="fileupload" name="files[]" accept="image/*" multiple="" />
+                        </p><br />
+                        - Chọn ảnh để upload: (gif, png, jpg, jpeg < 4MB)<br />
+                        - Kích thước: 800x 800px<br />
+                    </div>
+                    <div id="progress" class="progress">
+                        <div class="progress-bar progress-bar-success"></div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="form_name"></td>
+                <td class="form_text">
+                    <ul id="ListImages">
+                        @if (Model.ListImage != null)
+                        {
+                            var i = 1;
+                            var arrPic = Model.ListImage.Split(',');
+                            foreach (var item in arrPic)
+                            {
+                                <li>
+                                    <input type="hidden" name="Pictures" value="@item" />
+                                    <img src="@Path.Combine("/images/configs/",item)?w=80&h=80&mode=crop" alt="" />
+                                    <a href="javascript:;" id="@i" onclick="delfile( '@i')"><img src="/content/admin/icon-delete.png" alt="" /></a>
+                                </li>
+                                i = i + 1;
+                            }
+                        }
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.InfoContact)</td>
+                <td class="form_text">@Html.EditorFor(model => model.InfoContact)</td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.InfoFooter)</td>
+                <td class="form_text">@Html.EditorFor(model => model.InfoFooter)</td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.BankInfo)</td>
+                <td class="form_text">@Html.EditorFor(model => model.BankInfo)</td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Seller)</td>
+                <td class="form_text">@Html.EditorFor(model => model.Seller)</td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Place)</td>
+                <td class="form_text">@Html.EditorFor(model => model.Place)</td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Hotline)</td>
+                <td class="form_text">@Html.EditorFor(model => model.Hotline)</td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Zalo)</td>
+                <td class="form_text">@Html.EditorFor(model => model.Zalo)</td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Email)</td>
+                <td class="form_text">@Html.EditorFor(model => model.Email)</td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Facebook)</td>
+                <td class="form_text">@Html.EditorFor(model => model.Facebook)</td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Youtube)</td>
+                <td class="form_text">@Html.EditorFor(model => model.Youtube)</td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Twitter)</td>
+                <td class="form_text">@Html.EditorFor(model => model.Twitter)</td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Instagram)</td>
+                <td class="form_text">@Html.EditorFor(model => model.Instagram)</td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Tiktok)</td>
+                <td class="form_text">@Html.EditorFor(model => model.Tiktok)</td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.GoogleMap)</td>
+                <td class="form_text">@Html.EditorFor(model => model.GoogleMap)</td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.GoogleAnalytics)</td>
+                <td class="form_text">@Html.EditorFor(model => model.GoogleAnalytics)</td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.LiveChat)</td>
+                <td class="form_text">@Html.EditorFor(model => model.LiveChat)</td>
+            </tr>
+            <tr>
+                <td class="form_name"></td>
+                <td class="form_text"><input type="submit" class="btn quick-link" value="Cập nhật" /></td>
+            </tr>
+        </table>
+    }
+</div>
+
+@section scripts {
+    <script>
+        $(function () {
+            $("#ListImages").sortable();
+            $("#ListImages").disableSelection();
+        });
+
+        var i = 1;
+        $("#fileupload").fileupload({
+            add: function (e, data) {
+                var uploadErrors = [];
+                var acceptFileTypes = /^image\/(gif|jpe?g|png)$/i;
+                if (data.originalFiles[0]["type"].length && !acceptFileTypes.test(data.originalFiles[0]["type"])) {
+                    uploadErrors.push("Chỉ chấp nhận định dạng jpeg, jpg, png, gif");
+                }
+                if (data.originalFiles[0]["size"] > 4000000) {
+                    uploadErrors.push("Dung lượng ảnh lớn hơn 4MB");
+                }
+                var totalImg = $("#ListImages .thumb-img-box").length;
+                if (totalImg >= 10) {
+                    uploadErrors.push("Chỉ đăng tối đa 10 ảnh");
+                }
+                if (uploadErrors.length > 0) {
+                    alert(uploadErrors.join("\n"));
+                    return false;
+                } else {
+                    data.submit();
+                }
+                return true;
+            },
+            url: "/Uploader/Upload?folder=configs&r=" + Math.random(),
+            dataType: "json",
+            done: function (e, data) {
+                $.each(data.result.files, function (index, file) {
+                    $('#ListImages').append('<li><input type="hidden" name="Pictures" value ="' + file.name + '" /><img src="/images/configs/' + file.name + '?w=80&h=80"/><a href="javascript:;" id="' + i + '" onclick="delfile(' + i + ')"><img src="/content/admin/icon-delete.png" alt="" style="vertical-align:middle" /></a></li>');
+                });
+                i = i + 1;
+                $("#progress").fadeOut(2000);
+            },
+            start: function () {
+                $("#progress .progress-bar").css("width", "0");
+                $("#progress").show();
+            },
+            progressall: function (e, data) {
+                var progress = parseInt(data.loaded / data.total * 100, 10);
+                $("#progress .progress-bar").css("width", progress + "%");
+            }
+        }).prop('disabled', !$.support.fileInput).parent().addClass($.support.fileInput ? undefined : 'disabled');
+
+        function delfile(divid) {
+            if (confirm('Bạn có chắc xóa ảnh này?')) {
+                $('#' + divid).parent().fadeOut().remove();
+            }
+        }
+    </script>
+}

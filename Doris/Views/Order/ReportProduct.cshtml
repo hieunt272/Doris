@@ -1,0 +1,85 @@
+﻿@model Doris.ViewModel.ReportProductViewModel
+@using PagedList.Mvc
+@{
+    ViewBag.Title = "Thống kê sản phẩm";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>Thống kê sản phẩm</h2>
+<div class="box_content mt-0">
+    @using (Html.BeginForm("ReportProduct", "Order", FormMethod.Get))
+    {
+        <div class="form-group row">
+            <div class="col-lg-3">
+                <label>Từ ngày</label>
+                @Html.TextBoxFor(a => a.FromDate, new { @class = "form_control datepicker", autocomplete = "off" })
+            </div>
+            <div class="col-lg-3">
+                <label>Đến ngày</label>
+                @Html.TextBoxFor(a => a.ToDate, new { @class = "form_control datepicker", autocomplete = "off" })
+            </div>
+            <div class="col-lg-3">
+                <label>Trạng thái</label>
+                <select name="status" class="form_control">
+                    <option value="0" @if (Model.Status == 0) { @Html.Raw("selected=selected") }>Đang xử lý</option>
+                    <option value="1" @if (Model.Status == 1) { @Html.Raw("selected=selected") }>Đang giao hàng</option>
+                    <option value="2" @if (Model.Status == 2) { @Html.Raw("selected=selected") }>Hoàn tất</option>
+                    <option value="3" @if (Model.Status == 3) { @Html.Raw("selected=selected") }>Hủy đơn</option>
+                </select>
+            </div>
+            <div class="col-lg-3">
+                <label>Thành phố</label>
+                @Html.DropDownListFor(a => a.CityId, Model.CitySelectList, "Tất cả", new { @class = "form_control w300" })
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-lg-3 align-self-center">
+                <button type="submit" class="btn-search">Tìm kiếm</button>
+                @*<a href="@Url.Action("ExportReportProduct", new{fromDate = Model.FromDate, toDate = Model.ToDate, status = Model.Status, cityId = Model.CityId})" class="btn-search">Xuất File</a>*@
+            </div>
+        </div>
+    }
+    <table class="table table-bordered">
+        <thead class="bg-info">
+            <tr>
+                @*<th style="width: 150px;">Mã sản phẩm</th>*@
+                <th style="width: 50px;">Ảnh</th>
+                <th>Sản phẩm</th>
+                <th style="width: 150px;">Số lượng</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.ReportProductItems)
+            {
+                <tr>
+                    @*<td>@item.Product</td>*@
+                    <td>
+                        @if (item.Product.ListImage != null)
+                        {
+                            <img src="@Path.Combine("/images/products/", item.Product.ListImage.Split(',')[0])?w=50" />
+                        }
+                        else
+                        {
+                            @:-
+                        }
+                    </td>
+                    <td>@item.Product.Name</td>
+                    <td>@item.TotalSale</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    @if (Model.ReportProductItems.PageCount > 1)
+    {
+        <div class="text-center">@Html.PagedListPager(Model.ReportProductItems, page => Url.Action("ReportProduct", new { page, fromDate = Model.FromDate, toDate = Model.ToDate }))</div>
+    }
+</div>
+
+@section scripts
+{
+    <script>
+        $(".datepicker").datepicker({
+            dateFormat: "dd/mm/yy"
+        })
+    </script>
+}

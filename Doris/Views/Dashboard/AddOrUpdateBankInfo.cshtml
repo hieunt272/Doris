@@ -1,0 +1,60 @@
+﻿@model Doris.ViewModel.BankInfoViewModel
+
+<div class="card card-red p-0">
+    <div class="card-header">Thông tin ngân hàng</div>
+    <div class="card-body">
+        <form id="bankInfoForm">
+            @Html.AntiForgeryToken()
+            @if (Model.BankUser != null)
+            {
+                @Html.HiddenFor(a => a.BankUser.BankId)
+                <div class="form-group form-row">
+                    @Html.LabelFor(m => m.BankId, new { @class = "col-form-label col-4" })
+                    <div class="col-8">
+                        @Html.DropDownListFor(m => m.BankId, Model.BankSelectList, "Chọn ngân hàng", new { @class = "form-control form-control-sm" })
+                        @Html.ValidationMessageFor(m => m.BankId)
+                    </div>
+                </div>
+                <div class="form-group form-row">
+                    @Html.LabelFor(m => m.BankUser.Brand, new { @class = "col-form-label col-4" })
+                    <div class="col-8">
+                        @Html.TextBoxFor(m => m.BankUser.Brand, new { @class = "form-control form-control-sm" })
+                        @Html.ValidationMessageFor(m => m.BankUser.Brand)
+                    </div>
+                </div>
+                <div class="form-group form-row">
+                    @Html.LabelFor(m => m.BankUser.AccountName, new { @class = "col-form-label col-4" })
+                    <div class="col-8">
+                        @Html.TextBoxFor(m => m.BankUser.AccountName, new { @class = "form-control form-control-sm" })
+                        @Html.ValidationMessageFor(m => m.BankUser.AccountName)
+                    </div>
+                </div>
+                <div class="form-group form-row">
+                    @Html.LabelFor(m => m.BankUser.Name, new { @class = "col-form-label col-4" })
+                    <div class="col-8">
+                        @Html.TextBoxFor(m => m.BankUser.Name, new { @class = "form-control form-control-sm" })
+                        @Html.ValidationMessageFor(m => m.BankUser.Name)
+                    </div>
+                </div>
+                <div class="form-group form-row">
+                    <div class="col-8 offset-4">
+                        <button type="submit" class="btn-add">Lưu</button>
+                    </div>
+                </div>
+            }
+        </form>
+    </div>
+    <script>
+        $("#bankInfoForm").on("submit", function (e) {
+            e.preventDefault();
+            if ($(this).valid()) {
+                $.post("/Dashboard/AddOrUpdateBankInfo", $(this).serialize(), function (data) {
+                    alert(data.msg);
+                    if (data.status === 0) {
+                        window.location.reload();
+                    }
+                });
+            }
+        });
+    </script>
+</div>

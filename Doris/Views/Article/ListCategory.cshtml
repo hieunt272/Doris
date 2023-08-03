@@ -1,0 +1,107 @@
+﻿@model IEnumerable<Doris.Models.ArticleCategory>
+<table class="list_table tablecenter mb-4" id="list-cat">
+    <tr>
+        <th>STT</th>
+        <th>Hình ảnh</th>
+        <th>Tên danh mục</th>
+        <th>Loại danh mục</th>
+        <th>Hiện chân trang</th>
+        <th>Hoạt động</th>
+        <th style="width: 160px"></th>
+    </tr>
+    <tbody id="sortable-cat">
+        @foreach (var category in Model.Where(a => a.ParentId == null))
+        {
+            <tr data-id="@category.Id" style="background: #ededed;">
+                <td style="width: 120px;">
+                    <input type="number" name="Sort" value="@category.CategorySort" class="form_control" />
+                </td>
+                <td>
+                    @if (category.Image != null)
+                    {
+                        <img src="@Path.Combine("/images/articleCategory/", category.Image)" style="width: 150px; height: 100px; object-fit: contain" />
+                    }
+                </td>
+                <td class="left"><strong>@category.CategoryName</strong></td>
+                <td>@Html.DisplayFor(a => category.TypePost)</td>
+                <td>@Html.EditorFor(a => category.ShowFooter, new { htmlAttributes = new { id = "Footer" } })</td>
+                <td>@Html.EditorFor(a => category.CategoryActive, new { htmlAttributes = new { id = "Active" } })</td>
+                <td>
+                    <a href="javascript:;" onclick="updateCategory('@category.Id')">Cập nhật - </a>
+                    @Html.ActionLink("Sửa", "UpdateCategory", new { catId = category.Id }) -
+                    <a href="javascript:;" onclick="deleteArtCategory('@category.Id')" style="color: red">Xóa</a>
+                </td>
+            </tr>
+            foreach (var child in Model.Where(a => a.ParentId == category.Id))
+            {
+                <tr data-id="@child.Id">
+                    <td style="width: 120px;">
+                        <input type="number" name="Sort" value="@child.CategorySort" class="form_control" />
+                    </td>
+                    <td>
+                        @if (child.Image != null)
+                        {
+                            <img src="@Path.Combine("/images/articleCategory/", child.Image)" style="width: 150px; height: 100px; object-fit: contain" />
+                        }
+                    </td>
+                    <td class="left"><strong><i class="fal fa-window-minimize"></i> @child.CategoryName</strong></td>
+                    <td>@Html.DisplayFor(a => child.TypePost)</td>
+                    <td>@Html.EditorFor(a => child.ShowFooter, new { htmlAttributes = new { id = "Footer" } })</td>
+                    <td>@Html.EditorFor(a => child.CategoryActive, new { htmlAttributes = new { id = "Active" } })</td>
+                    <td>
+                        <a href="javascript:;" onclick="updateCategory('@child.Id')">Cập nhật - </a>
+                        @Html.ActionLink("Sửa", "UpdateCategory", new { catId = child.Id }) -
+                        <a href="javascript:;" onclick="deleteArtCategory('@child.Id')" style="color: red">Xóa</a>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+<script type="text/javascript">
+    function deleteArtCategory(id) {
+        if (confirm("Bạn có chắc chắn xóa danh mục này không?")) {
+            $.post("/Article/DeleteCategory", { catId: id }, function (data) {
+                if (data) {
+                    $.toast({
+                        text: 'Đang xóa danh mục',
+                        position: 'bottom-right',
+                        icon: 'success',
+                    })
+                    $("tr[data-id='" + id + "']").fadeOut();
+                } else {
+                    $.toast({
+                        text: 'Quá trình thực hiện không thành công. Hãy thử lại',
+                        icon: 'error',
+                    })
+                }
+            });
+        }
+    }
+
+    function updateCategory(id) {
+        var divId = $("tr[data-id='" + id + "']");
+        var sort = divId.find("input[name=Sort]").val();
+        var active = divId.find("input#Active").prop("checked");
+        var footer = divId.find("input#Footer").prop("checked");
+
+        if (sort == "") {
+            alert("Bạn hãy nhập số thứ tự");
+        }
+
+        $.post("/Article/UpdateArticleCat", { articleCatId: id, sort, active, footer }, function (data) {
+            if (data) {
+                $.toast({
+                    text: 'Cập nhật thành công',
+                    position: 'bottom-right',
+                    icon: 'success',
+                })
+            } else {
+                $.toast({
+                    text: 'Quá trình thực hiện không thành công. Hãy thử lại',
+                    icon: 'error',
+                })
+            }
+        });
+    }
+</script>

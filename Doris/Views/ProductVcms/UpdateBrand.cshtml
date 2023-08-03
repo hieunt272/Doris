@@ -1,0 +1,105 @@
+﻿@model Doris.Models.Brand
+@{
+    ViewBag.Title = "Cập nhật thương hiệu bài viết";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<h2>Cập nhật thương hiệu</h2>
+<a class="btn quick-link" id="create-cat" href="#list-cat"><i class="far fa-list mr-1"></i> Danh sách thương hiệu</a>
+<div class="box_content">
+    <div class="row">
+        <div class="col-sm-12 col-lg-8">
+            @using (Html.BeginForm("UpdateBrand", "ProductVcms", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                @Html.ValidationSummary(true)
+                @Html.HiddenFor(model => model.Id)
+                <table class="form_table form-table-cat">
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.BrandName)</td>
+                        <td class="form_text">@Html.EditorFor(model => model.BrandName)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.Description)</td>
+                        <td class="form_text">
+                            @Html.EditorFor(model => model.Description)
+                            @Html.ValidationMessageFor(a => Model.Description)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.Image)</td>
+                        <td class="form_text">
+                            @Html.TextBoxFor(model => model.Image, new { type = "file" })
+                            <span class="red-warring">Chấp nhận ảnh jpg, png, gif, jpeg < 4MB</span>
+                        </td>
+                    </tr>
+                    @if (Model.Image != null)
+                    {
+                        <tr id="ImgPreview">
+                            <td class="form_name"></td>
+                            <td class="form_text">
+                                <img class="img-border mb-2" src="@Path.Combine("/images/brands/", Model.Image)" />
+                                <br /><a href="javascript:;" onclick="$('#ImgPreview').hide(); $('#CurrentFile').val('');"><img src="/Content/admin/icon-delete-red.png" alt="" style="vertical-align: middle; margin-top: 0; height: 10px;" /> Xóa ảnh</a>
+                                <input type="hidden" name="CurrentFile" id="CurrentFile" value="@Model.Image" />
+                            </td>
+                        </tr>
+                    }
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.CoverImage)</td>
+                        <td class="form_text">
+                            @Html.TextBoxFor(model => model.CoverImage, new { type = "file" })
+                            <span class="red-warring">Chấp nhận ảnh jpg, png, gif, jpeg < 4MB</span>
+                        </td>
+                    </tr>
+                    @if (Model.CoverImage != null)
+                    {
+                        <tr id="ImgPreview2">
+                            <td class="form_name"></td>
+                            <td class="form_text">
+                                <img class="img-border mb-2" src="@Path.Combine("/images/brands/", Model.CoverImage)" />
+                                <br /><a href="javascript:;" onclick="$('#ImgPreview2').hide(); $('#CurrentFile2').val('');"><img src="/Content/admin/icon-delete-red.png" alt="" style="vertical-align: middle; margin-top: 0; height: 10px;" /> Xóa ảnh</a>
+                                <input type="hidden" name="CurrentFile2" id="CurrentFile2" value="@Model.CoverImage" />
+                            </td>
+                        </tr>
+                    }
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.Body)</td>
+                        <td class="form_text">@Html.EditorFor(model => model.Body)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.Sort)</td>
+                        <td class="form_text">@Html.EditorFor(model => model.Sort)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.Home)</td>
+                        <td class="form_text">@Html.EditorFor(model => model.Home)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.Hot)</td>
+                        <td class="form_text">@Html.EditorFor(model => model.Hot)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.Active)</td>
+                        <td class="form_text">@Html.CheckBoxFor(model => model.Active, new { @checked = "checked" })</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.Url)</td>
+                        <td class="form_text">@Html.EditorFor(model => model.Url)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.TitleMeta)</td>
+                        <td class="form_text">@Html.EditorFor(model => model.TitleMeta)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.DescriptionMeta)</td>
+                        <td class="form_text">@Html.EditorFor(model => model.DescriptionMeta)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name"></td>
+                        <td class="form_text">
+                            <input type="submit" class="btn quick-link" value="Cập nhật" />
+                        </td>
+                    </tr>
+                </table>
+            }
+        </div>
+    </div>
+</div>

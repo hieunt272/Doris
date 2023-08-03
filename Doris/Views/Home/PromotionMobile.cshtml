@@ -1,0 +1,95 @@
+﻿@model Doris.ViewModel.PromotionViewModel
+@using Doris.Models
+@using PagedList.Mvc
+@{
+    ViewBag.Title = "Khuyến mãi hot";
+    ViewBag.Canonical = Request.Url?.GetLeftPart(UriPartial.Authority) + Url.Action("Promotion");
+    ViewBag.Robots = "noindex";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var email = ViewContext.RouteData.Values["MemberEmail"].ToString();
+    Level level;
+}
+
+<section class="bg-pink page-pb">
+    <div class="container">
+        <div class="title-page title-border">
+            <button onclick="history.back()"><i class="fa-regular fa-arrow-left"></i></button>
+            <div class="title-bold">Khuyến mãi hot</div>
+        </div>
+        @if (Model.Products.Any())
+        {
+            <div class="row">
+                @foreach (var item in Model.Products)
+                {
+                    <div class="col-6 mb-2">
+                        <div class="product-item-mb">
+                            <a href="@Url.Action("ProductDetail", new { url = item.Url })" class="product-img">
+                                @if (item.ListImage != null)
+                                {
+                                    <img src="@Path.Combine("/images/products/", item.ListImage.Split(',')[0])" alt="@item.Name" />
+                                }
+                            </a>
+                            <div class="body">
+                                <a href="@Url.Action("BrandDetail", new { url = item.Url })" class="brand-name">
+                                    @item.Brand.BrandName
+                                </a>
+                                <div class="subject">
+                                    <a href="@Url.Action("ProductDetail", new { url = item.Url })">
+                                        @item.Name
+                                    </a>
+                                </div>
+                                <div class="box-price">
+                                    <div class="price">
+                                        @if (email != "")
+                                        {
+                                            level = (Level)Enum.Parse(typeof(Level), ViewContext.RouteData.Values["Level"].ToString());
+                                            if (item.PriceDiamond > 0 && level == Level.Diamond)
+                                            {
+                                                <div class="price-sale">@Convert.ToDecimal(item.Price).ToString("N0") đ</div>
+                                            }
+                                            else if (item.PricePlatinum > 0 && level == Level.Platinum)
+                                            {
+                                                <div class="price-sale">@Convert.ToDecimal(item.Price).ToString("N0") đ</div>
+                                            }
+                                            else if (item.PriceGold > 0 && level == Level.Gold)
+                                            {
+                                                <div class="price-sale">@Convert.ToDecimal(item.Price).ToString("N0") đ</div>
+
+                                            }
+                                            else if (item.PriceSilver > 0 && level == Level.Silver)
+                                            {
+                                                <div class="price-sale">@Convert.ToDecimal(item.Price).ToString("N0") đ</div>
+                                            }
+                                            else if (item.PriceBronze > 0 && level == Level.Bronze)
+                                            {
+                                                <div class="price-sale">@Convert.ToDecimal(item.Price).ToString("N0") đ</div>
+                                            }
+                                        }
+                                        @if (item.Price > 0)
+                                        {
+                                            <div class="price">@Convert.ToDecimal(item.Price).ToString("N0") đ</div>
+                                        }
+                                    </div>
+                                    <div class="icon-hot">
+                                        <img src="~/Content/images/img-main/hot-deal.png" alt="Hot Deal" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                @if (Model.Products.PageCount > 1)
+                {
+                    <div class="col-12 d-flex justify-content-center">
+                        @Html.PagedListPager(Model.Products, page => Url.Action("Promotion", new { page }))
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p class="alert alert-success small">Nội dung hiện chưa được cập nhật. Vui lòng quay lại sau !!!!</p>
+        }
+    </div>
+</section>

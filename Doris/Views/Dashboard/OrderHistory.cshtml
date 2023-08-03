@@ -1,0 +1,119 @@
+﻿@model Doris.ViewModel.OrderHistoryViewModel
+@using PagedList.Mvc
+@{
+    ViewBag.Title = "Lịch sử đặt hàng";
+}
+
+<section class="notify">
+    Nhập hàng giá sỉ, chiết khấu cao đến 60% !
+</section>
+<section class="user">
+    <div class="container">
+        <div class="title-section">Lịch sử đặt hàng</div>
+        <div class="row">
+            <div class="col-lg-5">
+                @Html.Action("UserNav")
+            </div>
+            <div class="col-lg-7">
+                <nav class="order-nav">
+                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                        <button class="nav-link active" data-toggle="tab" type="button" value="0">
+                            Tất cả
+                        </button>
+                        <button class="nav-link" data-toggle="tab" type="button" value="2">
+                            Chờ thanh toán
+                        </button>
+                        <button class="nav-link" data-toggle="tab" type="button" value="1">
+                            Đang xử lý
+                        </button>
+                        <button class="nav-link" data-toggle="tab" type="button" value="3">
+                            Đã thanh toán
+                        </button>
+                    </div>
+                </nav>
+                <div id="list-order">
+                    @if (Model.Orders.Any())
+                    {
+                        foreach (var order in Model.Orders)
+                        {
+                            var fo = order.OrderDetails.FirstOrDefault();
+                            <div class="order-item">
+                                <div class="order-item-top">
+                                    <div class="order-id">Mã đơn hàng: <span>@order.MaDonHang</span></div>
+                                    <div class="status">@Html.DisplayFor(a => order.Status)</div>
+                                </div>
+                                @foreach (var orderDetail in order.OrderDetails)
+                                {
+                                    <div class="order-detail-item">
+                                        @if (orderDetail.Product.ListImage != null)
+                                        {
+                                            <div class="product-img">
+                                                <img src="@Path.Combine("/images/products/", orderDetail.Product.ListImage.Split(',')[0])" alt="@orderDetail.Product.Name" />
+                                            </div>
+                                        }
+                                        <div class="order-details">
+                                            <div class="product-name">@orderDetail.Product.Name</div>
+                                            <div class="box-price">
+                                                <span class="price">@Convert.ToDecimal(orderDetail.Price).ToString("N0")đ</span><span class="quantity"> x @orderDetail.Quantity</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                <div class="order-item-bottom">
+                                    <div class="count">@order.Count() sản phẩm</div>
+                                    <div class="total">Thành tiền: <span class="total-price">@order.TotalFee().ToString("N0")đ</span></div>
+                                </div>
+                                @if (order.Status == 1)
+                                {
+                                    <div class="cancel-order">
+                                        <a href="javascript:;" onclick="cancelOrder(@order.Id)">
+                                            Hủy đơn
+                                        </a>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        if (Model.Orders.PageCount > 1)
+                        {
+                            <div class="text-center">@Html.PagedListPager(Model.Orders, page => Url.Action("OrderHistory", new { page, status = Model.Status }))</div>
+                        }
+                    }
+                    else
+                    {
+                        <img src="~/Content/images/img-main/giỏ-hàng.png" alt="Giỏ hàng" class="no-cart-img" />
+                        <div class="sub-text">Bạn chưa có đơn hàng nào</div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@section scripts{
+    <script>
+        userOrder("/Dashboard/GetUserOrder")
+
+        function cancelOrder(id) {
+            if (confirm("Bạn có chắc chắn hủy đơn hàng này không?")) {
+                $.post("/Dashboard/CancelOrder", { orderId: id }, function (data) {
+                    if (data) {
+                        $.toast({
+                            text: 'Hủy đơn hàng thành công',
+                            position: 'bottom-right',
+                            icon: 'success',
+                        })
+                        $("div[data-id='" + id + "']").fadeOut();
+                        function reload() {
+                            location.reload();
+                        }
+                        setTimeout(reload, 1500);
+                    } else {
+                        $.toast({
+                            text: 'Quá trình thực hiện không thành công. Hãy thử lại',
+                            icon: 'error',
+                        })
+                    }
+                });
+            }
+        }
+    </script>
+}

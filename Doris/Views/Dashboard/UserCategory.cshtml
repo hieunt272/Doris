@@ -1,0 +1,34 @@
+﻿@{
+    ViewBag.Title = "Danh mục của bạn";
+}
+
+<section class="notify">
+    Nhập hàng giá sỉ, chiết khấu cao đến 60% !
+</section>
+<section class="user">
+    <div class="container">
+        <div class="title-section">Danh mục của bạn</div>
+        <div class="row">
+            <div class="col-lg-5">
+                @Html.Action("UserNav")
+            </div>
+            <div class="col-lg-7">
+                <div class="note">
+                    Đây là danh sách các sản phẩm dành cho danh mục bán hàng tương lai của bạn
+                </div>
+                <div id="list-product">
+                    <a href="#" class="product-user-item">
+                        <img src="~/Content/images/img-main/banner-contact.jpg" alt="" class="product-img" />
+                        <div class="body">
+                            <div class="product-info">
+                                <div class="brand-name">Lemonade</div>
+                                <div class="product-name">Kem nền Lemonade Couple Dual Foundation - 01.Light</div>
+                            </div>
+                            <div class="price">459.000 đ</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

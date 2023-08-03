@@ -1,0 +1,50 @@
+﻿@model Doris.ViewModel.OrderHistoryViewModel
+@using PagedList.Mvc
+@using Doris.Models
+@{
+    var config = (ConfigSite)HttpContext.Current.Application["ConfigSite"];
+}
+
+@if (Model.Orders.Any())
+{
+    foreach (var order in Model.Orders)
+    {
+        var fo = order.OrderDetails.FirstOrDefault();
+        <div class="order-item">
+            <div class="order-item-top">
+                <div class="order-id">Mã đơn hàng: <span>@order.MaDonHang</span></div>
+                <div class="status">@Html.DisplayFor(a => order.Status)</div>
+            </div>
+            @foreach (var orderDetail in order.OrderDetails)
+            {
+                <div class="order-detail-item">
+                    @if (orderDetail.Product.ListImage != null)
+                    {
+                        <div class="product-img">
+                            <img src="@Path.Combine("/images/products/", orderDetail.Product.ListImage.Split(',')[0])" alt="@orderDetail.Product.Name" />
+                        </div>
+                    }
+                    <div class="order-details">
+                        <div class="product-name">@orderDetail.Product.Name</div>
+                        <div class="box-price">
+                            <span class="price">@Convert.ToDecimal(orderDetail.Price).ToString("N0")đ</span><span class="quantity"> x @orderDetail.Quantity</span>
+                        </div>
+                    </div>
+                </div>
+            }
+            <div class="order-item-bottom">
+                <div class="count">@order.Count() sản phẩm</div>
+                <div class="total">Thành tiền: <span class="total-price">@order.TotalFee().ToString("N0")đ</span></div>
+            </div>
+        </div>
+    }
+    if (Model.Orders.PageCount > 1)
+    {
+        <div class="text-center">@Html.PagedListPager(Model.Orders, page => Url.Action("OrderHistory", new { page, status = Model.Status }))</div>
+    }
+}
+else
+{
+    <img src="~/Content/images/img-main/giỏ-hàng.png" alt="Giỏ hàng" class="no-cart-img" />
+    <div class="sub-text">Bạn chưa có đơn hàng nào</div>
+}

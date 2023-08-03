@@ -1,0 +1,34 @@
+﻿@model Doris.ViewModel.EditUserViewModel
+@{
+    ViewBag.Title = "Cập nhật người dùng";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<h2>Cập nhật người dùng</h2>
+<a class="btn quick-link" href="@Url.Action("ListUser")"><i class="far fa-list mr-1"></i> Danh sách người dùng</a>
+<div class="box_content px-300">
+    @using (Html.BeginForm())
+    {
+        @Html.ValidationSummary(true)
+        @Html.HiddenFor(model => model.Id)
+        <table class="form_table">
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Username)</td>
+                <td class="form_text">@Html.EditorFor(model => model.Username)</td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Password)</td>
+                <td class="form_text">@Html.PasswordFor(model => model.Password, new { placeholder = "Để trống nếu không thay đổi" })</td>
+            </tr>
+            <tr>
+                <td class="form_name">@Html.LabelFor(model => model.Active)</td>
+                <td class="form_text">@Html.EditorFor(model => model.Active)</td>
+            </tr>
+            <tr>
+                <td class="form_name"></td>
+                <td class="form_text">
+                    <input type="submit" class="btn quick-link" value="Cập nhật" />
+                </td>
+            </tr>
+        </table>
+    }
+</div>

@@ -1,0 +1,200 @@
+﻿@model Doris.ViewModel.HeaderViewModel
+@using Doris.Models
+@{
+    var config = (ConfigSite)HttpContext.Current.Application["ConfigSite"];
+    var action = ViewContext.ParentActionViewContext.RouteData.GetRequiredString("Action");
+}
+
+@if (Request.Browser.IsMobileDevice)
+{
+    @Html.Action("HeaderMobile")
+}
+else
+{
+    <section class="header">
+        <a href="@Url.Action("Index")" class="logo">
+            @if (config.Image != null)
+            {
+                <img src="@Path.Combine("/images/configs/", config.Image)" alt="@config.Title" />
+            }
+        </a>
+        <ul class="ul-reset nav-header">
+            <li>
+                <a href="@Url.Action("Index")" @if (action == "Index") { @Html.Raw("class='active'") }>Trang chủ</a>
+            </li>
+            <li>
+                <a href="@Url.Action("AllProduct")" @if (action == "AllProduct") { @Html.Raw("class='active'") }>Danh mục</a>
+                @if (Model.ProductCategories.Any())
+                {
+                    var fc = Model.ProductCategories.FirstOrDefault(a => a.CoverImage != null);
+                    <div class="sub-nav-header">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-6">
+                                    <ul class="ul-reset sub-nav">
+                                        @foreach (var item in Model.ProductCategories)
+                                        {
+                                            <li>
+                                                <a href="@Url.Action("ProductCategory", "Home", new { url = item.Url })">
+                                                    @item.CategoryName <span class="count">(@item.Products.Count())</span>
+                                                </a>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                                <div class="col-6">
+                                    @if (fc != null)
+                                    {
+                                        <img src="@Path.Combine("/images/productCategory/", fc.CoverImage)" alt="@fc.CategoryName" class="category-img" />
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </li>
+            <li>
+                <a href="#">Thương hiệu</a>
+                @if (Model.Brands.Any())
+                {
+                    <div class="sub-nav-header">
+                        <div class="container">
+                            <ul class="ul-reset char-list">
+                                <li class="show active">ALL</li>
+                                @for (var i = 'A'; i <= 'Z'; i++)
+                                {
+                                    <li @if (Model.Brands.Count(a => a.BrandName.StartsWith("" + i + "")) > 0) { @Html.Raw("class='show'") }>@i</li>
+                                }
+                                <li>#</li>
+                            </ul>
+                            <div class="row" id="list-brand-sort">
+                                <div class="col-5">
+                                    <div class="char-brand">ALL</div>
+                                    <ul class="ul-reset brand-list">
+                                        @foreach (var item in Model.Brands)
+                                        {
+                                            <li>
+                                                <a href="@Url.Action("BrandDetail", new { url = item.Url })">@item.BrandName</a>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                                <div class="col-7">
+                                    @foreach (var item in Model.Brands.Where(a => a.CoverImage != null).Take(2))
+                                    {
+                                        if (item.CoverImage != null)
+                                        {
+                                            <img src="@Path.Combine("/images/brands/", item.CoverImage)" alt="@item.BrandName" class="brand-img" />
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </li>
+            <li>
+                <a href="javascript:;" @if (action == "Promotion" || action == "DealHot") { @Html.Raw("class='active'") }>Khuyến mãi</a>
+                <i class="fa-light fa-angle-down"></i>
+                <ul class="ul-reset sub-nav-2">
+                    <li>
+                        <a href="@Url.Action("Promotion")">Khuyến mãi hot</a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("DealHot")">Deal Hot</a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="@Url.Action("BestSeller")">Bán chạy nhất</a>
+            </li>
+            <li>
+                <a href="@Url.Action("NewProduct")">Hàng mới về</a>
+            </li>
+            <li>
+                <a href="@Url.Action("Contact")" @if (action == "Contact") { @Html.Raw("class='active'") }>Liên hệ</a>
+            </li>
+        </ul>
+        <div class="actions">
+            <a href="#" class="action btn-search">
+                <i class="fa-light fa-magnifying-glass"></i>
+            </a>
+            @Html.Action("CartSummary", "ShoppingCart")
+            @if (Model.User != null)
+            {
+                <div class="header-user">
+                    @if (Model.User.Avatar != null)
+                    {
+                        <img src="@Path.Combine("/images/users/", Model.User.Avatar)" alt="@Model.User.FullName" class="avatar" />
+                    }
+                    else
+                    {
+                        <i class="fa-light fa-circle-user icon-avatar"></i>
+                    }
+                    <div class="user-info">
+                        <div class="name">@Model.User.FullName</div>
+                        <div class="code">CH: @Model.User.ShopCode</div>
+                    </div>
+                    <div class="author-login">
+                        <a href="@Url.Action("MyProfile", "Dashboard")">
+                            <i class="fa-solid fa-user-gear"></i>
+                            Hồ sơ của tôi
+                        </a>
+                        <a href="@Url.Action("UserInfo", "Dashboard")">
+                            <i class="fa-solid fa-user"></i>
+                            Thông tin tài khoản
+                        </a>
+                        <a href="@Url.Action("UserChangePassword", "Dashboard")">
+                            <i class="fa-light fa-lock-hashtag"></i>
+                            Đổi mật khẩu
+                        </a>
+                        <a href="@Url.Action("OrderHistory", "Dashboard")">
+                            <i class="fa-light fa-clock-rotate-left"></i>
+                            Lịch sử đơn hàng
+                        </a>
+                        <a href="@Url.Action("Address", "Dashboard")">
+                            <i class="fa-solid fa-location-dot"></i>
+                            Sổ địa chỉ
+                        </a>
+                        <a href="@Url.Action("UserCategory", "Dashboard")">
+                            <i class="fa-solid fa-list"></i>
+                            Danh mục của bạn
+                        </a>
+                        <a href="@Url.Action("LogOut", "User")">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                            Đăng xuất
+                        </a>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <a href="@Url.Action("Login", "User")" class="action">
+                    <i class="fa-light fa-circle-user"></i>
+                </a>
+            }
+        </div>
+    </section>
+    <div class="body-overlay"></div>
+    <div class="site-search">
+        <div class="container">
+            <form action="@Url.Action("SearchProduct")" class="header-search">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <button>
+                            <i class="far fa-search"></i>
+                        </button>
+                    </div>
+                    <div class="input-effect">
+                        <input type="text" class="form-control" name="keywords" required autocomplete="off">
+                        <label>Tìm kiếm</label>
+                        <span class="focus-border"></span>
+                    </div>
+                </div>
+            </form>
+            <div class="site-search-close">
+                <i class="fal fa-times"></i>
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,371 @@
+﻿@model Doris.ViewModel.ProfileViewModel
+@using Doris.Models
+@{
+    ViewBag.Title = "Tài khoản của tôi";
+    ViewBag.Canonical = Request.Url?.GetLeftPart(UriPartial.Authority) + Url.Action("Account");
+    ViewBag.Robots = "noindex";
+
+    var level = (Level)Enum.Parse(typeof(Level), Model.Level.ToString());
+}
+
+@if (ViewBag.Result == "success")
+{
+    <div id="AlertBox" class="success">
+        <i class="fa-solid fa-check"></i> Lưu thông tin thành công
+    </div>
+}
+<section class="banner-mb banner-main">
+    @foreach (var item in Model.Banners.Where(a => a.GroupId == 1))
+    {
+        <a href="@item.Url" class="banner-item">
+            @if (item.ImageMobile != null)
+            {
+                <img src="@Path.Combine("/images/banners/", item.ImageMobile)" alt="@item.BannerName" />
+            }
+        </a>
+    }
+</section>
+<section class="container page-pb">
+    <div class="login-notice">
+        <div class="icon">
+            <img src="~/Content/images/img-main/unlock.png" alt="Unlock" />
+        </div>
+        <a href="#" class="notice">
+            <div class="title">Thăng hạng thành viên</div>
+            <div class="sub-title">Nhận nhiều ưu đãi hơn khi thăng hạng Thành Viên</div>
+        </a>
+        <a href="#" class="link">
+            <i class="fa-solid fa-chevron-right"></i>
+        </a>
+    </div>
+    <div class="my-profile">
+        <div class="title">Hồ sơ của tôi</div>
+        <div class="sub-text">Quản lý thông tin hồ sơ để bảo mật tài khoản</div>
+        @using (Html.BeginForm("MyProfile", "Dashboard", FormMethod.Post, new { @class = "profile-form", enctype = "multipart/form-data" }))
+        {
+            @Html.ValidationSummary(true)
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(a => a.UserId)
+
+            <div class="box-avatar">
+                @if (Model.Avatar != null)
+                {
+                    <img src="@Path.Combine("/images/users/", Model.Avatar)" alt="@Model.FullName" class="avatar" />
+                }
+                else
+                {
+                    <i class="fa-light fa-circle-user icon-avatar"></i>
+                }
+                <label class="label-file">
+                    Chọn ảnh
+                    <input type="file" name="Avatar" hidden />
+                </label>
+                <div>Dung lượng file tối đa 1MB <br /> Định dạng: JPG, PNG</div>
+            </div>
+            <div class="form-group form-row">
+                <div class="col-4"><label>Tên đăng nhập</label></div>
+                <div class="col-8">
+                    @Model.Username
+                </div>
+            </div>
+            <div class="form-group form-row">
+                <div class="col-4 d-flex align-items-center">
+                    @Html.LabelFor(m => m.FullName)
+                </div>
+                <div class="col-8">
+                    @Html.TextBoxFor(m => m.FullName, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(a => a.FullName)
+                </div>
+            </div>
+            <div class="form-group form-row">
+                <div class="col-4 d-flex align-items-center">
+                    @Html.LabelFor(m => m.Email)
+                </div>
+                <div class="col-8">
+                    <div class="secret-value">
+                        <span class="mail-secret">@Model.Email</span><span class="btn-change">Thay đổi</span>
+                    </div>
+                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control input-hidden" })
+                    @Html.ValidationMessageFor(a => a.Email)
+                </div>
+            </div>
+            <div class="form-group form-row">
+                <div class="col-4 d-flex align-items-center">
+                    @Html.LabelFor(m => m.PhoneNumber)
+                </div>
+                <div class="col-8">
+                    <div class="secret-value">
+                        <span class="phone-secret">@Model.PhoneNumber</span><span class="btn-change">Thay đổi</span>
+                    </div>
+                    @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control input-hidden" })
+                    @Html.ValidationMessageFor(a => a.PhoneNumber)
+                </div>
+            </div>
+            <div class="form-group form-row">
+                <div class="col-4 d-flex align-items-center">
+                    <label>Giới tính</label>
+                </div>
+                <div class="col-8">
+                    <label class="label-gender">
+                        <input type="radio" name="Gender" value="0" @if (Model.Gender == 0) { @Html.Raw("checked='checked'") }>
+                        <span class="checkmark"></span>
+                        Nam
+                    </label>
+                    <label class="label-gender">
+                        <input type="radio" name="Gender" value="1" @if (Model.Gender == 1) { @Html.Raw("checked='checked'") }>
+                        <span class="checkmark"></span>
+                        Nữ
+                    </label>
+                    <label class="label-gender">
+                        <input type="radio" name="Gender" value="2" @if (Model.Gender == 2) { @Html.Raw("checked='checked'") }>
+                        <span class="checkmark"></span>
+                        Khác
+                    </label>
+                </div>
+            </div>
+            <div class="form-group form-row">
+                <div class="col-4 d-flex align-items-center">
+                    <label>Ngày sinh</label>
+                </div>
+                <div class="col-8">
+                    <div class="birthday">
+                        <select name="Day">
+                            @for (var i = 1; i <= 31; i++)
+                            {
+                                <option value="@i" @if (Model.Day == i) { @Html.Raw("selected='selected'") }>@i</option>
+                            }
+                        </select>
+                        <select name="Month">
+                            @for (var i = 1; i <= 12; i++)
+                            {
+                                <option value="@i" @if (Model.Month == i) { @Html.Raw("selected='selected'") }>Tháng @i</option>
+                            }
+                        </select>
+                        <select name="Year">
+                            @for (var i = 1960; i <= DateTime.Now.Year; i++)
+                            {
+                                <option value="@i" @if (Model.Year == i) { @Html.Raw("selected='selected'") }>@i</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group form-row">
+                <div class="col-4"></div>
+                <div class="col-8">
+                    <button type="submit" class="btn-save">Lưu</button>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="title-line">
+        <div class="title">Cấp bậc thành viên</div>
+    </div>
+    <div class="level-list">
+        <div class="level-item">
+            <img src="~/Content/images/img-main/ranking-1.png" />
+            Thành viên
+        </div>
+        <div class="level-item">
+            <img src="~/Content/images/img-main/ranking-2.png" />
+            Đồng
+        </div>
+        <div class="level-item">
+            <img src="~/Content/images/img-main/ranking-3.png" />
+            Bạc
+        </div>
+        <div class="level-item">
+            <img src="~/Content/images/img-main/ranking-4.png" />
+            Vàng
+        </div>
+        <div class="level-item">
+            <img src="~/Content/images/img-main/ranking-5.png" />
+            Bạch Kim
+        </div>
+        <div class="level-item">
+            <img src="~/Content/images/img-main/ranking-6.png" />
+            Kim Cương
+        </div>
+    </div>
+    <div class="progress">
+        <div class="progress-bar" role="progressbar" style="width: @Model.PercentOrder%" aria-valuenow="@Model.PercentOrder" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+    <div class="info-level-next">
+        <div class="media">
+            @switch (Model.Level)
+            {
+                case Level.Bronze:
+                    <img src="~/Content/images/img-main/ranking-2.png" />
+                    break;
+                case Level.Silver:
+                    <img src="~/Content/images/img-main/ranking-3.png" />
+                    break;
+                case Level.Gold:
+                    <img src="~/Content/images/img-main/ranking-4.png" />
+                    break;
+                case Level.Platinum:
+                    <img src="~/Content/images/img-main/ranking-5.png" />
+                    break;
+                case Level.Diamond:
+                    <img src="~/Content/images/img-main/ranking-6.png" />
+                    break;
+            }
+            <div class="media-body">
+                <div class="text">Thăng hạng @Html.DisplayFor(a => a.Level)</div>
+                <div class="sub-text">Nhận nhiều ưu đãi hơn khi thăng hạng @Html.DisplayFor(a => a.Level)</div>
+            </div>
+        </div>
+        <div class="level-content">
+            Thăng hạng @Html.DisplayFor(a => a.Level) khi tiêu ít nhất @Model.TotalLevelUp.ToString("N0")đ trong tháng này.
+            <br />
+            Bạn sẽ được áp dụng các mức ưu đãi khác nhau tùy thuộc vào cấp độ @Html.DisplayFor(a => a.Level) hiện tại. Mức giá ưu đãi sẽ có hiệu lực trong vòng 1 tháng kể từ khi đạt được.
+        </div>
+    </div>
+    <div class="title-line">
+        <div class="title">Tài khoản ngân hàng</div>
+        <button type="button" class="add-info" data-fancybox data-type="ajax" data-touch="false" data-src="@Url.Action("AddOrUpdateBankInfo")">+ Thêm Tài Khoản Ngân Hàng</button>
+    </div>
+    <div class="bank-list">
+        @if (Model.BankUsers.Any())
+        {
+            foreach (var item in Model.BankUsers)
+            {
+                <div class="bank-item" data-id="@item.BankId">
+                    <div class="media">
+                        @if (item.Bank.Image != null)
+                        {
+                            <div class="bank-img">
+                                <img src="@Path.Combine("/images/banks/", item.Bank.Image)" alt="@item.Bank.Name" />
+                            </div>
+                        }
+                        <div class="media-body">
+                            <div class="media-top">
+                                <div class="bank-name">@item.Bank.Name</div>
+                                <span class="default @if (item.Default) { @Html.Raw("d-block") }">Mặc định</span>
+                            </div>
+                            <div class="media-bottom">
+                                <div class="bank-info">
+                                    Họ và tên: <span class="text-uppercase">@item.AccountName</span><br />
+                                    Chi nhánh: @item.Brand
+                                </div>
+                                <div class="bank-number">*@item.Name.Substring(item.Name.Length - 4)</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="actions-info">
+                        <a href="javascript:;" onclick="deleteBannkInfo('@item.BankId')" class="del-info">Xóa</a>
+                        <button type="button" class="update-info" data-fancybox data-type="ajax" data-touch="false" data-src="@Url.Action("AddOrUpdateBankInfo", new { bankId = item.BankId })">Cập nhật</button>
+                        <a href="javascript:;" onclick="defaultBannkInfo('@item.BankId')" class="set-default">Thiết Lập Mặc Định</a>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="alert alert-info small mb-0 py-2">Bạn chưa có thông tin ngân hàng</div>
+        }
+    </div>
+    <div class="title-line">
+        <div class="title">Địa chỉ của tôi</div>
+        <button type="button" class="add-info" data-fancybox data-type="ajax" data-touch="false" data-src="@Url.Action("AddOrUpdateAddressInfo")">+ Thêm Địa Chỉ Mới</button>
+    </div>
+    <div class="address-list">
+        @if (Model.Addresses.Any())
+        {
+            foreach (var item in Model.Addresses)
+            {
+                <div class="address-item-mb" data-id="@item.Id">
+                    <div class="info-top">@item.Fullname<span class="phone">@item.Mobile</span></div>
+                    <div class="info-bottom">
+                        <span>@item.SpecificAddress</span><br />
+                        @item.Ward.Name, @item.District.Name, @item.City.Name
+                    </div>
+                    <div class="default @if (item.Default) { @Html.Raw("d-block") }">Mặc định</div>
+                    <div class="actions-info">
+                        <a href="javascript:;" onclick="deleteAddressInfo('@item.Id')" class="del-info">Xóa</a>
+                        <button type="button" class="update-info" data-fancybox data-type="ajax" data-touch="false" data-src="@Url.Action("AddOrUpdateAddressInfo", new { addressId = item.Id })">Cập nhật</button>
+                        <a href="javascript:;" onclick="defaultAddressInfo('@item.Id')" class="set-default @if (item.Default) { @Html.Raw("btn-default") }">Thiết Lập Mặc Định</a>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="alert alert-info small mb-0 py-2">Bạn chưa có thông tin địa chỉ</div>
+        }
+    </div>
+</section>
+
+@section scripts {
+    <script>
+        function deleteAddressInfo(id) {
+            if (confirm("Bạn chắc chắn xóa địa chỉ này?")) {
+                $.post("/Dashboard/DeleteAddress", { addressId: id }, function (data) {
+                    if (data) {
+                        $("div[data-id='" + id + "']").fadeOut();
+                        function reload() {
+                            location.reload();
+                        }
+                        setTimeout(reload, 500);
+                    }
+                    else {
+                        $.toast({
+                            text: 'Quá trình thực hiện không thành công. Hãy thử lại',
+                            icon: 'error',
+                        })
+                    }
+                });
+            }
+        }
+
+        function defaultAddressInfo(id) {
+            var divId = $("div[data-id='" + id + "']");
+            var checkDefault = divId.find(".default").hasClass('d-block');
+
+            if (checkDefault == false) {
+                addressDefault = true;
+            }
+
+            $.post("/Dashboard/DefaultAddress", { addressId: id, addressDefault }, function (data) {
+                if (data) {
+                    location.reload();
+                }
+            });
+        }
+
+        function deleteBannkInfo(id) {
+            if (confirm("Bạn chắc chắn xóa tài khoản ngân hàng này?")) {
+                $.post("/Dashboard/DeleteBankInfo", { bankId: id }, function (data) {
+                    if (data) {
+                        $("div[data-id='" + id + "']").fadeOut();
+                        function reload() {
+                            location.reload();
+                        }
+                        setTimeout(reload, 500);
+                    }
+                    else {
+                        $.toast({
+                            text: 'Quá trình thực hiện không thành công. Hãy thử lại',
+                            icon: 'error',
+                        })
+                    }
+                });
+            }
+        }
+
+        function defaultBannkInfo(id) {
+            var divId = $("div[data-id='" + id + "']");
+            var checkDefault = divId.find(".default").hasClass('d-block');
+
+            if (checkDefault == false) {
+                bankDefault = true;
+            }
+
+            $.post("/Dashboard/DefaultBankInfo", { bankId: id, bankDefault }, function (data) {
+                if (data) {
+                    location.reload();
+                }
+            });
+        }
+    </script>
+}

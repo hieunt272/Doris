@@ -1,0 +1,112 @@
+﻿@model Doris.ViewModel.UserInfoViewModel
+@using Doris.Models
+@{
+    ViewBag.Title = "Thông tin tài khoản";
+}
+
+<section class="notify">
+    Nhập hàng giá sỉ, chiết khấu cao đến 60% !
+</section>
+<section class="user">
+    <div class="container">
+        <div class="title-section">Thông tin tài khoản</div>
+        <div class="row">
+            <div class="col-lg-5">
+                @Html.Action("UserNav")
+            </div>
+            <div class="col-lg-7">
+                <div class="box-user-contact">
+                    <div class="box-user">
+                        <div class="contact-info">
+                            <div class="dear">Xin chào, @Model.User.FullName</div>
+                            <div class="user-contact">
+                                <i class="fa-solid fa-phone"></i> @Model.User.PhoneNumber
+                            </div>
+                            <div class="user-contact">
+                                <i class="fa-light fa-envelope"></i> Email: @Model.User.Email
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box-user shop-info">
+                        <div class="media">
+                            @if (Model.User.Avatar != null)
+                            {
+                                <img src="@Path.Combine("/images/users/", Model.User.Avatar)" alt="@Model.User.FullName" class="avatar" />
+                            }
+                            else
+                            {
+                                <i class="fa-light fa-circle-user icon-avatar"></i>
+                            }
+                            <div class="media-body">
+                                <div class="title">Mã cửa hàng:</div>
+                                <div class="shop-code">@Model.User.ShopCode</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="title-level">Hạng thành viên</div>
+        <div class="row level-box">
+            <div class="col-lg-4">
+                <div class="box-user total-month">
+                    <img src="~/Content/images/img-main/carry-box.png" alt="Carry Box" />
+                    <div class="text">Tổng mua tháng trước</div>
+                    <div class="price">@Model.TotalMonth.ToString("N0")đ</div>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <div class="box-user h-100">
+                    <div class="level-info">
+                        <div class="level-info-item total-month">
+                            <div class="text">Tổng mua tháng trước</div>
+                            <div class="price">@Model.TotalMonth.ToString("N0")đ</div>
+                        </div>
+                        <div class="level-info-item level-next">
+                            <span>Hạng tháng tiếp theo</span><br />
+                            @if (Model.User.Level == Level.Diamond)
+                            {
+                                <span class="label-level">Bạn đã đạt hạng cao nhất</span>
+                            }
+                            else
+                            {
+                                <span class="label-level">@Html.DisplayFor(a => a.Level)</span>
+                            }
+                        </div>
+                    </div>
+                    <div class="level-next-buy">
+                        @if (Model.User.Level == Level.Diamond)
+                        {
+                            @:Bạn đã đạt hạng cao nhất
+                        }
+                        else
+                        {
+                            @:Mua thêm <span>@Model.TotalLevelUp.ToString("N0")đ</span> để đạt hạng
+                            if (Model.Level == Level.Bronze)
+                            {
+                                <img src="~/Content/images/img-main/icon-bronze.png" alt="Bronze" /> @:đồng
+                            }
+                            else if (Model.Level == Level.Silver)
+                            {
+                                <img src="~/Content/images/img-main/icon-silver.png" alt="Silver" /> @:bạc
+                            }
+                            else if (Model.Level == Level.Gold)
+                            {
+                                <img src="~/Content/images/img-main/icon-gold.png" alt="Gold" /> @:vàng
+                            }
+                            else if (Model.Level == Level.Platinum)
+                            {
+                                <img src="~/Content/images/img-main/icon-platinum.png" alt="Platinum" /> @:bạch kim
+                            }
+                            else if (Model.Level == Level.Diamond)
+                            {
+                                <img src="~/Content/images/img-main/diamond.png" alt="Diamond" /> @:kim cương
+                            }
+                            @:cho tháng tiếp theo.
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,39 @@
+﻿@model Doris.ViewModel.SearchProductViewModel
+@using PagedList.Mvc
+@{ 
+    ViewBag.Title = "Tìm kiếm " + Model.Keywords;
+    ViewBag.Canonical = Request.Url?.GetLeftPart(UriPartial.Authority) + Url.Action("SearchProduct", "Home");
+    ViewBag.Robots = "noindex";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="bg-pink page-pb">
+    <div class="container">
+        <div class="title-page title-border">
+            <button onclick="history.back()"><i class="fa-regular fa-arrow-left"></i></button>
+            <div class="title">Từ khóa: @Model.Keywords</div>
+        </div>
+        @if (Model.Products.Any())
+        {
+            <div class="row">
+                @foreach (var item in Model.Products)
+                {
+                    <div class="col-6 mb-2">
+                        @Html.Partial("_ProductItemMobile", item)
+                    </div>
+                }
+                @if (Model.Products.PageCount > 1)
+                {
+                    <div class="col-12 d-flex justify-content-center">
+                        @Html.PagedListPager(Model.Products, page => Url.Action("AllProduct", new { page, keywords = Model.Keywords }))
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <h3 class="font-weight-bold text-danger text-uppercase">Không có kết quả</h3>
+            <p>Xin lỗi, không có nội dung phù hợp với cụm từ tìm kiếm của bạn. Vui lòng thử lại với một số từ khóa khác.</p>
+        }
+    </div>
+</section>

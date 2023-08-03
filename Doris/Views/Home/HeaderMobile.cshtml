@@ -1,0 +1,32 @@
+﻿@model Doris.ViewModel.HeaderViewModel
+@{
+    var action = ViewContext.ParentActionViewContext.ParentActionViewContext.RouteData.GetRequiredString("Action");
+    string cls = null, cls2 = null;
+    if (action == "AllBrand" || action == "BrandDetail" || action == "AllProduct" || action == "ProductCategory" || action == "Promotion" || action == "ProductWholesale" || action == "SearchProduct")
+    {
+        cls = "d-none";
+    }
+    if (action == "Account" || action == "ProductDetail")
+    {
+        cls2 = "header-white";
+    }
+}
+
+<section class="header-mb @cls @cls2">
+    <div class="container">
+        <div class="box-header">
+            @if (cls2 != null)
+            {
+                <button onclick="history.back()" class="history-back"><i class="fa-regular fa-arrow-left"></i></button>
+            }
+            <form action="@Url.Action("SearchProduct")" class="header-search-mb">
+                <button type="submit"><i class="fa-light fa-magnifying-glass"></i></button>
+                <input type="text" name="keywords" class="form-control" placeholder="Tìm sản phẩm và Thương hiệu" required autocomplete="off" />
+                <div class="icon-camera">
+                    <i class="fa-light fa-camera"></i>
+                </div>
+            </form>
+            @Html.Action("CartSummary", "ShoppingCart")
+        </div>
+    </div>
+</section>

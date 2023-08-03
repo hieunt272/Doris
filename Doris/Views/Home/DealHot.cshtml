@@ -1,0 +1,90 @@
+﻿@model Doris.ViewModel.PromotionViewModel
+@using Doris.Models
+@{
+    var config = (ConfigSite)HttpContext.Current.Application["ConfigSite"];
+    ViewBag.Title = "Deal Hot";
+    ViewBag.Canonical = Request.Url?.GetLeftPart(UriPartial.Authority) + Url.Action("DealHot");
+    ViewBag.Robots = "noindex";
+}
+<section class="notify">
+    Nhập hàng giá sỉ, chiết khấu cao đến 60% !
+</section>
+<section class="container">
+    @if (Model.Banners.Any(a => a.GroupId == 3))
+    {
+        <div class="promotion-banner">
+            @foreach (var item in Model.Banners.Where(a => a.GroupId == 3))
+            {
+                <a href="@item.Url" class="promotion-banner-item">
+                    <img src="@Path.Combine("/images/banners/", item.Image)" alt="@item.BannerName" />
+                </a>
+            }
+        </div>
+    }
+    @if (Model.Articles.Any())
+    {
+        <div class="title-section">Các Deal hot nhất tháng này</div>
+        <div class="row">
+            @foreach (var item in Model.Articles)
+            {
+                <div class="col-lg-6">
+                    <a href="@Url.Action("Articledetail", new { url = item.Url })" class="promotion-item">
+                        <div class="promotion-img">
+                            @if (item.Image != null)
+                            {
+                                <img data-src="@Path.Combine("/images/articles/", item.Image)" src="~/Content/images/img-main/base64.gif" alt="@item.Subject" class="lazyload" />
+                            }
+                        </div>
+                        <div class="promotion-name">@item.Subject</div>
+                    </a>
+                </div>
+            }
+        </div>
+    }
+    <div class="title-section">Chương trình seller thân thiết</div>
+    <ul class="ul-reset ranking-list">
+        <li>
+            <img src="~/Content/images/img-main/icon-user.png" alt="Ranking" />
+            <div class="ranking-name">Thành viên</div>
+        </li>
+        <li>
+            <img src="~/Content/images/img-main/ranking-1.png" alt="Ranking" />
+            <div class="ranking-name">Đồng</div>
+        </li>
+        <li>
+            <img src="~/Content/images/img-main/ranking-2.png" alt="Ranking" />
+            <div class="ranking-name">Bạc</div>
+        </li>
+        <li>
+            <img src="~/Content/images/img-main/ranking-3.png" alt="Ranking" />
+            <div class="ranking-name">Vàng</div>
+        </li>
+        <li>
+            <img src="~/Content/images/img-main/ranking-4.png" alt="Ranking" />
+            <div class="ranking-name">Bạch kim</div>
+        </li>
+        <li>
+            <img src="~/Content/images/img-main/ranking-5.png" alt="Ranking" />
+            <div class="ranking-name">Kim cương</div>
+        </li>
+    </ul>
+    <div class="content-detail">
+        @Html.Raw(config.Seller)
+    </div>
+    @*<img src="~/Content/images/img-main/sales-table.jpg" alt="Bảng doanh số" class="sales-table" />
+        <div class="terms">
+            <div class="title">Điều khoản:</div>
+            <ul class="ul-reset">
+                <li>1. Hạng thành viên và mức thưởng được xét dựa trên doanh số tháng trước (sau ưu đãi)</li>
+                <li>2. Voucher thưởng được áp dụng cho các đơn hàng phát sinh vào tháng sau</li>
+                <li></li>
+            </ul>
+        </div>*@
+    @Html.Action("SubcribeForm")
+</section>
+
+@section scripts {
+    <script>
+        promotion();
+    </script>
+}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  

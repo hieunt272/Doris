@@ -1,0 +1,101 @@
+﻿@model Doris.ViewModel.ListArticleViewModel
+@using PagedList.Mvc
+@{
+    ViewBag.Title = "Danh sách bài viết";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<h2>Danh sách bài viết</h2>
+@if (ViewBag.Result == "success")
+{
+    <div id="AlertBox" class="alert alert-success"><strong>Thêm mới bài viết thành công</strong></div>
+}
+@if (ViewBag.Result == "update")
+{
+    <div id="AlertBox" class="alert alert-success"><strong>Cập nhật bài viết thành công</strong></div>
+}
+<a class="btn quick-link" href="@Url.Action("Article")"><i class="fal fa-plus-circle mr-1"></i>Thêm bài viết</a>
+<div class="box_content">
+    <form action="@Url.Action("ListArticle")" method="get">
+        <div class="row">
+            <div class="col-lg-3">
+                <label>Danh mục cấp 1</label> @Html.DropDownListFor(model => model.CatId, Model.SelectCategories, "Tất cả bài viết", new { data_item = "root-article" })
+            </div>
+            <div class="col-lg-3">
+                <label>Danh mục cấp 2</label> @Html.DropDownListFor(model => model.ChildId, Model.ChildCategoryList, "Tất cả bài viết", new { data_item = "child-article" })
+            </div>
+            <div class="col-lg-3">
+                <label>Từ khóa</label> @Html.TextBoxFor(a => a.Name, new { @class = "w300" })
+            </div>
+            <div class="col-lg-3 align-self-center">
+                <button type="submit" class="btn-search">Tìm kiếm</button>
+            </div>
+        </div>
+    </form>
+    <p>Có tổng số <strong>@Model.Articles.TotalItemCount</strong> bài viết</p>
+    <table class="list_table tablecenter table-striped">
+        <tbody>
+            <tr>
+                <th style="width: 100px">Ngày đăng</th>
+                <th style="width: 50px">Hình ảnh</th>
+                <th style="width: 300px">Tiêu đề</th>
+                <th>Danh mục</th>
+                <th>Hoạt động</th>
+                <th style="width: 130px"></th>
+            </tr>
+            @foreach (var article in Model.Articles)
+            {
+                <tr data-id="@article.Id">
+                    <td>@Html.DisplayFor(model => article.CreateDate)</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(article.Image))
+                        {
+                            <img src="@Path.Combine("/images/articles/", article.Image)" class="img-article" />
+                        }
+                    </td>
+                    <td class="left">
+                        <a href="@Url.Action("UpdateArticle", new { articleId = article.Id })"><strong>@article.Subject</strong></a>
+                    </td>
+                    <td>@article.ArticleCategory.CategoryName</td>
+                    <td>@Html.DisplayFor(model => article.Active)</td>
+                    <td>
+                        @Html.ActionLink("Sửa", "UpdateArticle", new { articleId = article.Id }) -
+                        <a href="javascript:;" onclick="deleteArticle('@article.Id')" style="color: red;">Xóa</a>
+                    </td>
+                </tr>
+            }
+            @if (Model.Articles.PageCount > 1)
+            {
+                <tr>
+                    <td colspan="8">@Html.PagedListPager(Model.Articles, page => Url.Action("ListArticle", new { page, catId = Model.CatId, childId = Model.ChildId, name = Model.Name }))</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+@section scripts
+{
+    <script type="text/javascript">
+        function deleteArticle(id) {
+            if (confirm("Bạn có chắc chắn xóa bài viết này không?")) {
+                $.post("/Article/DeleteArticle", { articleId: id }, function (data) {
+                    if (data) {
+                        $.toast({
+                            text: 'Xóa bài viết thành công',
+                            position: 'bottom-right',
+                            icon: 'success',
+                        })
+                        $("tr[data-id='" + id + "']").fadeOut();
+                    }
+                    else {
+                        $.toast({
+                            text: 'Quá trình thực hiện không thành công. Hãy thử lại',
+                            icon: 'error',
+                        })
+                    }
+                });
+            }
+        }
+    </script>
+}
+
+

@@ -1,0 +1,87 @@
+﻿@model Doris.ViewModel.FooterViewModel
+@using Doris.Models
+@{
+    var config = (ConfigSite)HttpContext.Current.Application["ConfigSite"];
+}
+
+@if (Request.Browser.IsMobileDevice)
+{
+    @Html.Action("FooterMobile")
+}
+else
+{
+    <section class="footer">
+        <div class="container">
+            <div class="row">
+                @if (Model.CategoryItems.Any())
+                {
+                    foreach (var categoryItem in Model.CategoryItems)
+                    {
+                        <div class="col-lg-3">
+                            <div class="footer-title">@categoryItem.Category.CategoryName</div>
+                            @if (categoryItem.Articles.Any())
+                            {
+                                <ul class="ul-reset nav-footer">
+                                    @foreach (var item in categoryItem.Articles)
+                                    {
+                                        <li>
+                                            <a href="@Url.Action("ArticleDetail", new { url = item.Url })">@item.Subject</a>
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                        </div>
+                    }
+                }
+                <div class="col-lg-3">
+                    <div class="footer-title">Mạng xã hội</div>
+                    <ul class="ul-reset social">
+                        <li>
+                            <a href="@config.Instagram" rel="nofollow" target="_blank">
+                                <span class="icon"><i class="fa-brands fa-instagram"></i></span> Instagram
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@config.Facebook" rel="nofollow" target="_blank">
+                                <span class="icon"><i class="fa-brands fa-facebook-f"></i></span> Facebook
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://zalo.me/@config.Zalo" rel="nofollow" target="_blank">
+                                <span class="icon-zalo">
+                                    <img src="~/Content/images/img-main/zalo-logo.png" />
+                                </span> Zalo
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@config.Tiktok" rel="nofollow" target="_blank">
+                                <span class="icon"><i class="fa-brands fa-tiktok"></i></span> Tiktok
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <a href="@Url.Action("Index")" class="logo">
+                            @if (config.ImageFooter != null)
+                            {
+                                <img data-src="@Path.Combine("/images/configs/", config.ImageFooter)" src="~/Content/images/img-main/base64.gif" alt="@config.Title" class="lazyload" />
+                            }
+                        </a>
+                        <div class="copyright">© Doris, @DateTime.Now.Year. All reights reserved</div>
+                    </div>
+                    <div class="col-lg-9 d-flex justify-content-center align-items-center">
+                        <img src="~/Content/images/img-main/bo-cong-thuong-2.png" alt="Đăng ký Bộ công thương" class="license" />
+                        <img src="~/Content/images/img-main/bo-cong-thuong.png" alt="Đăng ký Bộ công thương" class="license" />
+                        <div class="sub-text">
+                            Giấy phép ĐKKD: 0123456789<br />
+                            (Ngày 09/10/2022, Sở KHĐT TP Hà Nội)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+}

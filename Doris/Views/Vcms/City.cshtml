@@ -1,0 +1,58 @@
+﻿@model Doris.ViewModel.InsertCityViewModel
+
+@{
+    ViewBag.Title = "Thêm mới Thành phố";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<style>
+    .form_name {
+        width: 200px;
+    }
+</style>
+<h2>Thêm mới Thành phố</h2>
+<div class="box_content mt-0">
+    @using (Html.BeginForm())
+    {
+        @Html.ValidationSummary(true)
+        <div class="row">
+            <div class="col-lg-8">
+                <table class="form_table">
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.City.Name)</td>
+                        <td class="form_text">@Html.EditorFor(model => model.City.Name)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.ShipFee)</td>
+                        <td class="form_text">@Html.EditorFor(model => model.ShipFee)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.City.Sort)</td>
+                        <td class="form_text">@Html.EditorFor(model => model.City.Sort)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.City.Active)</td>
+                        <td class="form_text">@Html.CheckBoxFor(model => model.City.Active, new { @checked = "checked" }) Có/Không</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name"></td>
+                        <td class="form_text">
+                            <input type="submit" value="Thêm mới" class="btn quick-link" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    }
+</div>
+@Html.Action("ListCity")
+@section scripts{
+    <script src="~/Scripts/jquery.maskMoney.min.js"></script>
+    <script>
+        $(function () {
+            $(".input-number").maskMoney({
+                precision: 0,
+                thousands: ','
+            });
+        });
+    </script>
+}

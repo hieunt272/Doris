@@ -1,0 +1,94 @@
+﻿@model Doris.Models.Brand
+@{
+    ViewBag.Title = "Thêm thương hiệu";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<h2>Thêm thương hiệu</h2>
+@if (ViewBag.Result == "success")
+{
+    <div id="AlertBox" class="alert alert-success"><strong>Thêm mới thương hiệu thành công</strong></div>
+}
+@if (ViewBag.Result == "update")
+{
+    <div id="AlertBox" class="alert alert-success"><strong>Cập nhật thương hiệu thành công</strong></div>
+}
+<a class="btn quick-link" id="create-cat" href="#list-cat"><i class="far fa-list mr-1"></i> Danh sách thương hiệu</a>
+<div class="box_content">
+    <div class="row">
+        <div class="col-sm-12 col-lg-8">
+            @using (Html.BeginForm("Brand", "ProductVcms", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                @Html.ValidationSummary(true)
+                <table class="form_table form-table-cat">
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(a => Model.BrandName)</td>
+                        <td class="form_text">@Html.EditorFor(a => Model.BrandName)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(a => Model.Description)</td>
+                        <td class="form_text">
+                            @Html.EditorFor(a => Model.Description)
+                            @Html.ValidationMessageFor(a => Model.Description)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(a => Model.Image)</td>
+                        <td class="form_text">
+                            @Html.TextBoxFor(a => Model.Image, new { type = "file" })
+                            <span class="red-warring">
+                                Chấp nhận ảnh jpg, png, gif, jpeg < 4MB
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(a => Model.CoverImage)</td>
+                        <td class="form_text">
+                            @Html.TextBoxFor(a => Model.CoverImage, new { type = "file" })
+                            <span class="red-warring">
+                                Chấp nhận ảnh jpg, png, gif, jpeg < 4MB
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(a => Model.Body)</td>
+                        <td class="form_text">@Html.EditorFor(a => Model.Body)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(a => Model.Sort)</td>
+                        <td class="form_text">@Html.EditorFor(a => Model.Sort)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(a => Model.Home)</td>
+                        <td class="form_text">@Html.EditorFor(a => Model.Home)</td>
+                    </tr>
+                                        <tr>
+                        <td class="form_name">@Html.LabelFor(a => Model.Hot)</td>
+                        <td class="form_text">@Html.EditorFor(a => Model.Hot)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(a => Model.Active)</td>
+                        <td class="form_text">@Html.CheckBoxFor(a => Model.Active, new { @checked = "checked" })</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(a => Model.Url)</td>
+                        <td class="form_text">@Html.EditorFor(a => Model.Url)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(a => Model.TitleMeta)</td>
+                        <td class="form_text">@Html.EditorFor(a => Model.TitleMeta)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(a => Model.DescriptionMeta)</td>
+                        <td class="form_text">@Html.EditorFor(a => Model.DescriptionMeta)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name"></td>
+                        <td class="form_text">
+                            <input type="submit" class="btn quick-link" value="Thêm mới" />
+                        </td>
+                    </tr>
+                </table>
+            }
+        </div>
+    </div>
+</div>

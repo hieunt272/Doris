@@ -1,0 +1,41 @@
+﻿@model Doris.Models.User
+@{
+    var action = ViewContext.ParentActionViewContext.RouteData.GetRequiredString("Action");
+}
+
+<div class="box-user">
+    <div class="info-profile">
+        @if (Model.Avatar != null)
+        {
+            <img src="@Path.Combine("/images/users/", Model.Avatar)" alt="@Model.FullName" class="avatar" />
+        }
+        else
+        {
+            <i class="fa-light fa-circle-user icon-avatar"></i>
+        }
+        <div class="name">@Model.FullName</div>
+        <span class="label-level">@Html.DisplayFor(a => a.Level)</span>
+    </div>
+    <div class="user-nav">
+        <a href="@Url.Action("UserInfo")" class="user-nav-item @if (action == "UserInfo") { @Html.Raw("active") }">
+            <i class="fa-solid fa-user"></i>
+            Thông tin cá nhân
+        </a>
+        <a href="@Url.Action("UserChangePassword")" class="user-nav-item @if (action == "UserChangePassword") { @Html.Raw("active") }">
+            <i class="fa-light fa-lock-hashtag"></i>
+            Đổi mật khẩu
+        </a>
+        <a href="@Url.Action("OrderHistory")" class="user-nav-item @if (action == "OrderHistory") { @Html.Raw("active") }">
+            <i class="fa-light fa-clock-rotate-left"></i>
+            Lịch sử đặt hàng
+        </a>
+        <a href="@Url.Action("Address")" class="user-nav-item @if (action == "Address") { @Html.Raw("active") }">
+            <i class="fa-solid fa-location-dot"></i>
+            Sổ địa chỉ
+        </a>
+        <a href="@Url.Action("UserCategory")" class="user-nav-item @if (action == "UserCategory") { @Html.Raw("active") }">
+            <i class="fa-solid fa-list"></i>
+            Danh mục của bạn
+        </a>
+    </div>
+</div>

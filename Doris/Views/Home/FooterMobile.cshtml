@@ -1,0 +1,50 @@
+﻿@using Doris.Models
+@{
+    var config = (ConfigSite)HttpContext.Current.Application["ConfigSite"];
+    var action = ViewContext.ParentActionViewContext.ParentActionViewContext.RouteData.GetRequiredString("Action");
+
+    var email = ViewContext.RouteData.Values["MemberEmail"].ToString();
+    string cls = null, cls2 = null;
+    if (action == "AllBrand" || action == "BrandDetail" || action == "AllProduct" || action == "ProductCategory" || action == "Promotion" || action == "ProductWholesale" || action == "SearchProduct")
+    {
+        cls = "active";
+    }
+    if (action == "ProductDetail")
+    {
+        cls2 = "active";
+    }
+}
+<section class="footer-mb @cls2">
+    <a href="@Url.Action("Index")" class="action-link @if (action == "Index") { @Html.Raw("active") }">
+        <span class="icon"><i class="fa-solid fa-shop"></i></span>
+        Trang Chủ
+    </a>
+    <a href="@Url.Action("AllBrand")" class="action-link @cls">
+        <span class="icon"><i class="fa-light fa-bottle-water"></i></span>
+        Thương Hiệu
+    </a>
+    <a href="@Url.Action("Index")" class="action-link @if (action == "Notification") { @Html.Raw("active") }">
+        <span class="icon"><i class="fa-solid fa-bell"></i></span>
+        Thông Báo
+    </a>
+    @if (email != "")
+    {
+        <a href="@Url.Action("Account", "Dashboard")" class="action-link @if (action == "Account") { @Html.Raw("active") }">
+            <span class="icon"><i class="fa-solid fa-user"></i></span>
+            Tài Khoản Của Tôi
+        </a>
+    }
+    else
+    {
+        <a href="@Url.Action("Login", "User")" class="action-link @if (action == "Account" || action == "ProductDetail") { @Html.Raw("active") }">
+            <span class="icon"><i class="fa-solid fa-user"></i></span>
+            Tài Khoản Của Tôi
+        </a>
+    }
+</section>
+<section class="btn-scroll-mb @cls2">
+    <img src="~/Content/images/img-main/scroll-to-top.png" alt="Scroll To Top" />
+</section>
+<a href="tel:@config.Hotline" class="phone-fixed @cls2">
+    <img src="~/Content/images/img-main/phone.png" alt="Phone" />
+</a>

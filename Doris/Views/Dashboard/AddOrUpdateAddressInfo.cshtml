@@ -1,0 +1,108 @@
+﻿@model Doris.ViewModel.AddressViewModel
+
+<div class="card card-red p-0">
+    <div class="card-header">Thông tin địa chỉ</div>
+    <div class="card-body">
+        <form id="addressForm">
+            @Html.AntiForgeryToken()
+            @if (Model.Address != null)
+            {
+                @Html.HiddenFor(a => a.Address.Id)
+                <div class="form-group form-row">
+                    @Html.LabelFor(m => m.Address.Fullname, new { @class = "col-form-label col-4" })
+                    <div class="col-8">
+                        @Html.TextBoxFor(m => m.Address.Fullname, new { @class = "form-control form-control-sm" })
+                        @Html.ValidationMessageFor(m => m.Address.Fullname)
+                    </div>
+                </div>
+                <div class="form-group form-row">
+                    @Html.LabelFor(m => m.Address.Mobile, new { @class = "col-form-label col-4" })
+                    <div class="col-8">
+                        @Html.TextBoxFor(m => m.Address.Mobile, new { @class = "form-control form-control-sm" })
+                        @Html.ValidationMessageFor(m => m.Address.Mobile)
+                    </div>
+                </div>
+                <div class="form-group form-row">
+                    @Html.LabelFor(m => m.CityId, new { @class = "col-form-label col-4" })
+                    <div class="col-8">
+                        @Html.DropDownListFor(m => m.CityId, Model.CitySelectList, "Chọn Tỉnh/Thành phố", new { @class = "form-control form-control-sm", data_item = "city" })
+                        @Html.ValidationMessageFor(m => m.CityId)
+                    </div>
+                </div>
+                <div class="form-group form-row">
+                    @Html.LabelFor(m => m.DistrictId, new { @class = "col-form-label col-4" })
+                    <div class="col-8">
+                        @Html.DropDownListFor(m => m.DistrictId, Model.DistrictSelectList, "Chọn Quận/Huyện", new { @class = "form-control form-control-sm", data_item = "district" })
+                        @Html.ValidationMessageFor(m => m.DistrictId)
+                    </div>
+                </div>
+                <div class="form-group form-row">
+                    @Html.LabelFor(m => m.WardId, new { @class = "col-form-label col-4" })
+                    <div class="col-8">
+                        @Html.DropDownListFor(m => m.WardId, Model.WardSelectList, "Chọn Phường/Xã", new { @class = "form-control form-control-sm", data_item = "ward" })
+                        @Html.ValidationMessageFor(m => m.WardId)
+                    </div>
+                </div>
+                <div class="form-group form-row">
+                    @Html.LabelFor(m => m.Address.SpecificAddress, new { @class = "col-form-label col-4" })
+                    <div class="col-8">
+                        @Html.TextAreaFor(m => m.Address.SpecificAddress, new { @class = "form-control form-control-sm", rows = 4, placeholder = "Vui lòng nhập địa chỉ cụ thể" })
+                        @Html.ValidationMessageFor(m => m.Address.SpecificAddress)
+                    </div>
+                </div>
+                <div class="form-group form-row">
+                    <div class="col-8 offset-4">
+                        <button type="submit" class="btn-add">Lưu</button>
+                    </div>
+                </div>
+            }
+        </form>
+    </div>
+    <script>
+        $("#addressForm").on("submit", function (e) {
+            e.preventDefault();
+            if ($(this).valid()) {
+                $.post("/Dashboard/AddOrUpdateAddressInfo", $(this).serialize(), function (data) {
+                    alert(data.msg);
+                    if (data.status === 0) {
+                        window.location.reload();
+                    }
+                });
+            }
+        });
+
+        $("[data-item=city]").on("change", function (data) {
+            const id = $(this).val();
+            var items = [];
+            items.push("<option value>Chọn Quận/Huyện</option>");
+
+            if (id !== "") {
+                $.getJSON("/Base/GetDistrict", { cityId: id }, function (data) {
+                    $.each(data, function (key, val) {
+                        items.push("<option value='" + val.Id + "'>" + val.Name + "</option>");
+                    });
+                    $("[data-item=district]").html(items.join(""));
+                });
+            } else {
+                $("[data-item=district]").html(items.join(""));
+            }
+        });
+
+        $("[data-item=district]").on("change", function (data) {
+            const id = $(this).val();
+            var items = [];
+            items.push("<option value>Chọn Phường/Xã</option>");
+
+            if (id !== "") {
+                $.getJSON("/Base/GetWard", { districtId: id }, function (data) {
+                    $.each(data, function (key, val) {
+                        items.push("<option value='" + val.Id + "'>" + val.Name + "</option>");
+                    });
+                    $("[data-item=ward]").html(items.join(""));
+                });
+            } else {
+                $("[data-item=ward]").html(items.join(""));
+            }
+        });
+    </script>
+</div>
