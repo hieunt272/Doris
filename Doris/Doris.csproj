@@ -283,6 +283,7 @@
     <Content Include="Content\images\img-main\scroll-to-top.png" />
     <Content Include="Content\images\img-main\unlock.png" />
     <Content Include="Content\images\img-main\zalo-logo.png" />
+    <Content Include="Content\images\img-main\zalo-white.png" />
     <Content Include="Content\images\svg-contact\earth.svg" />
     <Content Include="Content\images\svg-contact\email.svg" />
     <Content Include="Content\images\svg-contact\map.svg" />
