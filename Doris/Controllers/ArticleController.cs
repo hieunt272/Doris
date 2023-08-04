@@ -308,6 +308,7 @@ namespace Doris.Controllers
                 article.Active = model.Article.Active;
                 article.TitleMeta = model.Article.TitleMeta;
                 article.DescriptionMeta = model.Article.DescriptionMeta;
+                article.LastUpdate = DateTime.Now;
 
                 _unitOfWork.Save();
 

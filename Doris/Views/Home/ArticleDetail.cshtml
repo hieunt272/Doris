@@ -1,0 +1,84 @@
+﻿@model Doris.ViewModel.ArticleDetailViewModel
+@{
+    ViewBag.Title = Model.Article.TitleMeta ?? Model.Article.Subject;
+    ViewBag.Description = Model.Article.DescriptionMeta ?? Model.Article.Description;
+    ViewBag.Canonical = Request.Url?.GetLeftPart(UriPartial.Authority) + Url.Action("ArticleDetail", new { url = Model.Article.Url });
+
+    if (Model.Article.Image != null)
+    {
+        ViewBag.ImageShare = Request.Url?.GetLeftPart(UriPartial.Authority) + Path.Combine("/images/articles/", Model.Article.Image);
+    }
+}
+
+<section class="bg-breadcrumb">
+    <div class="container">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index")">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a href="#">@Model.Article.ArticleCategory.CategoryName</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@Model.Article.Subject</li>
+        </ol>
+    </div>
+</section>
+<section class="article-detail">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 pr-lg-0">
+                <div class="box-border shadow mb-4">
+                    <h1 class="article-name">@Model.Article.Subject</h1>
+                    <span class="date">
+                        <i class="fal fa-calendar-alt"></i>
+                        @Model.Article.CreateDate.ToString("dd/MM/yyyy")
+                    </span>
+                    <div class="sapo-detail">
+                        @Model.Article.Description
+                    </div>
+                    @if (Model.Article.Body != null)
+                    {
+                        <div class="content-detail mt-3">
+                            @Html.Raw(Model.Article.Body)
+                        </div>
+                    }
+                    <hr>
+                    <div class="share">
+                        <ul class="d-flex align-items-center ul-reset">
+                            <li class="mr-3">Chia sẻ:</li>
+                            <li><button class="facebook" onclick="window.open('https://www.facebook.com/sharer.php?u='+encodeURIComponent(location.href)+'&amp;t='+encodeURIComponent(document.title));return false"><i class="fab fa-facebook-f"></i></button></li>
+                            <li><button class="instagram" onclick="window.open('https://www.instagram.com/?url='+encodeURIComponent(location.href)+'&amp;t='+encodeURIComponent(document.title));return false"><i class="fab fa-instagram"></i></button></li>
+                            <li><button class="twitter" onclick="window.open('https://twitter.com/intent/tweet?url='+encodeURIComponent(location.href)+'&amp;text='+encodeURIComponent(document.title));return false"><i class="fab fa-twitter"></i></button></li>
+                            <li><button class="linkedin" onclick="window.open('https://www.linkedin.com/sharing/share-offsite/?url='+encodeURIComponent(location.href)+'&amp;t='+encodeURIComponent(document.title));return false"><i class="fab fa-linkedin-in"></i></button></li>
+                        </ul>
+                    </div>
+                    <hr />
+                    <div class="fb-comments" data-href="@ViewBag.Canonical" data-numposts="10" data-width="100%"></div>
+                </div>
+            </div>
+            @if (Model.Articles.Any())
+            {
+                <div class="col-sm-12 col-lg-4 pl-lg-4">
+                    <div class="box-border p-3 shadow">
+                        <div class="recent-post">
+                            <div class="post-sidebar-title">
+                                Bài liên quan
+                            </div>
+                            @foreach (var article in Model.Articles)
+                            {
+                                <div class="media py-3">
+                                    <div class="media-body">
+                                        <a href="@Url.Action("ArticleDetail", "Home", new { url = article.Url })" class="subject">
+                                            @article.Subject
+                                        </a>
+                                        <div class="desc">@article.Description</div>
+                                        <span class="date">
+                                            <i class="fal fa-calendar-alt"></i>
+                                            @article.CreateDate.ToString("dd/MM/yyyy")
+                                        </span>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>

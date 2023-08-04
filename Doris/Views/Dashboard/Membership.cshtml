@@ -1,0 +1,90 @@
+﻿@model Doris.ViewModel.ProfileViewModel
+@using Doris.Models
+@{
+    var config = (ConfigSite)HttpContext.Current.Application["ConfigSite"];
+    ViewBag.Title = "Cấp bậc thành viên";
+    ViewBag.Canonical = Request.Url?.GetLeftPart(UriPartial.Authority) + Url.Action("Membership");
+    ViewBag.Robots = "noindex";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card card-membership p-0">
+    <div class="card-header">Cấp bậc thành viên</div>
+    <div class="card-body">
+        <div class="level-list">
+            <div class="level-item">
+                <img src="~/Content/images/img-main/ranking-1.png" />
+                Thành viên
+            </div>
+            <div class="level-item">
+                <img src="~/Content/images/img-main/ranking-2.png" />
+                Đồng
+            </div>
+            <div class="level-item">
+                <img src="~/Content/images/img-main/ranking-3.png" />
+                Bạc
+            </div>
+            <div class="level-item">
+                <img src="~/Content/images/img-main/ranking-4.png" />
+                Vàng
+            </div>
+            <div class="level-item">
+                <img src="~/Content/images/img-main/ranking-5.png" />
+                Bạch Kim
+            </div>
+            <div class="level-item">
+                <img src="~/Content/images/img-main/ranking-6.png" />
+                Kim Cương
+            </div>
+        </div>
+        <div class="progress">
+            <div class="progress-bar" role="progressbar" style="width: @Model.PercentOrder%" aria-valuenow="@Model.PercentOrder" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+        <div class="info-level-next">
+            <div class="media">
+                @switch (Model.Level)
+                {
+                    case Level.Bronze:
+                        <img src="~/Content/images/img-main/ranking-2.png" />
+                        break;
+                    case Level.Silver:
+                        <img src="~/Content/images/img-main/ranking-3.png" />
+                        break;
+                    case Level.Gold:
+                        <img src="~/Content/images/img-main/ranking-4.png" />
+                        break;
+                    case Level.Platinum:
+                        <img src="~/Content/images/img-main/ranking-5.png" />
+                        break;
+                    case Level.Diamond:
+                        <img src="~/Content/images/img-main/ranking-6.png" />
+                        break;
+                }
+                <div class="media-body">
+                    <div class="text">Thăng hạng @Html.DisplayFor(a => a.Level)</div>
+                    <div class="sub-text">Nhận nhiều ưu đãi hơn khi thăng hạng @Html.DisplayFor(a => a.Level)</div>
+                </div>
+            </div>
+            <div class="view-more">Xem thêm</div>
+        </div>
+        <div id="contentMembership">
+            <div class="title-bold">Chương trình seller thân thiết</div>
+            <div class="content-detail" id="memberShip">
+                @Html.Raw(config.MemberShip)
+            </div>
+            <div class="view-less">Rút gọn</div>
+        </div>
+        <button type="button" data-fancybox-close class="close-card">Đóng</button>
+    </div>
+    <script>
+        $('.view-more').click(function () {
+            $(this).hide();
+            $('#contentMembership').show();
+        });
+
+        $('.view-less').click(function () {
+            $('#contentMembership').hide();
+            $('.view-more').show();
+        });
+    </script>
+</div>

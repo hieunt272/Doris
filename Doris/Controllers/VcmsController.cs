@@ -267,6 +267,7 @@ namespace Doris.Controllers
                 //config.AboutUrl = model.AboutUrl;
                 config.BankInfo = model.BankInfo;
                 config.Seller = model.Seller;
+                config.MemberShip = model.MemberShip;
 
                 if (model.Zalo != null)
                 {

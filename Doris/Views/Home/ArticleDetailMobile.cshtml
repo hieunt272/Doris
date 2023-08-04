@@ -1,0 +1,38 @@
+﻿@model Doris.ViewModel.ArticleDetailViewModel
+@{
+    ViewBag.Title = Model.Article.TitleMeta ?? Model.Article.Subject;
+    ViewBag.Description = Model.Article.DescriptionMeta ?? Model.Article.Description;
+    ViewBag.Canonical = Request.Url?.GetLeftPart(UriPartial.Authority) + Url.Action("ArticleDetail", new { url = Model.Article.Url });
+
+    if (Model.Article.Image != null)
+    {
+        ViewBag.ImageShare = Request.Url?.GetLeftPart(UriPartial.Authority) + Path.Combine("/images/articles/", Model.Article.Image);
+    }
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<section class="title-page title-red">
+    <div class="container">
+        <button onclick="history.back()" class="history-back"><i class="fa-regular fa-arrow-left"></i></button>
+        <div class="title">@Model.Article.Subject</div>
+    </div>
+</section>
+<section class="article-detail-mb page-pb">
+    <div class="container">
+        <div class="article-name">@Model.Article.Subject</div>
+        <div class="last-update">
+            Cập nhật:
+            @if (Model.Article.LastUpdate != null)
+            {
+                @Convert.ToDateTime(Model.Article.LastUpdate).ToString("dd/MM/yyyy")
+            }
+            else
+            {
+                @Model.Article.CreateDate.ToString("dd/MM/yyyy")
+            }
+        </div>
+        <div class="content-detail">
+            @Html.Raw(Model.Article.Body)
+        </div>
+        <a href="@Url.Action("Support")" class="btn-detail">Xác nhận & quay lại</a>
+    </div>
+</section>

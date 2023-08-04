@@ -1,0 +1,86 @@
+﻿@model Doris.ViewModel.CollabPolicyViewModel
+@{
+    ViewBag.Title = "Chính sách giá cho cộng tác viên";
+    ViewBag.Canonical = Request.Url?.GetLeftPart(UriPartial.Authority) + Url.Action("CollabPolicy");
+    ViewBag.Robots = "noindex";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="collab-policy page-pb-2">
+    <div class="container">
+        <div class="title-page">
+            <button onclick="history.back()" class="history-back"><i class="fa-regular fa-arrow-left"></i></button>
+            <div class="title">Chính sách giá cho cộng tác viên</div>
+        </div>
+        <div class="introduce">
+            Kinh doanh không cần vốn.<br />
+            Doris sẽ vận hành giao hàng và gửi lại bạn hoa hồng.
+        </div>
+        <a href="@Url.Action("Support")" class="view-policy">
+            <i class="fa-light fa-circle-info"></i>
+            <span>Tìm hiểu thêm</span>
+            <i class="fa-solid fa-chevron-right"></i>
+        </a>
+        <div id="myPrice">
+            <div class="my-price-title">Giá bán của bạn (có thể chỉnh sửa)</div>
+            <form id="changePrice">
+                <div class="edit-price"><i class="fa-light fa-pen-to-square"></i></div>
+                <div class="price-text">@Model.MyPrice.ToString("N0") đ</div>
+                <input type="text" name="Price" class="form-control input-money input-hidden" value="@Model.MyPrice.ToString("N0")" required />
+                <input type="hidden" name="ProductId" value="@Model.ProductId" />
+            </form>
+            <div class="price-product">
+                Giá bán lẻ của sản phẩm là @Model.Price.ToString("N0") đ
+            </div>
+            <div class="price-info">
+                Giá bán của bạn <span class="my-price">@Model.MyPrice.ToString("N0") đ</span>
+            </div>
+            <div class="price-info">
+                Giá nhập của bạn <span>@Model.LevelPrice.ToString("N0") đ</span>
+            </div>
+            <div class="price-info comission">
+                Hoa hồng bạn nhận được <span class="my-comission">@Model.Comission.ToString("N0") đ</span>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="site-footer">
+    <div class="container">
+        <form id="formBookProduct">
+            <input type="hidden" name="ProductId" value="@Model.ProductId" />
+            <div class="quantity">
+                <input type="text" value="1" min="1" id="number" name="quantity" class="input-number" maxlength="4" />
+            </div>
+            <button type="submit" class="add-cart">Thêm vào giỏ</button>
+        </form>
+    </div>
+</section>
+@section scripts{
+    <script src="~/Scripts/jquery.nice-number.js"></script>
+    <script src="~/Scripts/jquery.maskMoney.min.js"></script>
+    <script>
+        $(".input-number").niceNumber();
+        $(".input-money").maskMoney({
+            precision: 0,
+            thousands: ','
+        });
+
+        $('.edit-price').click(function () {
+            $('.price-text').hide();
+            $('.input-hidden').show();
+        });
+
+        $("#myPrice").on("submit", function (e) {
+            e.preventDefault();
+
+            var proId = $('#myPrice').find('input[name=ProductId]').val();
+            var price = $('#myPrice').find('input[name=Price]').val();
+
+            $.post("/Home/ChangePrice", { productId: proId, price: price }, function (data) {
+                if (data.status === 0) {
+                    window.location.reload();
+                }
+            });
+        });
+    </script>
+}

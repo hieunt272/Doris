@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Web;
+using System.Web.Services.Description;
 using Doris.Models;
 
 namespace Doris.DAL
@@ -30,5 +31,6 @@ namespace Doris.DAL
         public DbSet<Address> Addresses { get; set; }
         public DbSet<Bank> Banks { get; set; }
         public DbSet<BankUser> BankUsers { get; set; }
+        public DbSet<ProductUser> ProductUsers { get; set; }
     }
 }

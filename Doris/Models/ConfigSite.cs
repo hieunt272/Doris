@@ -66,5 +66,7 @@ namespace Doris.Models
         public string ListImage { get; set; }
         [Display(Name = "Chương trình Seller thân thiết"), UIHint("EditorBox")]
         public string Seller { get; set; }
+        [Display(Name = "Cấp bậc thành viên"), UIHint("EditorBox")]
+        public string MemberShip { get; set; }
     }
 }

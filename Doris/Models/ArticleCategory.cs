@@ -42,5 +42,7 @@ namespace Doris.Models
         Article,
         [Display(Name = "Tin khuyến mãi")]
         Promotion,
+        [Display(Name = "Hỗ trợ")]
+        Support
     }
 }

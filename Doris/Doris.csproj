@@ -163,6 +163,10 @@
     <Compile Include="Migrations\202308030744477_Initial.designer.cs">
       <DependentUpon>202308030744477_Initial.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202308031546104_UpdateSome.cs" />
+    <Compile Include="Migrations\202308031546104_UpdateSome.designer.cs">
+      <DependentUpon>202308031546104_UpdateSome.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Address.cs" />
     <Compile Include="Models\Admin.cs" />
@@ -180,6 +184,7 @@
     <Compile Include="Models\OrderDetail.cs" />
     <Compile Include="Models\Product.cs" />
     <Compile Include="Models\ProductCategory.cs" />
+    <Compile Include="Models\ProductUser.cs" />
     <Compile Include="Models\ShoppingCart.cs" />
     <Compile Include="Models\Subcribe.cs" />
     <Compile Include="Models\User.cs" />
@@ -1837,6 +1842,13 @@
     <Content Include="Views\Vcms\UpdateBank.cshtml" />
     <Content Include="Views\Dashboard\AddOrUpdateBankInfo.cshtml" />
     <Content Include="Views\Home\ProductDetailMobile.cshtml" />
+    <Content Include="Views\Dashboard\Membership.cshtml" />
+    <Content Include="Views\Home\CollabPolicy.cshtml" />
+    <Content Include="Views\Home\Support.cshtml" />
+    <Content Include="Views\Home\ArticleDetail.cshtml" />
+    <Content Include="Views\Home\ArticleDetailMobile.cshtml" />
+    <Content Include="Views\ShoppingCart\IndexCartMobile.cshtml" />
+    <Content Include="Views\Shared\_LayoutShoppingCart.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
@@ -1847,6 +1859,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202308030744477_Initial.resx">
       <DependentUpon>202308030744477_Initial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202308031546104_UpdateSome.resx">
+      <DependentUpon>202308031546104_UpdateSome.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

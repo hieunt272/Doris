@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Configuration;
 using System.Web.Mvc;
+using System.Xml.Schema;
 
 namespace Doris.Controllers
 {
@@ -33,6 +34,12 @@ namespace Doris.Controllers
                 CartTotalShipFee = cart.GetTotalShipFee()
             };
             ViewBag.ReturnUrl = returnUrl;
+
+            if (Request.Browser.IsMobileDevice)
+            {
+                return PartialView("IndexCartMobile", viewModel);
+            }
+
             return View(viewModel);
         }
         [HttpPost, Route("thong-tin")]
@@ -57,6 +64,10 @@ namespace Doris.Controllers
                 _unitOfWork.Save();
             }
             return RedirectToActionPermanent("Index");
+        }
+        public PartialViewResult IndexCartMobile()
+        {
+            return PartialView();
         }
         [Route("thanh-toan")]
         public ActionResult CheckOut()

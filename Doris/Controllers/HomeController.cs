@@ -41,7 +41,7 @@ namespace Doris.Controllers
             {
                 Banners = _unitOfWork.BannerRepository.GetQuery(b => b.Active, o => o.OrderBy(b => b.Sort)),
                 NewProducts = products.Where(a => a.New).Take(10),
-                ProductHots = products.Where(a => a.Hot).Take(20),
+                ProductHots = products.Where(a => a.Hot).Take(10),
                 Products = products.Where(a => a.Home).Take(20),
                 Brands = Brands.Where(a => a.Home).Take(20)
             };
@@ -140,7 +140,7 @@ namespace Doris.Controllers
         }
 
         #region Article 
-        [Route("blogs/{url}.html", Order = 1)]
+        [Route("blogs/{url}.html")]
         public ActionResult ArticleDetail(string url)
         {
             var article = _unitOfWork.ArticleRepository.GetQuery(a => a.Url == url && a.Active).FirstOrDefault();
@@ -155,209 +155,17 @@ namespace Doris.Controllers
                 Articles = _unitOfWork.ArticleRepository.GetQuery(p =>
                 p.Active && (p.ArticleCategoryId == article.ArticleCategoryId && p.Id != article.Id), q => q.OrderByDescending(a => a.CreateDate), 6),
             };
-            return View(model);
-        }
-        [Route("blogs/{url:regex(^(?!.*(vcms|uploader|article|banner|contact|product|user)).*$)}", Order = 2)]
-        public ActionResult ArticleCategory(int? page, string url, string sort)
-        {
-            var category = _unitOfWork.ArticleCategoryRepository.GetQuery(a => a.CategoryActive && a.Url == url).FirstOrDefault();
-            if (category == null)
+
+            if (Request.Browser.IsMobileDevice)
             {
-                return RedirectToAction("Index");
+                return PartialView("ArticleDetailMobile", model);
             }
-
-            var articles = _unitOfWork.ArticleRepository.GetQuery(a => a.Active && (a.ArticleCategoryId == category.Id || a.ArticleCategory.ParentId == category.Id),
-                q => q.OrderByDescending(a => a.CreateDate));
-            var pageNumber = page ?? 1;
-            var pageSize = 12;
-
-            if (articles.Count() == 1)
-            {
-                var fi = articles.First();
-                return RedirectToAction("ArticleDetail", new { url = fi.Url });
-            }
-
-            switch (sort)
-            {
-                case "date-asc":
-                    articles = articles.OrderBy(a => a.CreateDate);
-                    break;
-                default:
-                    articles = articles.OrderByDescending(a => a.CreateDate);
-                    break;
-            }
-
-            var model = new ArticleCategoryViewModel
-            {
-                Category = category,
-                Articles = articles.ToPagedList(pageNumber, pageSize),
-                Categories = ArticleCategories,
-                Sort = sort,
-                BeginCount = (pageNumber - 1) * pageSize + 1,
-                EndCount = pageNumber * pageSize,
-            };
-            return View(model);
-        }
-        public PartialViewResult GetArticleCategory(int? page, string url, string sort)
-        {
-            var category = _unitOfWork.ArticleCategoryRepository.GetQuery(a => a.CategoryActive && a.Url == url).FirstOrDefault();
-
-            var articles = _unitOfWork.ArticleRepository.GetQuery(
-                a => a.Active && (a.ArticleCategoryId == category.Id || a.ArticleCategory.ParentId == category.Id),
-                q => q.OrderByDescending(a => a.CreateDate));
-            var pageNumber = page ?? 1;
-            var pageSize = 12;
-
-            switch (sort)
-            {
-                case "date-asc":
-                    articles = articles.OrderBy(a => a.CreateDate);
-                    break;
-                default:
-                    articles = articles.OrderByDescending(a => a.CreateDate);
-                    break;
-            }
-
-            var model = new ArticleCategoryViewModel
-            {
-                Category = category,
-                Articles = articles.ToPagedList(pageNumber, pageSize),
-                Categories = ArticleCategories,
-                Sort = sort,
-                BeginCount = (pageNumber - 1) * pageSize + 1,
-                EndCount = pageNumber * pageSize,
-            };
-            return PartialView(model);
-        }
-        [Route("blogs")]
-        public ActionResult AllArticle(int? page, string sort)
-        {
-            var pageNumber = page ?? 1;
-            var pageSize = 12;
-            var articles = _unitOfWork.ArticleRepository.GetQuery(a => a.Active);
-
-            switch (sort)
-            {
-                case "date-asc":
-                    articles = articles.OrderBy(a => a.CreateDate);
-                    break;
-                default:
-                    articles = articles.OrderByDescending(a => a.CreateDate);
-                    break;
-            }
-
-            var model = new AllArticleViewModel()
-            {
-                Articles = articles.ToPagedList(pageNumber, pageSize),
-                Categories = ArticleCategories,
-                Sort = sort,
-                BeginCount = (pageNumber - 1) * pageSize + 1,
-                EndCount = pageNumber * pageSize,
-            };
-            return View(model);
-        }
-        public PartialViewResult GetArticle(int? page, string sort)
-        {
-            var pageNumber = page ?? 1;
-            var pageSize = 12;
-            var articles = _unitOfWork.ArticleRepository.GetQuery(a => a.Active).AsNoTracking();
-
-            switch (sort)
-            {
-                case "date-asc":
-                    articles = articles.OrderBy(a => a.CreateDate);
-                    break;
-                default:
-                    articles = articles.OrderByDescending(a => a.CreateDate);
-                    break;
-            }
-
-            var model = new AllArticleViewModel()
-            {
-                Articles = articles.ToPagedList(pageNumber, pageSize),
-                Categories = ArticleCategories,
-                Sort = sort,
-                BeginCount = (pageNumber - 1) * pageSize + 1,
-                EndCount = pageNumber * pageSize,
-            };
-
-            return PartialView(model);
-        }
-        [ChildActionOnly]
-        public PartialViewResult MenuArticle()
-        {
-            var model = new MenuArticleViewModel
-            {
-                Articles = _unitOfWork.ArticleRepository.GetQuery(l => l.Active, a => a.OrderByDescending(c => c.CreateDate), 5),
-                ArticleCategories = ArticleCategories.Where(a => a.ParentId == null),
-            };
-            return PartialView(model);
-        }
-        [Route("tim-kiem")]
-        public ActionResult SearchArticle(int? page, string keywords, string sort)
-        {
-            var pageNumber = page ?? 1;
-            var pageSize = 12;
-            var newkey = keywords.Trim();
-            var articles = _unitOfWork.ArticleRepository.GetQuery(l =>
-                l.Active && l.Subject.Contains(newkey) && l.ArticleCategory.TypePost == TypePost.Article, c => c.OrderByDescending(a => a.CreateDate));
-
-            if (string.IsNullOrEmpty(newkey))
-            {
-                return RedirectToAction("Index");
-            }
-
-            switch (sort)
-            {
-                case "date-asc":
-                    articles = articles.OrderBy(a => a.CreateDate);
-                    break;
-                default:
-                    articles = articles.OrderByDescending(a => a.CreateDate);
-                    break;
-            }
-
-            var model = new ArticleSearchViewModel
-            {
-                Articles = articles.ToPagedList(pageNumber, pageSize),
-                Keywords = keywords,
-                Categories = ArticleCategories,
-                Sort = sort,
-                BeginCount = (pageNumber - 1) * pageSize + 1,
-                EndCount = pageNumber * pageSize,
-            };
 
             return View(model);
         }
-        public PartialViewResult GetSearchArticle(int? page, string keywords, string sort)
+        public PartialViewResult ArticleDetailMobile()
         {
-            var pageNumber = page ?? 1;
-            var pageSize = 12;
-            var newkey = keywords.Trim();
-            var articles = _unitOfWork.ArticleRepository.GetQuery(l =>
-                l.Active && l.Subject.Contains(newkey) && l.ArticleCategory.TypePost == TypePost.Article, c => c.OrderByDescending(a => a.CreateDate));
-
-            switch (sort)
-            {
-                case "date-asc":
-                    articles = articles.OrderBy(a => a.CreateDate);
-                    break;
-                default:
-                    articles = articles.OrderByDescending(a => a.CreateDate);
-                    break;
-            }
-
-            var model = new ArticleSearchViewModel
-            {
-                Articles = articles.ToPagedList(pageNumber, pageSize),
-                Keywords = keywords,
-                Categories = ArticleCategories,
-                Sort = sort,
-                BeginCount = (pageNumber - 1) * pageSize + 1,
-                EndCount = pageNumber * pageSize,
-            };
-
-            return PartialView(model);
+            return PartialView();
         }
         #endregion
 
@@ -965,6 +773,87 @@ namespace Doris.Controllers
         }
         #endregion
 
+        [Route("chinh-sach-gia-{productId}")]
+        public ActionResult CollabPolicy(int productId)
+        {
+            var product = _unitOfWork.ProductRepository.GetById(productId);
+            if (product == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            var productUser = _unitOfWork.ProductUserRepository.GetQuery(a => a.ProductId == productId && a.UserId == User.Id).FirstOrDefault();
+
+            decimal price = 0;
+            if (product.PriceDiamond > 0 && User.Level == Level.Diamond)
+            {
+                price = Convert.ToDecimal(product.PriceDiamond);
+            }
+            else if (product.PricePlatinum > 0 && User.Level == Level.Platinum)
+            {
+                price = Convert.ToDecimal(product.PricePlatinum);
+            }
+            else if (product.PriceGold > 0 && User.Level == Level.Gold)
+            {
+                price = Convert.ToDecimal(product.PriceGold);
+            }
+            else if (product.PriceSilver > 0 && User.Level == Level.Silver)
+            {
+                price = Convert.ToDecimal(product.PriceSilver);
+            }
+            else if (product.PriceBronze > 0 && User.Level == Level.Bronze)
+            {
+                price = Convert.ToDecimal(product.PriceBronze);
+            }
+            else if (product.Price > 0)
+            {
+                price = Convert.ToDecimal(product.Price);
+            }
+
+            var model = new CollabPolicyViewModel
+            {
+                MyPrice = Convert.ToDecimal(product.Price),
+                Price = Convert.ToDecimal(product.Price),
+                LevelPrice = price,
+                ProductId = productId
+            };
+
+            if (productUser != null)
+            {
+                model.MyPrice = Convert.ToDecimal(productUser.UserPrice);
+            }
+
+            model.Comission = model.MyPrice - price;
+
+            return View(model);
+        }
+        public JsonResult ChangePrice(int productId, string price)
+        {
+            if (ModelState.IsValid)
+            {
+                var productUser = _unitOfWork.ProductUserRepository.GetQuery(a => a.ProductId == productId && a.UserId == User.Id).FirstOrDefault();
+
+                if (productUser == null)
+                {
+                    productUser = new ProductUser
+                    {
+                        ProductId = productId,
+                        UserId = User.Id,
+                        UserPrice = Convert.ToDecimal(price.Replace(",", ""))
+                    };
+                }
+                else
+                {
+                    productUser.UserPrice = Convert.ToDecimal(price.Replace(",", ""));
+                }
+
+                _unitOfWork.ProductUserRepository.AddOrUpdate(productUser);
+                _unitOfWork.Save();
+                return Json(new { status = 0 });
+            }
+            return Json(new { status = 1 });
+        }
+
         [Route("deal-hot")]
         public ActionResult DealHot()
         {
@@ -985,6 +874,12 @@ namespace Doris.Controllers
                 Categories = ProductCategories
             };
             return View(model);
+        }
+        [Route("ho-tro")]
+        public ActionResult Support()
+        {
+            var articles = _unitOfWork.ArticleRepository.GetQuery(a => a.Active && a.ArticleCategory.TypePost == TypePost.Support, o => o.OrderByDescending(a => a.CreateDate));
+            return View(articles);
         }
 
         [ChildActionOnly]

@@ -29,51 +29,46 @@ namespace Doris.Controllers
         public ActionResult Account(string result = "")
         {
             ViewBag.Result = result;
-            var user = _unitOfWork.UserRepository.GetQuery(a => a.Id == User.Id).FirstOrDefault();
-            if (user == null)
-            {
-                return RedirectToAction("Index", "Home");
-            }
 
-            var nextLevel = (int)user.Level + 1;
+            var nextLevel = (int)User.Level + 1;
             var level = (Level)nextLevel;
             decimal totalLevelUp = 0;
             int percent = 0;
 
-            percent = Convert.ToInt32(user.TotalBuy / 250000000 * 100);
+            percent = Convert.ToInt32(User.TotalBuy / 250000000 * 100);
 
             switch (level)
             {
                 case Level.Bronze:
-                    totalLevelUp = 10000000 - Convert.ToDecimal(user.TotalBuy);
+                    totalLevelUp = 10000000 - Convert.ToDecimal(User.TotalBuy);
                     break;
                 case Level.Silver:
-                    totalLevelUp = 50000000 - Convert.ToDecimal(user.TotalBuy);
+                    totalLevelUp = 50000000 - Convert.ToDecimal(User.TotalBuy);
                     break;
                 case Level.Gold:
-                    totalLevelUp = 100000000 - Convert.ToDecimal(user.TotalBuy);
+                    totalLevelUp = 100000000 - Convert.ToDecimal(User.TotalBuy);
                     break;
                 case Level.Platinum:
-                    totalLevelUp = 150000000 - Convert.ToDecimal(user.TotalBuy);
+                    totalLevelUp = 150000000 - Convert.ToDecimal(User.TotalBuy);
                     break;
                 case Level.Diamond:
-                    totalLevelUp = 250000000 - Convert.ToDecimal(user.TotalBuy);
+                    totalLevelUp = 250000000 - Convert.ToDecimal(User.TotalBuy);
                     break;
             }
 
             var model = new ProfileViewModel
             {
                 Banners = _unitOfWork.BannerRepository.GetQuery(b => b.Active, o => o.OrderBy(b => b.Sort)),
-                Username = user.Username,
-                FullName = user.FullName,
-                Email = user.Email,
-                PhoneNumber = user.PhoneNumber,
-                Gender = user.Gender,
-                Day = user.BirthDay.Day,
-                Month = user.BirthDay.Month,
-                Year = user.BirthDay.Year,
-                Avatar = user.Avatar,
-                UserId = user.Id,
+                Username = User.Username,
+                FullName = User.FullName,
+                Email = User.Email,
+                PhoneNumber = User.PhoneNumber,
+                Gender = User.Gender,
+                Day = User.BirthDay.Day,
+                Month = User.BirthDay.Month,
+                Year = User.BirthDay.Year,
+                Avatar = User.Avatar,
+                UserId = User.Id,
                 PercentOrder = percent,
                 Level = level,
                 TotalLevelUp = totalLevelUp,
@@ -556,6 +551,23 @@ namespace Doris.Controllers
             _unitOfWork.BankUserRepository.Delete(bankUser);
             _unitOfWork.Save();
             return true;
+        }
+
+        [Route("cap-bac-thanh-vien")]
+        public PartialViewResult Membership()
+        {
+            var nextLevel = (int)User.Level + 1;
+            var level = (Level)nextLevel;
+            int percent = 0;
+
+            percent = Convert.ToInt32(User.TotalBuy / 250000000 * 100);
+
+            var model = new ProfileViewModel
+            {
+                Level = level,
+                PercentOrder = percent,
+            };
+            return PartialView(model);
         }
 
         [Route("danh-muc-cua-ban")]

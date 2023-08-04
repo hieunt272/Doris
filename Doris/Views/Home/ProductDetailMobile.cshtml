@@ -12,33 +12,38 @@
     {
         ViewBag.ImageShare = Request.Url?.GetLeftPart(UriPartial.Authority) + Path.Combine("/images/products/", Model.Product.ListImage.Split(',')[0]);
     }
-    int price = 0;
+    decimal price = 0, comission = 0;
     if (email != "")
     {
         level = (Level)Enum.Parse(typeof(Level), ViewContext.RouteData.Values["Level"].ToString());
         if (Model.Product.PriceDiamond > 0 && level == Level.Diamond)
         {
-            price = Convert.ToInt32(Model.Product.PriceDiamond);
+            price = Convert.ToDecimal(Model.Product.PriceDiamond);
+            comission = Convert.ToDecimal(Model.Product.Price - Model.Product.PriceDiamond);
         }
         else if (Model.Product.PricePlatinum > 0 && level == Level.Platinum)
         {
-            price = Convert.ToInt32(Model.Product.PricePlatinum);
+            price = Convert.ToDecimal(Model.Product.PricePlatinum);
+            comission = Convert.ToDecimal(Model.Product.Price - Model.Product.PricePlatinum);
         }
         else if (Model.Product.PriceGold > 0 && level == Level.Gold)
         {
-            price = Convert.ToInt32(Model.Product.PriceGold);
+            price = Convert.ToDecimal(Model.Product.PriceGold);
+            comission = Convert.ToDecimal(Model.Product.Price - Model.Product.PriceGold);
         }
         else if (Model.Product.PriceSilver > 0 && level == Level.Silver)
         {
-            price = Convert.ToInt32(Model.Product.PriceSilver);
+            price = Convert.ToDecimal(Model.Product.PriceSilver);
+            comission = Convert.ToDecimal(Model.Product.Price - Model.Product.PriceSilver);
         }
         else if (Model.Product.PriceBronze > 0 && level == Level.Bronze)
         {
-            price = Convert.ToInt32(Model.Product.PriceBronze);
+            price = Convert.ToDecimal(Model.Product.PriceBronze);
+            comission = Convert.ToDecimal(Model.Product.Price - Model.Product.PriceBronze);
         }
         else
         {
-            price = Convert.ToInt32(Model.Product.Price);
+            price = Convert.ToDecimal(Model.Product.Price);
         }
     }
 }
@@ -67,7 +72,7 @@
             <div class="price-sale">
                 @if (email != "")
                 {
-                    @price.ToString("N0")
+                    @price.ToString("N0") @:đ
                 }
                 else
                 {
@@ -82,17 +87,20 @@
             Giá sỉ tốt nhất chỉ từ @Convert.ToDecimal(Model.Product.WholesalePrice).ToString("N0") đ
             <i class="fa-regular fa-angle-right"></i>
         </div>
-        <div class="policy-user">
-            <div class="content">
-                <div class="text">Chính sách dành cho Cộng tác viên</div>
-                <div class="sub-text">Nhận hoa hồng @Model.Comission.ToString("N0")đ không cần bỏ vốn</div>
+        @if (email != "")
+        {
+            <div class="policy-user">
+                <div class="content">
+                    <div class="text">Chính sách dành cho Cộng tác viên</div>
+                    <div class="sub-text">Nhận hoa hồng @comission.ToString("N0")đ không cần bỏ vốn</div>
+                </div>
+                <a href="@Url.Action("CollabPolicy", new { productId = Model.Product.Id })">Tìm hiểu thêm <i class="fa-regular fa-angle-right"></i></a>
             </div>
-            <a href="#">Tìm hiểu thêm <i class="fa-regular fa-angle-right"></i></a>
-        </div>
+        }
         @if (Model.Products.Any())
         {
             <div class="title-related">Sản phẩm tương tự khác</div>
-            <div class="product-related product-slide">
+            <div class="product-related">
                 @foreach (var item in Model.Products)
                 {
                     @Html.Partial("_ProductItemMobile", item)
@@ -138,10 +146,18 @@
 <section class="site-footer">
     <div class="container">
         <form id="formBookProduct">
+            <input type="hidden" name="ProductId" value="@Model.Product.Id" />
             <div class="quantity">
                 <input type="text" value="1" min="1" id="number" name="quantity" class="input-number" maxlength="4" />
             </div>
-            <button type="submit" class="add-cart">Thêm vào giỏ</button>
+            @if (email != "")
+            {
+                <button type="submit" class="add-cart">Thêm vào giỏ</button>
+            }
+            else
+            {
+                <a href="@Url.Action("Login", "User")" class="add-cart">Thêm vào giỏ</a>
+            }
         </form>
     </div>
 </section>
@@ -149,6 +165,7 @@
     <script src="~/Scripts/swiper-bundle.min.js"></script>
     <script src="~/Scripts/jquery.nice-number.js"></script>
     <script>
+        productDetailMB();
         var swiper = new Swiper('.swiper', {
             pagination: {
                 el: '.swiper-pagination',

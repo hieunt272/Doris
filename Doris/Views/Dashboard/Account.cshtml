@@ -30,11 +30,11 @@
         <div class="icon">
             <img src="~/Content/images/img-main/unlock.png" alt="Unlock" />
         </div>
-        <a href="#" class="notice">
+        <a href="javascript:;" data-fancybox data-type="ajax" data-touch="false" data-src="@Url.Action("Membership")" class="notice">
             <div class="title">Thăng hạng thành viên</div>
             <div class="sub-title">Nhận nhiều ưu đãi hơn khi thăng hạng Thành Viên</div>
         </a>
-        <a href="#" class="link">
+        <a href="javascript:;" data-fancybox data-type="ajax" data-touch="false" data-src="@Url.Action("Membership")" class="link">
             <i class="fa-solid fa-chevron-right"></i>
         </a>
     </div>
@@ -298,6 +298,7 @@
 
 @section scripts {
     <script>
+        profile();
         function deleteAddressInfo(id) {
             if (confirm("Bạn chắc chắn xóa địa chỉ này?")) {
                 $.post("/Dashboard/DeleteAddress", { addressId: id }, function (data) {

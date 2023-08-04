@@ -1,0 +1,80 @@
+﻿@model Doris.ViewModel.ShoppingCartViewModel
+@{
+    ViewBag.Title = "Giỏ hàng của bạn";
+    Layout = "~/Views/Shared/_LayoutShoppingCart.cshtml";
+}
+
+<section class="title-page title-red">
+    <div class="container">
+        <button onclick="history.back()" class="history-back"><i class="fa-regular fa-arrow-left"></i></button>
+        <div class="title">Giỏ hàng</div>
+    </div>
+</section>
+<section class="cart-mb page-pb">
+    <div class="container">
+        @if (Model.CartItems.Any())
+        {
+            <div class="media box-notice">
+                <i class="fa-light fa-circle-info"></i>
+                <div class="media-body">
+                    <span>2 phương thức giao hàng</span>
+                    <div class="delivery-info"><span>Đơn hàng giao tới bạn</span> là đơn hàng được giao trực tiếp đến địa chỉ mà bạn cung cấp.</div>
+                    <div class="delivery-info">
+                        <span>Đơn hàng giao tới khách hàng</span> là đơn hàng được Dr Henry đóng gói và giao tới tận tay Khách hàng của bạn. Hoa hồng sẽ được chuyển đến bạn khi đơn hàng hoàn tất.
+                    </div>
+                </div>
+            </div>
+            <label class="delivery-label">
+                <input type="radio" name="TypeDelivery" value="0" checked="checked">
+                Đơn Hàng Giao Tới Bạn
+                <span class="checkmark"></span>
+            </label>
+            <label class="delivery-label">
+                <input type="radio" name="TypeDelivery" value="1">
+                Đơn Hàng Giao Tới Khách Hàng
+                <span class="checkmark"></span>
+            </label>
+            <div class="title-cart">
+                <span class="title">Chi tiết đơn hàng</span>
+                <a href="@Url.Action("AllProduct", "Home")">+ Thêm Sản Phẩm</a>
+            </div>
+            using (Html.BeginForm("Index", "ShoppingCart"))
+            {
+                foreach (var cartItem in Model.CartItems)
+                {
+                    var p = cartItem.Price ?? 0;
+                    var price = cartItem.Count * p;
+                    <div class="cart-item-mb">
+                        <div class="cart-img">
+                            @if (cartItem.Product.ListImage != null)
+                            {
+                                <img src="@Path.Combine("/images/products/", cartItem.Product.ListImage.Split(',')[0])" alt="@cartItem.Product.Name" />
+                            }
+                        </div>
+                        <div class="cart-body">
+                            <div class="cart-top">
+                                <div class="product-name">@cartItem.Product.Name</div>
+                                <div class="brand-name">@cartItem.Product.Brand.BrandName</div>
+                                <div class="price">@Convert.ToDecimal(cartItem.Price).ToString("N0") đ</div>
+                            </div>
+                            <div class="cart-bottom">
+
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        }
+        else
+        {
+            <div class="no-cart">
+                <div class="title">Thông tin giỏ hàng</div>
+                <img src="~/Content/images/img-main/giỏ-hàng.png" alt="Giỏ hàng" />
+                <div class="sub-text">Giỏ hàng trống. Mua sắm ngay!</div>
+            </div>
+        }
+    </div>
+</section>
+<section class="footer-cart">
+    @Html.Action("Footer", "Home")
+</section>

@@ -140,4 +140,13 @@ namespace Doris.ViewModel
     {
         public IPagedList<Product> Products { get; set; }
     }
+
+    public class CollabPolicyViewModel
+    {
+        public decimal MyPrice { get; set; }
+        public decimal Price { get; set; }
+        public decimal LevelPrice { get; set; }
+        public decimal Comission { get; set; }
+        public int ProductId { get; set; }
+    }
 }

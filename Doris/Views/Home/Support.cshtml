@@ -1,0 +1,41 @@
+﻿@model IEnumerable<Doris.Models.Article>
+@{
+    ViewBag.Title = "Hỗ trợ";
+    ViewBag.Canonical = Request.Url?.GetLeftPart(UriPartial.Authority) + Url.Action("Support");
+    ViewBag.Robots = "noindex";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="title-page title-red">
+    <div class="container">
+        <button onclick="history.back()" class="history-back"><i class="fa-regular fa-arrow-left"></i></button>
+        <div class="title">Hỗ trợ</div>
+    </div>
+</section>
+<section class="support">
+    <div class="container">
+        <div class="blog-list">
+            @if (Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    <a href="@Url.Action("ArticleDetail", new { url = item.Url })" class="blog-item">
+                        <div class="icon">
+                            @if (item.Image != null)
+                            {
+                                <img src="@Path.Combine("/images/articles/", item.Image)" alt="@item.Subject" />
+                            }
+                        </div>
+                        <div class="blog-name">@item.Subject</div>
+                    </a>
+                }
+            }
+            <a href="@Url.Action("Logout", "User")" class="blog-item">
+                <div class="icon">
+                    <i class="fa-sharp fa-regular fa-arrow-right-from-bracket"></i>
+                </div>
+                <div class="blog-name">Đăng xuất Tài khoản</div>
+            </a>
+        </div>
+    </div>
+</section>

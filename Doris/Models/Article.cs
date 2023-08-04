@@ -25,6 +25,9 @@ namespace Doris.Models
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}")]
         [Display(Name = "Ngày đăng")]
         public DateTime CreateDate { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}")]
+        [Display(Name = "Ngày đăng")]
+        public DateTime? LastUpdate { get; set; }
         public int View { get; set; }
         [Display(Name = "Danh mục bài viết"), Required(ErrorMessage = "Hãy chọn danh mục bài viết")]
         public int ArticleCategoryId { get; set; }

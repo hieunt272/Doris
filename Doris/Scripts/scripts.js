@@ -51,6 +51,18 @@ function homeJs() {
             }
         ]
     });
+
+    $(".product-slide").slick({
+        dots: false,
+        infinite: true,
+        slidesToShow: 2,
+        slidesToScroll: 1,
+        speed: 1000,
+        autoplay: false,
+        autoplaySpeed: 3000,
+        prevArrow: '<button class="chevron-prev"><i class="fa-light fa-angle-left"></i></button>',
+        nextArrow: '<button class="chevron-next"><i class="fa-light fa-angle-right"></i></button>'
+    });
 }
 
 function contact() {
@@ -160,21 +172,19 @@ function productDetail() {
         var total = parseInt(quantity * price);
         $("#totalPrice").text(total.toLocaleString('vi') + "đ");
     });
+}
 
-    $("#formBookProduct").on("submit", function (e) {
-        e.preventDefault();
-        $.post("/gio-hang/them-vao-gio-hang", $(this).serialize(), function (data) {
-            if (data.result === 1) {
-                $.toast({
-                    text: "Thêm vào giỏ hàng thành công",
-                    icon: "success",
-                    position: "bottom-right"
-                });
-                $("#itemshop").text(data.count);
-            } else {
-                $.toast("Quá trình thực hiện không thành công");
-            }
-        });
+function productDetailMB() {
+    $(".product-related").slick({
+        dots: false,
+        infinite: true,
+        speed: 1000,
+        slidesToShow: 3,
+        slidesToScroll: 1,
+        centerMode: false,
+        variableWidth: true,
+        prevArrow: '<button class="chevron-prev"><i class="fa-light fa-angle-left"></i></button>',
+        nextArrow: '<button class="chevron-next"><i class="fa-light fa-angle-right"></i></button>',
     });
 }
 
@@ -353,17 +363,22 @@ $(document).ready(function () {
         arrows: false
     });
 
-    $(".product-slide").slick({
-        dots: false,
-        infinite: true,
-        slidesToShow: 2,
-        slidesToScroll: 1,
-        speed: 1000,
-        autoplay: false,
-        autoplaySpeed: 3000,
-        prevArrow: '<button class="chevron-prev"><i class="fa-light fa-angle-left"></i></button>',
-        nextArrow: '<button class="chevron-next"><i class="fa-light fa-angle-right"></i></button>'
+    $("#formBookProduct").on("submit", function (e) {
+        e.preventDefault();
+        $.post("/gio-hang/them-vao-gio-hang", $(this).serialize(), function (data) {
+            if (data.result === 1) {
+                $.toast({
+                    text: "Thêm vào giỏ hàng thành công",
+                    icon: "success",
+                    position: "bottom-right"
+                });
+                $("#itemshop").text(data.count);
+            } else {
+                $.toast("Quá trình thực hiện không thành công");
+            }
+        });
     });
+
 });
 
 $(function () {
@@ -495,7 +510,6 @@ function Sort(action) {
 function userOrder(action) {
     $(document).on('click', '.nav-link', function () {
         let status = parseInt($('.nav-link.active').val());
-        console.log(status);
 
         $("body").append('<div class="loading"><i class="fad fa-spin fa-spinner"></i></div>');
         $.get(action, { status: status }, function (data) {
