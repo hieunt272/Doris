@@ -74,4 +74,11 @@ namespace Doris.ViewModel
         public int BankId { get; set; }
         public SelectList BankSelectList { get; set; }
     }
+
+    public class ListOrderMobileViewModel
+    {
+        public IPagedList<Order> Orders { get; set; }
+        public int Status { get; set; }
+        public string Keywords { get; set; }
+    }
 }

@@ -73,7 +73,7 @@ namespace Doris.Controllers
                 Level = level,
                 TotalLevelUp = totalLevelUp,
                 Addresses = _unitOfWork.AddressRepository.GetQuery(a => a.UserId == User.Id, o => o.OrderBy(a => a.Id)),
-                BankUsers = _unitOfWork.BankUserRepository.GetQuery(a => a.UserId == User.Id, o =>o.OrderBy(a => a.Sort))
+                BankUsers = _unitOfWork.BankUserRepository.GetQuery(a => a.UserId == User.Id, o => o.OrderBy(a => a.Sort))
             };
             return View(model);
         }
@@ -306,7 +306,7 @@ namespace Doris.Controllers
                 return false;
             }
 
-            order.Status = 4;
+            order.Status = 7;
             _unitOfWork.Save();
             return true;
         }
@@ -569,11 +569,64 @@ namespace Doris.Controllers
             };
             return PartialView(model);
         }
-
         [Route("danh-muc-cua-ban")]
         public ActionResult UserCategory()
         {
             return View();
+        }
+
+        [Route("don-hang")]
+        public ActionResult ListOrderMobile(int? page, string keywords, int status = 0)
+        {
+            var pageNumber = page ?? 1;
+            var pageSize = 5;
+            var orders = _unitOfWork.OrderRepository.GetQuery(a => a.UserId == User.Id, o => o.OrderByDescending(a => a.CreateDate));
+
+            if (!string.IsNullOrEmpty(keywords))
+            {
+                orders = orders.Where(a => a.MaDonHang.Contains(keywords));
+            }
+
+            if (status > 0)
+            {
+                orders = orders.Where(a => a.Status == status);
+            }
+
+            var model = new ListOrderMobileViewModel
+            {
+                Orders = orders.ToPagedList(pageNumber, pageSize),
+                Status = status,
+                Keywords = keywords
+            };
+
+            return View(model);
+        }
+        public PartialViewResult GetOrderMobile(int? page, string keywords, int status = 0)
+        {
+            var pageNumber = page ?? 1;
+            var pageSize = 5;
+            var orders = _unitOfWork.OrderRepository.GetQuery(a => a.UserId == User.Id, o => o.OrderByDescending(a => a.CreateDate));
+
+            if (!string.IsNullOrEmpty(keywords))
+            {
+                orders = orders.Where(a => a.MaDonHang.Contains(keywords));
+            }
+
+            if (status > 0)
+            {
+                orders = orders.Where(a => a.Status == status);
+            }
+
+            var count = orders.Count();
+
+            var model = new ListOrderMobileViewModel
+            {
+                Orders = orders.ToPagedList(pageNumber, pageSize),
+                Status = status,
+                Keywords = keywords
+            };
+
+            return PartialView(model);
         }
 
         protected override void Dispose(bool disposing)

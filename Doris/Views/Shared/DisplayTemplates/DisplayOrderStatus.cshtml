@@ -1,16 +1,32 @@
-﻿@if(Model == 1)
+﻿@if (Model == 1)
 {
-    <span style="color: #fff; background: #EF9139">Đang xử lý</span>
+    <span style="color: #f17173">Đang xử lý</span>
 }
 else if (Model == 2)
 {
-    <span style="color: #fff; background: #199DD9">Chờ thanh toán</span>
+    <span style="color: #f17173">Chờ thanh toán</span>
 }
 else if (Model == 3)
 {
-    <span style="color: #fff; background: #28a745">Đã thanh toán</span>
+    <span style="color: #f17173">Đã thanh toán</span>
 }
 else if (Model == 4)
 {
-    <span style="color: #fff; background: #ee4d2d">Hủy đơn</span>
+    <span style="color: #f17173">Vận chuyển</span>
+}
+else if (Model == 5)
+{
+    <span style="color: #f17173">Đang giao</span>
+}
+else if (Model == 6)
+{
+    <span style="color: #f17173">Hoàn thành</span>
+}
+else if (Model == 7)
+{
+    <span style="color: #f17173">Đã hủy</span>
+}
+else if (Model == 8)
+{
+    <span style="color: #f17173">Trả hàng/Hoàn tiền</span>
 }

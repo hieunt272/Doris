@@ -4,14 +4,26 @@
     var config = (ConfigSite)HttpContext.Current.Application["ConfigSite"];
 }
 
-<section class="bg-breadcrumb">
-    <div class="container">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="@Url.Action("Index")">Trang chủ</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Đặt hàng thành công</li>
-        </ol>
-    </div>
-</section>
+@if (Request.Browser.IsMobileDevice)
+{
+    <section class="title-page title-red">
+        <div class="container">
+            <a href="@Url.Action("Index", "Home")" class="history-back"><i class="fa-regular fa-arrow-left"></i></a>
+            <div class="title">Đặt hàng thành công</div>
+        </div>
+    </section>
+}
+else
+{
+    <section class="bg-breadcrumb">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index")">Trang chủ</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Đặt hàng thành công</li>
+            </ol>
+        </div>
+    </section>
+}
 <section class="container">
     <div class="row">
         <div class="col-lg-6 offset-lg-3">

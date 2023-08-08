@@ -29,12 +29,16 @@
             <tr>
                 <td>Trạng thái đơn hàng</td>
                 <td>
-                    <select name="status" class="form-control">
+                    <select name="status" class="form_control">
                         <option value="0">Tất cả đơn hàng</option>
                         <option value="1" @if (Model.Status == 1) { @Html.Raw("selected=selected") }>Đang xử lý</option>
                         <option value="2" @if (Model.Status == 2) { @Html.Raw("selected=selected") }>Chờ thanh toán</option>
                         <option value="3" @if (Model.Status == 3) { @Html.Raw("selected=selected") }>Đã thanh toán</option>
-                        <option value="4" @if (Model.Status == 4) { @Html.Raw("selected=selected") }>Hủy đơn</option>
+                        <option value="4" @if (Model.Status == 4) { @Html.Raw("selected=selected") }>Vận chuyển</option>
+                        <option value="5" @if (Model.Status == 5) { @Html.Raw("selected=selected") }>Đang giao</option>
+                        <option value="6" @if (Model.Status == 6) { @Html.Raw("selected=selected") }>Hoàn thành</option>
+                        <option value="7" @if (Model.Status == 7) { @Html.Raw("selected=selected") }>Hủy đơn</option>
+                        <option value="8" @if (Model.Status == 8) { @Html.Raw("selected=selected") }>Trả hàng/Hoàn tiền</option>
                     </select>
                 </td>
                 <td>Thành phố</td>
@@ -42,6 +46,10 @@
             </tr>
         </table>
         <div>
+            @if (Model.UserId > 0)
+            {
+                <input type="hidden" name="UserId" value="@Model.UserId" />
+            }
             <button type="submit" class="btn-search">TÌM KIẾM</button>
         </div>
     </form>
@@ -77,6 +85,7 @@
                     <p><strong>Điện thoại</strong> @order.CustomerInfo.Mobile</p>
                     <p><strong>Email</strong> @order.CustomerInfo.Email</p>
                     <p><strong>Ngày đặt:</strong> @order.CreateDate.ToString("dd/MM/yyyy HH:mm")</p>
+                    <p><strong>Chuyển hàng:</strong> @if (order.Transport == 1) { @Html.Raw("tới shop") } else { @Html.Raw("tới khách hàng") }</p>
                 </td>
                 <td><strong>@order.User.ShopCode</strong></td>
                 <td><strong style="font-size: 16px;">@order.TotalFee().ToString("N0")</strong></td>
@@ -85,7 +94,11 @@
                         <option value="1">Đang xử lý</option>
                         <option value="2" @if (order.Status == 2) { @Html.Raw("selected='selected'") }>Chờ thanh toán</option>
                         <option value="3" @if (order.Status == 3) { @Html.Raw("selected='selected'") }>Đã thanh toán</option>
-                        <option value="4" @if (order.Status == 4) { @Html.Raw("selected='selected'") }>Hủy đơn</option>
+                        <option value="4" @if (order.Status == 4) { @Html.Raw("selected='selected'") }>Vận chuyển</option>
+                        <option value="5" @if (order.Status == 5) { @Html.Raw("selected='selected'") }>Đang giao</option>
+                        <option value="6" @if (order.Status == 6) { @Html.Raw("selected='selected'") }>Hoàn thành</option>
+                        <option value="7" @if (order.Status == 7) { @Html.Raw("selected='selected'") }>Hủy đơn</option>
+                        <option value="8" @if (order.Status == 8) { @Html.Raw("selected='selected'") }>Trả hàng/Hoàn tiền</option>
                     </select>
                 </td>
                 <td>
@@ -117,7 +130,7 @@
         @if (Model.Orders.PageCount > 1)
         {
             <tr>
-                <td colspan="7">@Html.PagedListPager(Model.Orders, page => Url.Action("ListOrder", new { page, status = Model.Status, name = Model.CustomerName, email = Model.CustomerEmail, mobile = Model.CustomerMobile, formdate = Model.FromDate, todate = Model.ToDate, cityId = Model.CityId, pagesize = Model.PageSize }))</td>
+                <td colspan="7">@Html.PagedListPager(Model.Orders, page => Url.Action("ListOrder", new { page, status = Model.Status, name = Model.CustomerName, email = Model.CustomerEmail, mobile = Model.CustomerMobile, formdate = Model.FromDate, todate = Model.ToDate, cityId = Model.CityId, pagesize = Model.PageSize, userId = Model.UserId }))</td>
             </tr>
         }
     </table>

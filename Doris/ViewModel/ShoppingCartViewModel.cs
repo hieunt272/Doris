@@ -12,6 +12,7 @@ namespace Doris.ViewModel
         public decimal CartTotal { get; set; }
         public int CartCount { get; set; }
         public decimal CartTotalShipFee { get; set; }
+        public decimal TotalFreeShip { get; set; }
     }
     public class ShoppingCartRemoveViewModel
     {
@@ -30,6 +31,7 @@ namespace Doris.ViewModel
         public int UserId { get; set; }
         public int? AddressId { get; set; }
         public decimal CartTotal { get; set; }
+        public int? Transport { get; set; }
 
         [Display(Name = "Tỉnh/Thành phố"), Required(ErrorMessage = "Bạn hãy chọn Tỉnh/Thành phố")]
         public int? CityId { get; set; }
@@ -37,23 +39,24 @@ namespace Doris.ViewModel
         public int? DistrictId { get; set; }
         [Display(Name = "Phường/Xã"), Required(ErrorMessage = "Bạn hãy chọn Phường/Xã")]
         public int? WardId { get; set; }
+        [Display(Name = "Số nhà, Tên đường")]
+        public string SpecialAddress { get; set; }
+        [Display(Name = "Tên")]
+        public string Fullname { get; set; }
+        [Display(Name = "Số tài khoản")]
+        public string BankNumber { get; set; }
+        [Display(Name = "Ngân hàng thụ hưởng")]
+        public int? BankId { get; set; }
 
         public SelectList CitySelectList { get; set; }
         public SelectList DistrictSelectList { get; set; }
         public SelectList WardSelectList { get; set; }
+        public SelectList BankSelectList { get; set; }
 
-        public SelectList SelectTransport { get; set; }
-        public SelectList SelectTypePay { get; set; }
-
-        public IEnumerable<Cart> CartItems { get; set; }
+        public List<Cart> Carts { get; set; }
         public IEnumerable<Address> Addresses { get; set; }
         public CheckOutViewModel()
         {
-            var selectTransport = new Dictionary<int, string> { { 1, "Đến địa chỉ người nhận" }, { 2, "Khách đến nhận hàng" }, { 3, "Qua bưu điện" }, { 4, "Hình thức khác" } };
-            var typePay = new Dictionary<int, string> { { 1, "Tiền mặt" }, { 2, "Chuyển khoản" } };
-            SelectTransport = new SelectList(selectTransport, "Key", "Value");
-            SelectTypePay = new SelectList(typePay, "Key", "Value");
-
             DistrictSelectList = new SelectList(new List<District>(), "Id", "Name");
             WardSelectList = new SelectList(new List<Ward>(), "Id", "Name");
         }

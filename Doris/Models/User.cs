@@ -41,6 +41,7 @@ namespace Doris.Models
         public virtual ICollection<Address> Addresses { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
         public virtual ICollection<BankUser> BankUsers { get; set; }
+        public virtual ICollection<ProductUser> ProductUsers { get; set; }
         public User()
         {
             CreateDate = DateTime.Now;

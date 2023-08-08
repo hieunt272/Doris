@@ -26,9 +26,9 @@
                                 @config.Title
                             </span>
                         </div>
-                        @foreach (var item in Model.CartItems)
+                        @foreach (var item in Model.Carts)
                         {
-                            var total = Model.CartItems.Sum(a => a.Price * a.Count);
+                            var total = Model.Carts.Sum(a => a.Price * a.Count);
                             var price = item.Count * item.Price;
 
                             <div class="cart-item">
@@ -197,7 +197,7 @@
 @section scripts
 {
     <script type="text/javascript">
-        checkOut();
+        checkout();
         function defaultAddress(id) {
             var divId = $("div[data-id='" + id + "']");
             var addressDefault = divId.find("input.Default").prop("checked");

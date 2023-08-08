@@ -1,0 +1,50 @@
+﻿@model Doris.ViewModel.ListOrderMobileViewModel
+
+@if (Model.Orders.Any())
+{
+    foreach (var order in Model.Orders)
+    {
+        <div class="box-order-item" data-id="@order.Id">
+            <div class="order-top">
+                <div>
+                    @if (order.Status == 1 || order.Status == 2)
+                    {
+                        <a href="javascript:;" onclick="cancelOrder(@order.Id)" class="order-cancel">
+                            Hủy đơn
+                        </a>
+                    }
+                </div>
+                <div class="status">@Html.DisplayFor(a => order.Status)</div>
+            </div>
+            @foreach (var orderDetail in order.OrderDetails)
+            {
+                <div class="cart-item-mb">
+                    <div class="cart-img">
+                        @if (orderDetail.Product.ListImage != null)
+                        {
+                            <img src="@Path.Combine("/images/products/", orderDetail.Product.ListImage.Split(',')[0])" alt="@orderDetail.Product.Name" />
+                        }
+                    </div>
+                    <div class="cart-body">
+                        <div class="cart-top">
+                            <div class="product-name">@orderDetail.Product.Name</div>
+                            <div class="brand-name">@orderDetail.Product.Brand.BrandName</div>
+                            <div class="price">@Convert.ToDecimal(orderDetail.Price).ToString("N0") đ</div>
+                        </div>
+                        <div class="cart-bottom">
+                            <div class="count">x @orderDetail.Quantity</div>
+                        </div>
+                    </div>
+                </div>
+            }
+            <div class="total-price">
+                <span class="title">Tổng số tiền</span>
+                <span class="price">@order.TotalFee().ToString("N0") đ</span>
+            </div>
+        </div>
+    }
+}
+else
+{
+    <div class="not-find">Không tìm thấy kết quả</div>
+}

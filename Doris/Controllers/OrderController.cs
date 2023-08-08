@@ -22,7 +22,7 @@ namespace Doris.Controllers
         // GET: Order
         private readonly UnitOfWork _unitOfWork = new UnitOfWork();
 
-        public ActionResult ListOrder(int? page, int? cityId, string madonhang, string fromdate, string todate, string customerName, string customerEmail, string customerMobile, int status = 0)
+        public ActionResult ListOrder(int? page, int? cityId, string madonhang, string fromdate, string todate, string customerName, string customerEmail, string customerMobile, int status = 0, int userId = 0)
         {
             var pageNumber = page ?? 1;
             var pageSize = 20;
@@ -60,6 +60,10 @@ namespace Doris.Controllers
             {
                 orders = orders.Where(a => a.Status == status);
             }
+            if (userId > 0)
+            {
+                orders = orders.Where(a => a.UserId == userId);
+            }
 
             var model = new ListOrderViewModel
             {
@@ -73,6 +77,7 @@ namespace Doris.Controllers
                 ToDate = todate,
                 PageSize = pageSize,
                 CityId = cityId,
+                UserId = userId,
                 CitySelectList = new SelectList(_unitOfWork.CityRepository.Get(a => a.Active, q => q.OrderBy(a => a.Sort)), "Id", "Name")
             };
 
@@ -153,7 +158,7 @@ namespace Doris.Controllers
                 order.Status = status;
             }
 
-            foreach (var item in user.Orders.Where(a => a.Status == 3))
+            foreach (var item in user.Orders.Where(a => a.Status == 6))
             {
                 total += item.Total();
             }

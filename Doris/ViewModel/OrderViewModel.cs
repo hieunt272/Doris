@@ -46,6 +46,7 @@ namespace Doris.ViewModel
         [Required]
         public int PageSize { get; set; }
         public int? CityId { get; set; }
+        public int UserId { get; set; }
         public SelectList CitySelectList { get; set; }
     }
     public class SearchOrderViewModel

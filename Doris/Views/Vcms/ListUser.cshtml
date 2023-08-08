@@ -49,7 +49,7 @@
                     <td>@Html.DisplayFor(a => user.Active)</td>
                     <td class="list-icon">
                         @Html.ActionLink("Sửa", "EditUser", new { userId = user.Id }) -
-                        @*@Html.ActionLink("Đổi mật khẩu", "UserChangePassword", new { userId = user.Id }) -*@
+                        <a href="@Url.Action("ListOrder", "Order", new { userId = user.Id })">Xem đơn hàng</a> -
                         <a href="javascript:;" class="red-warring" onclick="deleteUser('@user.Id')">Xóa</a>
                     </td>
                 </tr>

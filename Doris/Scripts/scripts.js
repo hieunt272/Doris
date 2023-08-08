@@ -91,34 +91,6 @@ function contact() {
     });
 }
 
-function project() {
-    $(".video-list").slick({
-        dots: true,
-        infinite: true,
-        slidesToShow: 4,
-        slidesToScroll: 1,
-        speed: 1000,
-        autoplay: false,
-        autoplaySpeed: 3000,
-        prevArrow: '<button class="chevron-prev"><i class="fa-light fa-angle-left"></i></button>',
-        nextArrow: '<button class="chevron-next"><i class="fa-light fa-angle-right"></i></button>',
-        responsive: [
-            {
-                breakpoint: 992,
-                settings: {
-                    slidesToShow: 2,
-                }
-            },
-            {
-                breakpoint: 600,
-                settings: {
-                    slidesToShow: 1,
-                }
-            }
-        ]
-    });
-}
-
 function productDetail() {
     $('.slider-for').slick({
         slidesToShow: 1,
@@ -254,7 +226,7 @@ function address() {
     });
 }
 
-function checkOut() {
+function checkout() {
     $('.btn-list-address').click(function (e) {
         $('.address-default').addClass('active');
         $('.list-address').addClass('active');
@@ -264,6 +236,17 @@ function checkOut() {
         $('.list-address').removeClass('active');
     });
 }
+
+function checkoutMb() {
+    $("#addressCustomerForm .btn-cart").click(function () {
+        var city = $("#CityId option:selected").text();
+        var district = $("#DistrictId option:selected").text();
+        var ward = $("#WardId option:selected").text();
+        var address = $("#SpecialAddress").val();
+        $("#Order_CustomerInfo_Address").val(address + ", " + ward + ", " + district + ", " + city);
+        $('#addressModal').modal('hide');
+    });
+};
 
 function alertBox() {
     $("#AlertBox").fadeOut(1000);
@@ -378,7 +361,6 @@ $(document).ready(function () {
             }
         });
     });
-
 });
 
 $(function () {
@@ -470,7 +452,7 @@ $(function () {
             if (recordToDelete !== "") {
                 $.post("/ShoppingCart/RemoveFromCart", { "id": recordToDelete }, function (data) {
                     if (data.Status === 1) {
-                        $(".cart-item[data-cart-id='" + recordToDelete + "']").fadeOut();
+                        $("div[data-cart-id='" + recordToDelete + "']").fadeOut();
                         function reload() {
                             location.reload();
                         }
@@ -515,6 +497,20 @@ function userOrder(action) {
         $.get(action, { status: status }, function (data) {
             $('#list-order').empty();
             $('#list-order').html(data);
+        }).then(function () {
+            $(".loading").remove();
+        });
+    });
+}
+
+function userOrderMobile(action) {
+    $(document).on('click', '.nav-link', function () {
+        let status = parseInt($('.nav-link.active').val());
+
+        $("body").append('<div class="loading"><i class="fad fa-spin fa-spinner"></i></div>');
+        $.get("/Dashboard/GetOrderMobile", { status: status }, function (data) {
+            $('#orderList').empty();
+            $('#orderList').html(data);
         }).then(function () {
             $(".loading").remove();
         });

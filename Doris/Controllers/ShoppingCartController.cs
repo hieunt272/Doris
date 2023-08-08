@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using System.Web.Configuration;
 using System.Web.Mvc;
 using System.Xml.Schema;
+using Antlr.Runtime.Tree;
+using System.Runtime.InteropServices;
 
 namespace Doris.Controllers
 {
@@ -37,16 +39,23 @@ namespace Doris.Controllers
 
             if (Request.Browser.IsMobileDevice)
             {
+                viewModel.TotalFreeShip = 2000000 - viewModel.CartTotal;
+
                 return PartialView("IndexCartMobile", viewModel);
             }
 
             return View(viewModel);
         }
         [HttpPost, Route("thong-tin")]
-        public ActionResult Index(FormCollection fc)
+        public ActionResult Index(int? transport, FormCollection fc)
         {
             var records = fc.GetValues("RecordId");
             var quantities = fc.GetValues("Quantity");
+
+            if (transport > 0)
+            {
+                return RedirectToAction("Checkout", new { transport = transport });
+            }
 
             if (records == null || quantities == null)
             {
@@ -63,6 +72,7 @@ namespace Doris.Controllers
                 cartItem.Count = quantity;
                 _unitOfWork.Save();
             }
+
             return RedirectToActionPermanent("Index");
         }
         public PartialViewResult IndexCartMobile()
@@ -70,14 +80,44 @@ namespace Doris.Controllers
             return PartialView();
         }
         [Route("thanh-toan")]
-        public ActionResult CheckOut()
+        public ActionResult CheckOut(int? transport)
         {
             var cart = ShoppingCart.GetCart(HttpContext);
             if (!cart.GetCartItems().Any())
             {
                 return RedirectToAction("Index");
             }
+
             var carts = cart.GetCartItems();
+
+            if (cart.GetTotal() >= 2000000)
+            {
+                foreach (var item in carts)
+                {
+                    var cartItem = _unitOfWork.CartRepository.GetById(item.RecordId);
+                    if (item.Product.WholesalePrice > 0 && cartItem != null)
+                    {
+                        item.Price = item.Product.WholesalePrice;
+                        cartItem.Price = item.Product.WholesalePrice;
+                        _unitOfWork.Save();
+                    }
+                }
+            }
+
+            if (transport == 2)
+            {
+                foreach (var item in carts)
+                {
+                    var cartItem = _unitOfWork.CartRepository.GetById(item.RecordId);
+                    var productUser = _unitOfWork.ProductUserRepository.GetQuery(a => a.ProductId == item.ProductId && a.UserId == User.Id).FirstOrDefault();
+                    if (productUser != null && cartItem != null)
+                    {
+                        item.Price = productUser.UserPrice;
+                        cartItem.Price = productUser.UserPrice;
+                        _unitOfWork.Save();
+                    }
+                }
+            }
 
             var addresses = _unitOfWork.AddressRepository.GetQuery(a => a.UserId == User.Id, o => o.OrderBy(a => a.Id));
 
@@ -89,14 +129,22 @@ namespace Doris.Controllers
                     ShipFee = 30000,
 
                 },
-                CartItems = carts,
                 CartTotal = cart.GetTotalShipFee(),
                 Addresses = addresses,
                 Address = addresses.Where(a => a.Default).FirstOrDefault(),
                 User = User,
                 UserId = User.Id,
                 CitySelectList = CitySelectList,
+                Carts = carts
             };
+
+            if (Request.Browser.IsMobileDevice)
+            {
+                model.BankSelectList = new SelectList(_unitOfWork.BankRepository.Get(a => a.Active, o => o.OrderBy(a => a.Sort)), "Id", "Name");
+                model.Transport = transport;
+                return PartialView("CheckoutMobile", model);
+            }
+
             return View(model);
         }
         [Route("thanh-toan")]
@@ -147,7 +195,7 @@ namespace Doris.Controllers
                 _unitOfWork.Save();
 
                 //Thanh toán CK
-                var district = _unitOfWork.DistrictRepository.GetById(model.DistrictId);
+                var ward = _unitOfWork.WardRepository.GetById(model.WardId);
 
                 var typepay = "Thanh toán khi nhận hàng";
                 switch (model.Order.TypePay)
@@ -162,7 +210,7 @@ namespace Doris.Controllers
                 var sb = "<p style='font-size:16px'>Thông tin đơn hàng gửi từ website " + Request.Url?.Host + "</p>";
                 sb += "<p>Mã đơn hàng: <strong>" + model.Order.MaDonHang + "</strong></p>";
                 sb += "<p>Họ và tên: <strong>" + model.Order.CustomerInfo.Fullname + "</strong></p>";
-                sb += "<p>Địa chỉ: <strong>" + model.Order.CustomerInfo.Address + ", " + district?.Name + ", " + district?.City.Name + "</strong></p>";
+                sb += "<p>Địa chỉ: <strong>" + model.Order.CustomerInfo.Address + ", " + ward?.Name + ", " + ward?.District.Name + ", " + ward?.District.City.Name + "</strong></p>";
                 sb += "<p>Email: <strong>" + model.Order.CustomerInfo.Email + "</strong></p>";
                 sb += "<p>Điện thoại: <strong>" + model.Order.CustomerInfo.Mobile + "</strong></p>";
                 sb += "<p>Yêu cầu thêm: <strong>" + model.Order.CustomerInfo.Body + "</strong></p>";
@@ -210,11 +258,18 @@ namespace Doris.Controllers
             var cart = ShoppingCart.GetCart(HttpContext);
             model.CartTotal = cart.GetTotal();
             model.CitySelectList = model.CitySelectList;
+            model.Carts = cart.GetCartItems();
+            model.Addresses = _unitOfWork.AddressRepository.GetQuery(a => a.UserId == User.Id, o => o.OrderBy(a => a.Id));
+            model.User = User;
             if (model.CityId > 0)
             {
                 model.DistrictSelectList = DistrictSelectList(model.CityId);
             }
             return View(model);
+        }
+        public PartialViewResult CheckoutMobile()
+        {
+            return PartialView();
         }
 
         [Route("thanh-toan-thanh-cong")]
@@ -233,7 +288,7 @@ namespace Doris.Controllers
         }
 
         [Route("them-vao-gio-hang")]
-        public JsonResult AddToCart(int productId, string returnUrl, int quantity = 1)
+        public JsonResult AddToCart(int productId, int quantity = 1)
         {
             var cart = ShoppingCart.GetCart(HttpContext);
             decimal? price = null;
@@ -283,6 +338,21 @@ namespace Doris.Controllers
                 };
                 return Json(data);
             }
+        }
+        [HttpPost]
+        public JsonResult UpdateCart(int cartId, int quantity)
+        {
+            var cart = ShoppingCart.GetCart(HttpContext);
+
+            var cartItem = _unitOfWork.CartRepository.GetQuery(a => a.RecordId == cartId).FirstOrDefault();
+            if (cartItem == null)
+            {
+                return Json(new { result = 0 });
+            }
+
+            cartItem.Count = quantity;
+            _unitOfWork.Save();
+            return Json(new { result = 1 });
         }
 
         [HttpPost]

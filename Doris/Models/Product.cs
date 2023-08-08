@@ -65,6 +65,7 @@ namespace Doris.Models
 
         public virtual Brand Brand { get; set; }
         public virtual ProductCategory ProductCategory { get; set; }
+        public virtual ICollection<ProductUser> ProductUsers { get; set; }
 
         public Product()
         {

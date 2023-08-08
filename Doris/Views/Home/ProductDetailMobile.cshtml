@@ -82,11 +82,14 @@
             </div>
             <div class="price">Giá bán lẻ: @Convert.ToDecimal(Model.Product.Price).ToString("N0") đ</div>
         </div>
-        <div class="price-apply">Giá sỉ áp dụng cho đơn hàng tối thiểu 2 triệu</div>
-        <div class="wholesale-price">
-            Giá sỉ tốt nhất chỉ từ @Convert.ToDecimal(Model.Product.WholesalePrice).ToString("N0") đ
-            <i class="fa-regular fa-angle-right"></i>
-        </div>
+        @if (Model.Product.WholesalePrice > 0)
+        {
+            <div class="price-apply">Giá sỉ áp dụng cho đơn hàng tối thiểu 2 triệu</div>
+            <div class="wholesale-price">
+                Giá sỉ tốt nhất chỉ từ @Convert.ToDecimal(Model.Product.WholesalePrice).ToString("N0") đ
+                <i class="fa-regular fa-angle-right"></i>
+            </div>
+        }
         @if (email != "")
         {
             <div class="policy-user">

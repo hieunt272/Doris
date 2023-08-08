@@ -258,6 +258,7 @@
     <Content Include="Content\images\img-main\delivery.png" />
     <Content Include="Content\images\img-main\device.png" />
     <Content Include="Content\images\img-main\diamond.png" />
+    <Content Include="Content\images\img-main\don-hang.png" />
     <Content Include="Content\images\img-main\footer.png" />
     <Content Include="Content\images\img-main\giỏ-hàng.png" />
     <Content Include="Content\images\img-main\hoa-1.png" />
@@ -1850,6 +1851,9 @@
     <Content Include="Views\Home\ArticleDetailMobile.cshtml" />
     <Content Include="Views\ShoppingCart\IndexCartMobile.cshtml" />
     <Content Include="Views\Shared\_LayoutShoppingCart.cshtml" />
+    <Content Include="Views\ShoppingCart\CheckoutMobile.cshtml" />
+    <Content Include="Views\Dashboard\ListOrderMobile.cshtml" />
+    <Content Include="Views\Dashboard\GetOrderMobile.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />

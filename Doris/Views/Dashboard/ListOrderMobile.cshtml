@@ -1,0 +1,180 @@
+﻿@model Doris.ViewModel.ListOrderMobileViewModel
+@using PagedList.Mvc
+@{
+    ViewBag.Title = "Đơn hàng";
+    ViewBag.Canonical = Request.Url?.GetLeftPart(UriPartial.Authority) + Url.Action("ListOrderMobile");
+    ViewBag.Robots = "noindex";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="title-page title-red title-order-list">
+    <div class="container">
+        <button onclick="history.back()" class="history-back"><i class="fa-regular fa-arrow-left"></i></button>
+        <div class="title">
+            <img src="~/Content/images/img-main/don-hang.png" alt="Đơn hàng" />
+            Đơn hàng
+        </div>
+    </div>
+</section>
+<section class="list-order-mb page-pb">
+    <ul class="nav nav-pills" id="orderTab">
+        <li class="nav-item">
+            <button class="nav-link @if (Model.Status == 0) { @Html.Raw("active") }" data-toggle="pill" type="button" aria-selected="true" value="0">Tất cả</button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link @if (Model.Status == 2) { @Html.Raw("active") }" data-toggle="pill" type="button" aria-selected="false" value="2">
+                Chờ thanh toán
+                @if (Model.Orders.Count(a => a.Status == 2) > 0)
+                {
+                    <span class="count">(@Model.Orders.Count(a => a.Status == 2))</span>
+                }
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link @if (Model.Status == 4) { @Html.Raw("active") }" data-toggle="pill" type="button" aria-selected="false" value="4">
+                Vận chuyển
+                @if (Model.Orders.Count(a => a.Status == 4) > 0)
+                {
+                    <span class="count">(@Model.Orders.Count(a => a.Status == 4))</span>
+                }
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link @if (Model.Status == 5) { @Html.Raw("active") }" data-toggle="pill" type="button" aria-selected="false" value="5">
+                Đang giao
+                @if (Model.Orders.Count(a => a.Status == 5) > 0)
+                {
+                    <span class="count">(@Model.Orders.Count(a => a.Status == 5))</span>
+                }
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link @if (Model.Status == 6) { @Html.Raw("active") }" data-toggle="pill" type="button" aria-selected="false" value="6">
+                Hoàn thành
+                @if (Model.Orders.Count(a => a.Status == 6) > 0)
+                {
+                    <span class="count">(@Model.Orders.Count(a => a.Status == 6))</span>
+                }
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link @if (Model.Status == 7) { @Html.Raw("active") }" data-toggle="pill" type="button" aria-selected="false" value="7">
+                Đã hủy
+                @if (Model.Orders.Count(a => a.Status == 7) > 0)
+                {
+                    <span class="count">(@Model.Orders.Count(a => a.Status == 7))</span>
+                }
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link @if (Model.Status == 8) { @Html.Raw("active") }" data-toggle="pill" type="button" aria-selected="false" value="8">
+                Trả Hàng/Hoàn tiền
+                @if (Model.Orders.Count(a => a.Status == 8) > 0)
+                {
+                    <span class="count">(@Model.Orders.Count(a => a.Status == 8))</span>
+                }
+            </button>
+        </li>
+    </ul>
+    <div class="container">
+        <form class="search-order">
+            <input type="text" name="keywords" class="form-control" placeholder="Bạn có thể tìm kiếm ID đơn hàng" required />
+            <button type="submit">
+                <i class="fa-light fa-magnifying-glass"></i>
+            </button>
+        </form>
+        <div class="tab-content" id="orderList">
+            @if (Model.Orders.Any())
+            {
+                foreach (var order in Model.Orders)
+                {
+                    <div class="box-order-item" data-id="@order.Id">
+                        <div class="order-top">
+                            <div>
+                                @if (order.Status == 1 || order.Status == 2)
+                                {
+                                    <a href="javascript:;" onclick="cancelOrder(@order.Id)" class="order-cancel">
+                                        Hủy đơn
+                                    </a>
+                                }
+                            </div>
+                            <div class="status">@Html.DisplayFor(a => order.Status)</div>
+                        </div>
+                        @foreach (var orderDetail in order.OrderDetails)
+                        {
+                            <div class="cart-item-mb">
+                                <div class="cart-img">
+                                    @if (orderDetail.Product.ListImage != null)
+                                    {
+                                        <img src="@Path.Combine("/images/products/", orderDetail.Product.ListImage.Split(',')[0])" alt="@orderDetail.Product.Name" />
+                                    }
+                                </div>
+                                <div class="cart-body">
+                                    <div class="cart-top">
+                                        <div class="product-name">@orderDetail.Product.Name</div>
+                                        <div class="brand-name">@orderDetail.Product.Brand.BrandName</div>
+                                        <div class="price">@Convert.ToDecimal(orderDetail.Price).ToString("N0") đ</div>
+                                    </div>
+                                    <div class="cart-bottom">
+                                        <div class="count">x @orderDetail.Quantity</div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        <div class="total-price">
+                            @if (order.ShipFee > 0)
+                            {
+                                <div class="price-info">
+                                    <span class="title">Phí vận chuyển</span>
+                                    <span class="ship-fee">@order.ShipFee.ToString("N0") đ</span>
+                                </div>
+                            }
+                            <div class="price-info">
+                                <span class="title">Tổng số tiền</span>
+                                <span class="price">@order.TotalFee().ToString("N0") đ</span>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="not-find">Không tìm thấy kết quả</div>
+            }
+            @if (Model.Orders.PageCount > 1)
+            {
+                <div class="text-center">
+                    @Html.PagedListPager(Model.Orders, page => Url.Action("ListOrderMobile", new { page, keywords = Model.Keywords, status = Model.Status }))
+                </div>
+            }
+        </div>
+    </div>
+</section>
+@section scripts{
+    <script>
+        userOrderMobile();
+        function cancelOrder(id) {
+            if (confirm("Bạn có chắc chắn hủy đơn hàng này không?")) {
+                $.post("/Dashboard/CancelOrder", { orderId: id }, function (data) {
+                    if (data) {
+                        $.toast({
+                            text: 'Hủy đơn hàng thành công.',
+                            position: 'bottom-right',
+                            icon: 'success',
+                        })
+                        $(".box-order-item[data-id='" + id + "']").fadeOut();
+                        function reload() {
+                            location.reload();
+                        }
+                        setTimeout(reload, 1500);
+                    } else {
+                        $.toast({
+                            text: 'Quá trình thực hiện không thành công. Hãy thử lại',
+                            icon: 'error',
+                        })
+                    }
+                });
+            }
+        }
+    </script>
+}
