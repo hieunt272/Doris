@@ -50,7 +50,7 @@
             {
                 var p = cartItem.Price ?? 0;
                 var price = cartItem.Count * p;
-                <div class="cart-item-mb" data-cart-id="@cartItem.RecordId">
+                <div class="cart-item-mb cart-id" data-cart-id="@cartItem.RecordId">
                     <a href="@Url.Action("ProductDetail", "Home", new { url = cartItem.Product.Url })" class="cart-img">
                         @if (cartItem.Product.ListImage != null)
                         {
@@ -67,7 +67,7 @@
                             <div class="brand-name">@cartItem.Product.Brand.BrandName</div>
                             <div class="price">@Convert.ToDecimal(cartItem.Price).ToString("N0") đ</div>
                         </div>
-                        <div class="cart-bottom">
+                        <div class="cart-bottom cart-quantity">
                             <input type="text" value="@cartItem.Count" min="1" id="number" name="quantity" class="input-number" maxlength="4" />
                             <div class="check">
                                 <i class="fa-regular fa-check"></i>
@@ -85,6 +85,14 @@
                 </div>
             }
             <div class="box-price-info">
+                <div class="discount-code">
+                    <div class="title">
+                        <img src="~/Content/images/img-main/discount.png" /> 5 mã giảm giá khả dụng
+                    </div>
+                    <button type="button" data-toggle="modal" data-target="#discountList">
+                        Xem thêm
+                    </button>
+                </div>
                 <div class="price-info">
                     <span class="ship-fee">Phí vận chuyển <i class="fa-light fa-circle-exclamation"></i></span>
                     <span class="price">30.000 đ</span>
@@ -112,16 +120,6 @@
     <script src="~/Scripts/jquery.nice-number.js"></script>
     <script>
         $(".input-number").niceNumber();
-
-        $(".cart-bottom .btn-light").click(function () {
-            var quantity = $(this).siblings(".input-number").val();
-            var cartId = $(this).parents(".cart-item-mb").attr("data-cart-id");
-
-            $.post("/ShoppingCart/UpdateCart", { cartId: cartId, quantity: quantity }, function (data) {
-                if (data.result === 1) {
-                    location.reload();
-                }
-            });
-        });
+        cart();
     </script>
 }

@@ -22,6 +22,8 @@ namespace Doris.Models
         public DateTime TransportDate { get; set; }
         [Display(Name = "Trạng thái đơn hàng"), UIHint("DisplayOrderStatus")]
         public int Status { get; set; }
+        [Display(Name = "Hóa đơn"), UIHint("DisplayTypeBill")]
+        public int TypeBill { get; set; }
         public bool Viewed { get; set; }
         public CustomerInfo CustomerInfo { get; set; }
         [Display(Name = "Thanh toán trước")]
@@ -102,5 +104,20 @@ namespace Doris.Models
 
         [Display(Name = "Thành viên mới")]
         public bool IsNewMember { get; set; }
+
+        [Display(Name = "Tên cơ sở kinh doanh")]
+        public string BusinessName { get; set; }
+        [Display(Name = "Mã số thuế")]
+        public string TaxCode { get; set; }
+        [Display(Name = "Địa chỉ xuất hóa đơn GTGT")]
+        public string BillAddress { get; set; }
+        [Display(Name = "Email nhận hóa đơn")]
+        public string BillEmail { get; set; }
+        [Display(Name = "Email cá nhân")]
+        public string PersonEmail { get; set; }
+        [Display(Name = "Họ và tên")]
+        public string PersonName { get; set; }
+        [Display(Name = "Địa chỉ")]
+        public string PersonAddress { get; set; }
     }
 }

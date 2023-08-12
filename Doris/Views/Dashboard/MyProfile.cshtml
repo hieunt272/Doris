@@ -26,7 +26,7 @@
                 <div class="col-lg-8">
                     <div class="form-group form-row">
                         <div class="col-3">
-                            Tên đăng nhập
+                            <label>Tên đăng nhập</label>
                         </div>
                         <div class="col-9">
                             @Model.Username
@@ -67,7 +67,7 @@
                     </div>
                     <div class="form-group form-row">
                         <div class="col-3 d-flex align-items-center">
-                            Giới tính
+                            <label>Giới tính</label>
                         </div>
                         <div class="col-9">
                             <label class="label-gender">
@@ -89,7 +89,7 @@
                     </div>
                     <div class="form-group form-row">
                         <div class="col-3 d-flex align-items-center">
-                            Ngày sinh
+                            <label>Ngày sinh</label>
                         </div>
                         <div class="col-9">
                             <div class="birthday">
@@ -139,11 +139,90 @@
                     </div>
                 </div>
             </div>
+            <div class="title-line">
+                <div class="title">Tài khoản ngân hàng của tôi</div>
+                <button type="button" class="add-info" data-fancybox data-type="ajax" data-touch="false" data-src="@Url.Action("AddOrUpdateBankInfo")">+ Thêm Tài Khoản Ngân Hàng</button>
+            </div>
+            <div class="bank-list">
+                @if (Model.BankUsers.Any())
+                {
+                    foreach (var item in Model.BankUsers)
+                    {
+                        <div class="bank-item" data-id="@item.BankId">
+                            <div class="media">
+                                @if (item.Bank.Image != null)
+                                {
+                                    <div class="bank-img">
+                                        <img src="@Path.Combine("/images/banks/", item.Bank.Image)" alt="@item.Bank.Name" />
+                                    </div>
+                                }
+                                <div class="media-body">
+                                    <div class="media-top">
+                                        <div class="bank-name">@item.Bank.Name</div>
+                                        <span class="default @if (item.Default) { @Html.Raw("d-block") }">Mặc định</span>
+                                    </div>
+                                    <div class="media-bottom">
+                                        <div class="bank-info">
+                                            Họ và tên: <span class="text-uppercase">@item.AccountName</span><br />
+                                            Chi nhánh: @item.Brand
+                                        </div>
+                                        <div class="bank-number">*@item.Name.Substring(item.Name.Length - 4)</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="actions-info">
+                                <a href="javascript:;" onclick="deleteBannkInfo('@item.BankId')" class="del-info">Xóa</a>
+                                <button type="button" class="update-info" data-fancybox data-type="ajax" data-touch="false" data-src="@Url.Action("AddOrUpdateBankInfo", new { bankId = item.BankId })">Cập nhật</button>
+                                <a href="javascript:;" onclick="defaultBannkInfo('@item.BankId')" class="set-default">Thiết Lập Mặc Định</a>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="alert alert-info small mb-0 py-2">Bạn chưa có thông tin ngân hàng</div>
+                }
+            </div>
         }
     </div>
 </section>
 @section scripts {
     <script>
         profile();
+
+        function deleteBannkInfo(id) {
+            if (confirm("Bạn chắc chắn xóa tài khoản ngân hàng này?")) {
+                $.post("/Dashboard/DeleteBankInfo", { bankId: id }, function (data) {
+                    if (data) {
+                        $("div[data-id='" + id + "']").fadeOut();
+                        function reload() {
+                            location.reload();
+                        }
+                        setTimeout(reload, 500);
+                    }
+                    else {
+                        $.toast({
+                            text: 'Quá trình thực hiện không thành công. Hãy thử lại',
+                            icon: 'error',
+                        })
+                    }
+                });
+            }
+        }
+
+        function defaultBannkInfo(id) {
+            var divId = $("div[data-id='" + id + "']");
+            var checkDefault = divId.find(".default").hasClass('d-block');
+
+            if (checkDefault == false) {
+                bankDefault = true;
+            }
+
+            $.post("/Dashboard/DefaultBankInfo", { bankId: id, bankDefault }, function (data) {
+                if (data) {
+                    location.reload();
+                }
+            });
+        }
     </script>
 }

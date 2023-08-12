@@ -33,11 +33,11 @@ namespace Doris.ViewModel
         public decimal CartTotal { get; set; }
         public int? Transport { get; set; }
 
-        [Display(Name = "Tỉnh/Thành phố"), Required(ErrorMessage = "Bạn hãy chọn Tỉnh/Thành phố")]
+        [Display(Name = "Tỉnh/Thành phố")]
         public int? CityId { get; set; }
-        [Display(Name = "Quận/Huyện"), Required(ErrorMessage = "Bạn hãy chọn Quận/Huyện")]
+        [Display(Name = "Quận/Huyện")]
         public int? DistrictId { get; set; }
-        [Display(Name = "Phường/Xã"), Required(ErrorMessage = "Bạn hãy chọn Phường/Xã")]
+        [Display(Name = "Phường/Xã")]
         public int? WardId { get; set; }
         [Display(Name = "Số nhà, Tên đường")]
         public string SpecialAddress { get; set; }
@@ -54,7 +54,9 @@ namespace Doris.ViewModel
         public SelectList BankSelectList { get; set; }
 
         public List<Cart> Carts { get; set; }
+        public BankUser BankUser { get; set; }
         public IEnumerable<Address> Addresses { get; set; }
+        public IEnumerable<BankUser> BankUsers { get; set; }
         public CheckOutViewModel()
         {
             DistrictSelectList = new SelectList(new List<District>(), "Id", "Name");

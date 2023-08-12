@@ -163,6 +163,71 @@
                             <div class="form-group">
                                 <textarea class="form-control" name="Order.CustomerInfo.Body" rows="4" placeholder="Lời nhắn (nếu có)"></textarea>
                             </div>
+                            <label class="title bill-info">
+                                Thông tin xuất hóa đơn
+                                <input type="checkbox" name="Bill" />
+                                <span class="checkmark"></span>
+                            </label>
+                            <div class="box-bill">
+                                <input type="hidden" id="typeBill" name="Order.TypeBill" value="0" />
+                                <ul class="nav nav-pills mb-3" id="pills-tab">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active" data-toggle="pill" data-target="#business" type="button" aria-selected="true" data-bill="Business">
+                                            Doanh nghiệp
+                                            <span class="checkmark"></span>
+                                        </button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" data-toggle="pill" data-target="#personal" type="button" aria-selected="false" data-bill="Personal">
+                                            Cá nhân
+                                            <span class="checkmark"></span>
+                                        </button>
+                                    </li>
+                                </ul>
+                                <div class="tab-content" id="pills-tabContent">
+                                    <div class="tab-pane fade show active" id="business">
+                                        <div class="form-group form-row">
+                                            <div class="col-8">
+                                                @Html.LabelFor(a => a.Order.CustomerInfo.BusinessName)
+                                                @Html.TextBoxFor(a => a.Order.CustomerInfo.BusinessName, new { @class = "form-control", placeholder = "Nhập tên cơ sở kinh doanh" })
+                                                @Html.ValidationMessageFor(a => a.Order.CustomerInfo.BusinessName)
+                                            </div>
+                                            <div class="col-4">
+                                                @Html.LabelFor(a => a.Order.CustomerInfo.TaxCode)
+                                                @Html.TextBoxFor(a => a.Order.CustomerInfo.TaxCode, new { @class = "form-control", placeholder = "Nhập mã số thuế" })
+                                                @Html.ValidationMessageFor(a => a.Order.CustomerInfo.TaxCode)
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.LabelFor(a => a.Order.CustomerInfo.BillAddress)
+                                            @Html.TextBoxFor(a => a.Order.CustomerInfo.BillAddress, new { @class = "form-control", placeholder = "Nhập địa chỉ" })
+                                            @Html.ValidationMessageFor(a => a.Order.CustomerInfo.BillAddress)
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.LabelFor(a => a.Order.CustomerInfo.BillEmail)
+                                            @Html.TextBoxFor(a => a.Order.CustomerInfo.BillEmail, new { @class = "form-control", placeholder = "Nhập email" })
+                                            @Html.ValidationMessageFor(a => a.Order.CustomerInfo.BillEmail)
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="personal">
+                                        <div class="form-group">
+                                            @Html.LabelFor(a => a.Order.CustomerInfo.PersonEmail)
+                                            <input data-val="true" data-val-required="Vui lòng nhập thông tin" type="text" id="Order_CustomerInfo_PersonEmail" name="Order.CustomerInfo.PersonEmail" class="form-control" placeholder="Nhập vào địa chỉ email của bạn" required />
+                                            @Html.ValidationMessageFor(a => a.Order.CustomerInfo.PersonEmail)
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.LabelFor(a => a.Order.CustomerInfo.PersonName)
+                                            <input data-val="true" data-val-required="Vui lòng nhập thông tin" type="text" id="Order_CustomerInfo_PersonName" name="Order.CustomerInfo.PersonName" class="form-control" placeholder="Nhập họ và tên của bạn" required />
+                                            @Html.ValidationMessageFor(a => a.Order.CustomerInfo.PersonName)
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.LabelFor(a => a.Order.CustomerInfo.PersonAddress)
+                                            <input data-val="true" data-val-required="Vui lòng nhập thông tin" type="text" id="Order_CustomerInfo_PersonAddress" name="Order.CustomerInfo.PersonAddress" class="form-control" placeholder="Nhập vào địa chỉ của bạn" required />
+                                            @Html.ValidationMessageFor(a => a.Order.CustomerInfo.PersonAddress)
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     }
                 </div>
@@ -174,6 +239,15 @@
                         <div class="total-price">
                             @Model.CartTotal.ToString("N0")đ
                         </div>
+                        <P class="title">Hình thức chuyển hàng</P>
+                        <label class="alert alert-info d-block">
+                            <input type="radio" checked="checked" name="Order.Transport" value="1" />
+                            Đơn Hàng Giao Tới Bạn
+                        </label>
+                        <label class="alert alert-info d-block">
+                            <input type="radio" name="Order.Transport" value="2" />
+                            Đơn Hàng Giao Tới Khách Hàng
+                        </label>
                         <P class="title">Hình thức thanh toán</P>
                         <label class="alert alert-info d-block">
                             <input type="radio" checked="checked" name="Order.TypePay" value="1" />
@@ -188,6 +262,11 @@
                         <button type="submit" class="btn-checkout">
                             Đặt hàng
                         </button>
+                        <div class="text-center">
+                            <a href="@Url.Action("Index")" class="back-to-cart">
+                                Quay lại đơn hàng >
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

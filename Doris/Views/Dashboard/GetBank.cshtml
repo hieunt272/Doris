@@ -1,0 +1,20 @@
+﻿@model Doris.Models.BankUser
+
+@if (Model.Bank.Image != null)
+{
+    <div class="bank-img">
+        <img src="@Path.Combine("/images/banks/", Model.Bank.Image)" alt="@Model.Bank.Name" />
+    </div>
+}
+<div class="media-body">
+    <div class="media-top">
+        <div class="bank-name">@Model.Bank.Name</div>
+    </div>
+    <div class="media-bottom">
+        <div class="bank-info">
+            Họ và tên: <span class="text-uppercase">@Model.AccountName</span><br />
+            Chi nhánh: @Model.Brand
+        </div>
+        <div class="bank-number">*@Model.Name.Substring(Model.Name.Length - 4)</div>
+    </div>
+</div>

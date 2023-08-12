@@ -158,28 +158,36 @@
                                         if (item.PriceDiamond > 0 && level == Level.Diamond)
                                         {
                                             <div class="price-sale">@Convert.ToDecimal(item.Price).ToString("N0") đ</div>
+                                            <div class="price">@Convert.ToDecimal(item.PriceDiamond).ToString("N0") đ</div>
                                         }
                                         else if (item.PricePlatinum > 0 && level == Level.Platinum)
                                         {
                                             <div class="price-sale">@Convert.ToDecimal(item.Price).ToString("N0") đ</div>
+                                            <div class="price">@Convert.ToDecimal(item.PricePlatinum).ToString("N0") đ</div>
                                         }
                                         else if (item.PriceGold > 0 && level == Level.Gold)
                                         {
                                             <div class="price-sale">@Convert.ToDecimal(item.Price).ToString("N0") đ</div>
-
+                                            <div class="price">@Convert.ToDecimal(item.PriceGold).ToString("N0") đ</div>
                                         }
                                         else if (item.PriceSilver > 0 && level == Level.Silver)
                                         {
                                             <div class="price-sale">@Convert.ToDecimal(item.Price).ToString("N0") đ</div>
+                                            <div class="price">@Convert.ToDecimal(item.PriceSilver).ToString("N0") đ</div>
                                         }
                                         else if (item.PriceBronze > 0 && level == Level.Bronze)
                                         {
                                             <div class="price-sale">@Convert.ToDecimal(item.Price).ToString("N0") đ</div>
+                                            <div class="price">@Convert.ToDecimal(item.PriceBronze).ToString("N0") đ</div>
                                         }
-                                    }
-                                    @if (item.Price > 0)
-                                    {
-                                        <div class="price">@Convert.ToDecimal(item.Price).ToString("N0") đ</div>
+                                        else if (item.Price > 0)
+                                        {
+                                            <div class="price">@Convert.ToDecimal(item.Price).ToString("N0") đ</div>
+                                        }
+                                        else
+                                        {
+                                            <div class="price">Liên hệ</div>
+                                        }
                                     }
                                 </div>
                                 <div class="icon-hot">

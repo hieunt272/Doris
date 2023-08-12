@@ -23,7 +23,7 @@
                                     {
                                         var p = cartItem.Price ?? 0;
                                         var price = cartItem.Count * p;
-                                        <div class="cart-item" data-cart-id="@cartItem.RecordId">
+                                        <div class="cart-item cart-id" data-cart-id="@cartItem.RecordId">
                                             <div class="cart-item-details">
                                                 @if (cartItem.Product.ListImage != null)
                                                 {
@@ -32,8 +32,7 @@
                                                 <a href="@Url.Action("ProductDetail", "Home", new { url = cartItem.Product.Url })" class="cart-item-name">@cartItem.Product.Name</a>
                                             </div>
                                             <div class="cart-item-price">@Convert.ToDecimal(cartItem.Price).ToString("N0")đ</div>
-                                            <div class="cart-item-quantity">
-                                                <input type="hidden" name="RecordId" value="@cartItem.RecordId" />
+                                            <div class="cart-item-quantity cart-quantity">
                                                 <input type="text" value="@cartItem.Count" min="1" id="number" name="Quantity" class="input-number" maxlength="4" />
                                             </div>
                                             <div class="cart-item-total">@price.ToString("N0")đ</div>
@@ -44,7 +43,6 @@
                                     }
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-success btn-update"><i class="fa fa-recycle"></i> Cập nhật</button>
                         }
                     }
                     else
@@ -107,8 +105,7 @@ else
 {
     <script src="~/Scripts/jquery.nice-number.js"></script>
     <script>
-        $(document).ready(function () {
-            $(".input-number").niceNumber();
-        });
+        $(".input-number").niceNumber();
+        cart();
     </script>
 }

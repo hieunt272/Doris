@@ -73,7 +73,7 @@
                                 <div class="cart-top">
                                     <div class="product-name">@cartItem.Product.Name</div>
                                     <div class="brand-name">@cartItem.Product.Brand.BrandName</div>
-                                    <div class="price">@Convert.ToDecimal(cartItem.Price).ToString("N0") đ</div>
+                                    <div class="price">@Convert.ToDecimal(cartItem.Product.Price).ToString("N0") đ</div>
                                 </div>
                                 <div class="cart-bottom">
                                     <div class="count">x @cartItem.Count</div>
@@ -114,7 +114,14 @@
                     <div class="price">30.000 đ</div>
                 </div>
                 <div class="price-info">
-                    <div class="title">Tổng cộng (Khách hàng cần thanh toán)</div>
+                    @if (Model.Transport == 2)
+                    {
+                        <div class="title">Tổng cộng (Khách hàng cần thanh toán)</div>
+                    }
+                    else
+                    {
+                        <div class="title">Tổng cộng</div>
+                    }
                     <div class="price-total">@Model.CartTotal.ToString("N0") đ</div>
                 </div>
             </div>
@@ -149,7 +156,6 @@
                 else
                 {
                     <div class="form-checkout">
-                        <input type="hidden" name="Order.CustomerInfo.Email" value="@Model.User.Email" />
                         <div class="form-group">
                             <label>Họ & tên <span>*</span></label>
                             <input data-val="true" data-val-length="Tối đa 50 ký tự" data-val-length-max="50" data-val-required="Hãy nhập họ và tên" type="text" name="Order.CustomerInfo.Fullname" class="form-control" placeholder="Nhập vào Họ & tên" value="@Model.User.FullName" required />
@@ -196,11 +202,18 @@
                             Thanh toán chuyển khoản
                             <span class="checkmark"></span>
                         </label>
+                        <hr />
+                        <label class="payment-label bill-label">
+                            <input type="checkbox" name="Bill">
+                            Thông tin xuất hóa đơn
+                            <span class="checkmark"></span>
+                        </label>
                     </div>
                 }
             }
             else
             {
+                <input type="hidden" name="Order.CustomerInfo.Email" value="@Model.User.Email" />
                 <div class="form-checkout">
                     <div class="form-group">
                         <label>Họ & tên Khách hàng <span>*</span></label>
@@ -227,10 +240,40 @@
                         @Html.TextAreaFor(a => a.Order.CustomerInfo.Body, new { @placeholder = "Ghi chú cho Dr Henry", rows = 4 })
                         @Html.ValidationMessageFor(a => a.Order.CustomerInfo.Body)
                     </div>
-                    <button type="button" class="add-bank" data-toggle="modal" data-target="#bankModal">
-                        <i class="fa-solid fa-circle-plus"></i>
-                        Thêm Thông tin thanh toán của bạn*
-                    </button>
+                    @if (Model.BankUser != null)
+                    {
+                        <div class="title-label">
+                            <span>Thông tin thanh toán của bạn</span>
+                            <button type="button" data-toggle="modal" data-target="#bankList">Thay đổi</button>
+                        </div>
+                        <div class="media bank-default" id="bank-default">
+                            @if (Model.BankUser.Bank.Image != null)
+                            {
+                                <div class="bank-img">
+                                    <img src="@Path.Combine("/images/banks/", Model.BankUser.Bank.Image)" alt="@Model.BankUser.Bank.Name" />
+                                </div>
+                            }
+                            <div class="media-body">
+                                <div class="media-top">
+                                    <div class="bank-name">@Model.BankUser.Bank.Name</div>
+                                </div>
+                                <div class="media-bottom">
+                                    <div class="bank-info">
+                                        Họ và tên: <span class="text-uppercase">@Model.BankUser.AccountName</span><br />
+                                        Chi nhánh: @Model.BankUser.Brand
+                                    </div>
+                                    <div class="bank-number">*@Model.BankUser.Name.Substring(Model.BankUser.Name.Length - 4)</div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <button type="button" class="add-bank" data-fancybox data-type="ajax" data-touch="false" data-src="@Url.Action("AddBankInfo", "Dashboard")">
+                            <i class="fa-solid fa-circle-plus"></i>
+                            Thêm Thông tin thanh toán của bạn*
+                        </button>
+                    }
                     <label>Chọn phương thức thanh toán của Khách hàng <span>*</span></label>
                     <label class="payment-label">
                         <input type="radio" name="Order.TypePay" value="1" checked="checked">
@@ -274,7 +317,7 @@
                     </div>
                     <div class="form-group">
                         <label>Số nhà, Tên đường <span>*</span></label>
-                        <input data-val="true" data-val-required="Bạn hãy nhập Số nhà, Tên đường" type="text" name="SpecialAddress" class="form-control" placeholder="Vui lòng nhập thông tin chính xác" required />
+                        <input data-val="true" data-val-required="Bạn hãy nhập Số nhà, Tên đường" type="text" id="SpecialAddress" name="SpecialAddress" class="form-control" placeholder="Vui lòng nhập thông tin chính xác" required />
                         @Html.ValidationMessageFor(a => a.SpecialAddress)
                     </div>
                     <button type="button" class="btn-cart">Hoàn tất</button>
@@ -282,37 +325,50 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="bankModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <i class="fa-regular fa-xmark fa-2xs"></i>
-                </button>
-                <div class="title-checkout">Thông tin thanh toán</div>
-                <form id="addressCustomerForm" class="form-checkout">
-                    <div class="form-group">
-                        <label>Tên <span>*</span></label>
-                        @Html.TextBoxFor(a => a.Fullname, new { @class = "form-control", placeholder = "Nhập vào Họ & Tên" })
-                        @Html.ValidationMessageFor(a => a.Fullname)
-                    </div>
-                    <div class="form-group">
-                        <label>Số Tài Khoản <span>*</span></label>
-                        @Html.TextBoxFor(a => a.Fullname, new { @class = "form-control", placeholder = "Số Tài Khoản" })
-                        @Html.ValidationMessageFor(a => a.Fullname)
-                    </div>
-                    <div class="form-group">
-                        <label>Ngân Hàng Thụ Hưởng <span>*</span></label>
-                        @Html.DropDownListFor(a => a.BankId, Model.BankSelectList, "Tên Ngân Hàng", new { @class = "form-control" })
-                        @Html.ValidationMessageFor(a => a.BankId)
-                    </div>
-                    <div class="box-btns">
-                        <button type="submit" class="btn-cart">Hoàn tất</button>
-                        <button type="button" class="close-modal" data-dismiss="modal" aria-label="Close">Hủy</button>
-                    </div>
-                </form>
+    @if (Model.Transport == 2)
+    {
+        <div class="modal fade" id="bankList" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i class="fa-regular fa-xmark fa-2xs"></i>
+                    </button>
+                    <div class="title-checkout">Thông tin thanh toán của bạn</div>
+                    @if (Model.BankUsers.Any())
+                    {
+                        <div class="bank-list">
+                            @foreach (var item in Model.BankUsers)
+                            {
+                                <div class="bank-item" data-id="@item.BankId">
+                                    <div class="media">
+                                        @if (item.Bank.Image != null)
+                                        {
+                                            <div class="bank-img">
+                                                <img src="@Path.Combine("/images/banks/", item.Bank.Image)" alt="@item.Bank.Name" />
+                                            </div>
+                                        }
+                                        <div class="media-body">
+                                            <div class="media-top">
+                                                <div class="bank-name">@item.Bank.Name</div>
+                                            </div>
+                                            <div class="media-bottom">
+                                                <div class="bank-info">
+                                                    Họ và tên: <span class="text-uppercase">@item.AccountName</span><br />
+                                                    Chi nhánh: @item.Brand
+                                                </div>
+                                                <div class="bank-number">*@item.Name.Substring(item.Name.Length - 4)</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <a href="javascript:;" onclick="chooseBank('@item.BankId')" class="btn-accept">Chọn</a>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
             </div>
         </div>
-    </div>
+    }
 </section>
 <a href="tel:@config.Hotline" class="phone-fixed">
     <img src="~/Content/images/img-main/phone.png" alt="Phone" />
@@ -327,6 +383,17 @@
                 if (data) {
                     location.reload();
                 }
+            });
+        }
+
+        function chooseBank(id) {
+            $("body").append('<div class="loading"><i class="fad fa-spin fa-spinner"></i></div>');
+            $.get("/Dashboard/GetBank", { bankId: id }, function (data) {
+                $("#bank-default").empty();
+                $("#bank-default").html(data);
+            }).then(function () {
+                $(".loading").remove();
+                $("#bankList").modal('hide');
             });
         }
     </script>

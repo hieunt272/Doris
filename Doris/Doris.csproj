@@ -167,6 +167,10 @@
     <Compile Include="Migrations\202308031546104_UpdateSome.designer.cs">
       <DependentUpon>202308031546104_UpdateSome.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202308120201486_AddCustomerInfoBill.cs" />
+    <Compile Include="Migrations\202308120201486_AddCustomerInfoBill.designer.cs">
+      <DependentUpon>202308120201486_AddCustomerInfoBill.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Address.cs" />
     <Compile Include="Models\Admin.cs" />
@@ -258,6 +262,7 @@
     <Content Include="Content\images\img-main\delivery.png" />
     <Content Include="Content\images\img-main\device.png" />
     <Content Include="Content\images\img-main\diamond.png" />
+    <Content Include="Content\images\img-main\discount.png" />
     <Content Include="Content\images\img-main\don-hang.png" />
     <Content Include="Content\images\img-main\footer.png" />
     <Content Include="Content\images\img-main\giỏ-hàng.png" />
@@ -698,6 +703,8 @@
     <Content Include="Views\ShoppingCart\CheckoutMobile.cshtml" />
     <Content Include="Views\Dashboard\ListOrderMobile.cshtml" />
     <Content Include="Views\Dashboard\GetOrderMobile.cshtml" />
+    <Content Include="Views\Dashboard\GetBank.cshtml" />
+    <Content Include="Views\Dashboard\AddBankInfo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
@@ -711,6 +718,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202308031546104_UpdateSome.resx">
       <DependentUpon>202308031546104_UpdateSome.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202308120201486_AddCustomerInfoBill.resx">
+      <DependentUpon>202308120201486_AddCustomerInfoBill.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

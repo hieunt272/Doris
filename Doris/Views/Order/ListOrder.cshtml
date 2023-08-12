@@ -13,7 +13,7 @@
                 <td>@Html.TextBoxFor(a => a.MaDonhang, new { @class = "form_control" })</td>
                 <td>Tên khách hàng</td>
                 <td>@Html.TextBoxFor(a => a.CustomerName, new { @class = "form_control" })</td>
-            </tr> 
+            </tr>
             <tr>
                 <td>Điện thoại khách hàng</td>
                 <td>@Html.TextBoxFor(a => a.CustomerMobile, new { @class = "form_control" })</td>
@@ -53,7 +53,7 @@
             <button type="submit" class="btn-search">TÌM KIẾM</button>
         </div>
     </form>
-    <hr/>
+    <hr />
     <p>Có tổng số <strong>@Model.Orders.TotalItemCount</strong> đơn hàng</p>
     <table class="list_table tablecenter">
         <tr>
@@ -80,12 +80,26 @@
             <tr data-id="@order.Id">
                 <td><a href="javascript:;" onclick="loadOrder(@order.Id)" class="@colorStats">@order.MaDonHang</a></td>
                 <td class="left">
-                    <p><strong>Người mua</strong> @order.CustomerInfo.Fullname</p>
-                    <p><strong>Địa chỉ</strong> @order.CustomerInfo.Address, @order.District.Name, @order.City.Name</p>
-                    <p><strong>Điện thoại</strong> @order.CustomerInfo.Mobile</p>
+                    @if (order.Transport == 2)
+                    {
+                        <p><strong>Họ tên khách hàng</strong> @order.CustomerInfo.Fullname</p>
+                        <p><strong>Điện thoại khách hàng</strong> @order.CustomerInfo.Mobile</p>
+                        <p><strong>Địa chỉ</strong> @order.CustomerInfo.Address</p>
+                    }
+                    else
+                    {
+                        <p><strong>Người mua</strong> @order.CustomerInfo.Fullname</p>
+                        <p><strong>Điện thoại</strong> @order.CustomerInfo.Mobile</p>
+                        <p><strong>Địa chỉ</strong> @order.CustomerInfo.Address, @order.Ward.Name, @order.District.Name, @order.City.Name</p>
+                    }
                     <p><strong>Email</strong> @order.CustomerInfo.Email</p>
                     <p><strong>Ngày đặt:</strong> @order.CreateDate.ToString("dd/MM/yyyy HH:mm")</p>
-                    <p><strong>Chuyển hàng:</strong> @if (order.Transport == 1) { @Html.Raw("tới shop") } else { @Html.Raw("tới khách hàng") }</p>
+                    <p>
+                        <strong>Chuyển hàng:</strong> @if (order.Transport == 1)
+                        {@Html.Raw("tới shop") }
+                    else
+                    { @Html.Raw("tới khách hàng")}
+                    </p>
                 </td>
                 <td><strong>@order.User.ShopCode</strong></td>
                 <td><strong style="font-size: 16px;">@order.TotalFee().ToString("N0")</strong></td>

@@ -667,7 +667,7 @@ input::-webkit-inner-spin-button {
 
     .new {
         position: absolute;
-        top: 30px;
+        top: 40px;
         right: 0;
         font-size: .875rem;
         color: $white;
@@ -720,20 +720,30 @@ input::-webkit-inner-spin-button {
     }
 
     .box-price {
-        @include flex-item(space-between, center);
+        display: flex;
+        align-items: center;
 
         .price {
             font-size: 1.125rem;
             font-weight: 500;
+            color: $red;
         }
 
         .discount {
-            font-size: .75rem;
+            position: absolute;
+            top: 15px;
+            right: 0;
+            font-size: .875rem;
             color: $white;
             background: #FF0000;
-            padding: 0 6px;
-            border-radius: 4px;
-            margin-bottom: 2px;
+            padding: 0 10px;
+        }
+
+        .price-sale {
+            text-decoration: line-through;
+            color: $gray;
+            font-size: .875rem;
+            margin-right: 10px;
         }
     }
 }
@@ -1557,6 +1567,7 @@ input::-webkit-inner-spin-button {
     li {
         text-align: center;
         width: 138px;
+        align-self: flex-end;
     }
 
     img {
@@ -1923,6 +1934,10 @@ input::-webkit-inner-spin-button {
         display: inline-block;
         text-align: center;
         margin-top: 10px;
+
+        &:hover {
+            color: $red;
+        }
     }
 }
 
@@ -2687,6 +2702,8 @@ input::-webkit-inner-spin-button {
 
 .cart-item-total {
     font-weight: 500;
+    width: 100px;
+    text-align: right;
 }
 
 .check-out {
@@ -2777,6 +2794,17 @@ input::-webkit-inner-spin-button {
         border-radius: 12px;
         height: 100px;
         margin: 10px 0 20px;
+    }
+}
+
+.back-to-cart {
+    margin-top: 15px;
+    font-size: 1.125rem;
+    font-weight: 300;
+    display: inline-block;
+
+    &:hover {
+        color: $red;
     }
 }
 
@@ -3728,10 +3756,10 @@ input::-webkit-inner-spin-button {
     @include flex-item(space-between, center);
     border-bottom: 1px solid $gray;
     padding-bottom: 5px;
-    margin-bottom: 20px;
+    margin: 20px 0;
 
     .title {
-        font-size: 1rem;
+        font-size: 1.75rem;
         text-transform: uppercase;
     }
 
@@ -3739,8 +3767,8 @@ input::-webkit-inner-spin-button {
         border: 0;
         color: $white;
         background: #FF3132;
-        font-size: .65rem;
-        padding: 2px 6px;
+        font-size: .875rem;
+        padding: 4px 10px;
     }
 }
 
@@ -3803,6 +3831,8 @@ input::-webkit-inner-spin-button {
 }
 
 .bank-item {
+    display: flex;
+
     &:not(:first-child) {
         margin-top: 12px;
         padding-top: 12px;
@@ -3811,18 +3841,19 @@ input::-webkit-inner-spin-button {
 
     .media {
         align-items: center;
-        font-size: .75rem;
+        color: $gray;
+        width: 70%;
     }
 
     .bank-img {
         border: 1px solid #D1D2D3;
         padding: 3px;
         border-radius: 4px;
-        margin-right: 5px;
+        margin-right: 10px;
     }
 
     img {
-        width: 40px;
+        width: 60px;
         aspect-ratio: 1;
         object-fit: contain;
     }
@@ -3835,21 +3866,20 @@ input::-webkit-inner-spin-button {
 
     .media-top {
         @include flex-item(space-between, center);
-        margin-bottom: 4px;
+        margin-bottom: 6px;
     }
 
     .bank-name {
         text-transform: uppercase;
         max-width: 70%;
         @include truncate(1);
-        line-height: 14px;
     }
 
     .default {
-        font-size: .65rem;
+        font-size: .875rem;
         color: $white;
         background: #00bfa5;
-        padding: 0 4px;
+        padding: 2px 10px;
         border-radius: 3px;
         display: none;
     }
@@ -3859,31 +3889,30 @@ input::-webkit-inner-spin-button {
     }
 
     .bank-info {
-        line-height: 14px;
+        line-height: 20px;
     }
 }
 
 .actions-info {
-    margin-top: 10px;
-    @include flex-item(flex-end, center);
+    width: 30%;
+    @include flex-item(flex-end, flex-end);
+    flex-direction: column;
+    font-size: .875rem;
 
     .del-info {
-        font-size: .75rem;
         text-decoration: underline;
     }
 
     .update-info {
         padding: 0;
         border: 0;
-        margin: 0 12px;
+        margin: 5px 0;
         color: #429BFF;
         background: transparent;
-        font-size: .75rem;
     }
 
     .set-default {
         display: inline-block;
-        font-size: .75rem;
         padding: 2px 10px;
         color: #A0A0A0;
         font-weight: 300;
@@ -4627,6 +4656,31 @@ input::-webkit-inner-spin-button {
         padding-top: 10px;
         border-top: 1px solid #f2f2f2;
     }
+
+    .discount-code {
+        @include flex-item(space-between, center);
+        margin-bottom: 10px;
+        font-size: .75rem;
+        color: #8C8C8C;
+
+        .title {
+            display: flex;
+            align-items: center;
+        }
+
+        img {
+            width: 20px;
+            margin-right: 5px;
+        }
+
+        button {
+            padding: 0;
+            border: 0;
+            color: $gray;
+            background: $white;
+            text-decoration: underline;
+        }
+    }
 }
 
 .delivery-label {
@@ -4954,6 +5008,19 @@ input::-webkit-inner-spin-button {
             box-shadow: none;
         }
 
+        label {
+            font-size: .75rem;
+            margin-bottom: 4px;
+        }
+
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+        .form-control {
+            font-size: .75rem;
+        }
+
         .btn-cart {
             margin: 20px auto 0;
             display: block;
@@ -4965,6 +5032,35 @@ input::-webkit-inner-spin-button {
             right: 2px;
             width: 25px;
             height: 25px;
+        }
+
+        .bank-list {
+            margin-bottom: 0;
+        }
+
+        .bank-item {
+            position: relative;
+
+            &:first-child {
+                .btn-accept {
+                    top: 0;
+                }
+            }
+
+            .media-bottom {
+                align-items: flex-end;
+            }
+        }
+
+        .btn-accept {
+            position: absolute;
+            top: 12px;
+            right: 0;
+            font-size: .65rem;
+            color: $gray;
+            border: 1px solid $gray;
+            border-radius: 3px;
+            padding: 1px 6px;
         }
     }
 }
@@ -5033,6 +5129,7 @@ input::-webkit-inner-spin-button {
         padding: 6px 12px;
         width: 100%;
         outline: 0;
+        margin-bottom: -6px;
     }
 
     .add-bank {
@@ -5083,6 +5180,10 @@ input::-webkit-inner-spin-button {
             display: none;
         }
     }
+}
+
+.bill-label {
+    color: $black;
 }
 
 .payment-label input:checked ~ .checkmark {
@@ -5226,6 +5327,146 @@ input::-webkit-inner-spin-button {
 
         &:not(:first-child) {
             margin-top: 5px;
+        }
+    }
+}
+
+.no-brand {
+    text-align: center;
+    color: $gray;
+}
+
+.title-label {
+    button {
+        float: right;
+        padding: 0;
+        border: 0;
+        color: $red;
+        background: $white;
+        text-decoration: underline;
+        font-size: .75rem;
+    }
+}
+
+.bank-default {
+    margin: 5px 0 15px;
+    align-items: unset;
+
+    .bank-img {
+        border: 1px solid #D1D2D3;
+        border-radius: 4px;
+        margin-right: 10px;
+    }
+
+    img {
+        width: 50px;
+        aspect-ratio: 1;
+        object-fit: contain;
+        padding: 4px;
+    }
+
+    .media-body {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        color: $gray;
+        font-size: .75rem;
+        line-height: 14px;
+    }
+
+    .media-top {
+        @include flex-item(space-between, center);
+        margin-bottom: 4px;
+    }
+
+    .bank-name {
+        text-transform: uppercase;
+        max-width: 70%;
+        @include truncate(1);
+    }
+
+    .media-bottom {
+        @include flex-item(space-between, center);
+    }
+}
+
+#addBankForm {
+    .form-group {
+        margin-bottom: 10px;
+    }
+
+    .btn-add {
+        margin-top: 10px;
+        padding: 6px 20px;
+    }
+}
+
+.box-bill {
+    display: none;
+
+    .nav-link {
+        padding: 0;
+        border: 0;
+        background: $white;
+        margin-right: 100px;
+        padding-right: 22px;
+        position: relative;
+
+        &.active {
+            color: $black;
+            background: $white;
+
+            .checkmark {
+                background: $red;
+            }
+        }
+    }
+
+    .checkmark {
+        position: absolute;
+        top: 4px;
+        right: 0;
+        height: 15px;
+        aspect-ratio: 1;
+        background-color: $white;
+        border: 1px solid $red;
+        border-radius: 3px;
+    }
+}
+
+.bill-info {
+    position: relative;
+    user-select: none;
+    padding-right: 24px;
+
+    input {
+        position: absolute;
+        opacity: 0;
+        visibility: hidden;
+    }
+
+    .checkmark {
+        position: absolute;
+        top: 5px;
+        right: 0;
+        height: 15px;
+        aspect-ratio: 1;
+        background-color: $white;
+        border: 1px solid $red;
+        border-radius: 3px;
+
+        &::after {
+            @include before(100%, 100%);
+            top: 0;
+            left: 0;
+            background: $red;
+            display: none;
+        }
+    }
+
+    input:checked ~ .checkmark {
+        &::after {
+            display: block;
         }
     }
 }
@@ -5447,7 +5688,7 @@ input::-webkit-inner-spin-button {
         padding-left: 15px;
 
         .checkmark {
-            top: 1px;
+            top: 3.5px;
             width: 10px;
             height: 10px;
 
@@ -5479,5 +5720,62 @@ input::-webkit-inner-spin-button {
 
     .loading {
         font-size: 1.5rem;
+    }
+
+    .title-line {
+        margin-top: 0;
+
+        .title {
+            font-size: .875rem;
+        }
+
+        .add-info {
+            font-size: .65rem;
+            padding: 2px 6px;
+        }
+    }
+
+    .bank-item {
+        flex-direction: column;
+
+        .media {
+            align-items: center;
+            font-size: .75rem;
+            width: 100%;
+        }
+
+        .bank-img {
+            margin-right: 5px;
+        }
+
+        img {
+            width: 40px;
+        }
+
+        .media-top {
+            margin-bottom: 4px;
+        }
+
+        .bank-name, .bank-info {
+            line-height: 14px;
+        }
+
+        .default {
+            font-size: .65rem;
+            padding: 0 4px;
+            border-radius: 3px;
+        }
+    }
+
+    .actions-info {
+        width: 100%;
+        font-size: .75rem;
+        margin-top: 10px;
+        flex-direction: row;
+        align-items: center;
+
+        .update-info {
+            margin: 0 12px;
+        }
     }
 }

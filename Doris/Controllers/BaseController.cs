@@ -17,7 +17,7 @@ namespace Doris.Controllers
         public JsonResult GetCities(string city ="")
         { 
             var cities = _unitOfWork.CityRepository
-                .GetQuery(a => a.Active && a.Name.ToLower().Contains(city.ToLower()), q => q.OrderBy(a => a.Sort)).Select(a => new { a.Id, a.Name });
+                .GetQuery(a => a.Active && a.Name.Contains(city), q => q.OrderBy(a => a.Sort)).Select(a => new { a.Id, a.Name });
             return Json(cities, JsonRequestBehavior.AllowGet);
         }
 

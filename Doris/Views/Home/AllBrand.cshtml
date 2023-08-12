@@ -66,7 +66,6 @@
                     {
                         <li @if (Model.Brands.Count(a => a.BrandName.StartsWith("" + i + "")) > 0) { @Html.Raw("class='show'") }>@i</li>
                     }
-                    <li>#</li>
                 </ul>
             </div>
         }

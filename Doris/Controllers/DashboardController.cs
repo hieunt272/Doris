@@ -83,6 +83,7 @@ namespace Doris.Controllers
             var user = _unitOfWork.UserRepository.GetQuery(a => a.Id == User.Id).FirstOrDefault();
             return PartialView(user);
         }
+
         #region UserInfo
         [Route("ho-so-ca-nhan")]
         public ActionResult MyProfile(string result = "")
@@ -105,7 +106,8 @@ namespace Doris.Controllers
                 Month = user.BirthDay.Month,
                 Year = user.BirthDay.Year,
                 Avatar = user.Avatar,
-                UserId = user.Id
+                UserId = user.Id,
+                BankUsers = _unitOfWork.BankUserRepository.GetQuery(a => a.UserId == User.Id, o => o.OrderBy(a => a.Sort))
             };
             return View(model);
         }
@@ -155,7 +157,7 @@ namespace Doris.Controllers
                 user.Gender = model.Gender;
                 _unitOfWork.Save();
 
-                var userData = user.Username + "|" + user.Avatar + "|" + user.Id + "|" + user.Email;
+                var userData = user.FullName + "|" + user.Level + "|" + user.ShopCode + "|" + user.Avatar;
                 var ticket = new FormsAuthenticationTicket(2, user.Email.ToLower(), DateTime.Now, DateTime.Now.AddDays(30), true,
                     userData, FormsAuthentication.FormsCookiePath);
 
@@ -552,6 +554,40 @@ namespace Doris.Controllers
             _unitOfWork.Save();
             return true;
         }
+        public PartialViewResult AddBankInfo()
+        {
+            var model = new BankInfoViewModel
+            {
+                BankUser = new BankUser { Sort = 1 },
+                BankSelectList = new SelectList(_unitOfWork.BankRepository.Get(a => a.Active, o => o.OrderBy(a => a.Sort)), "Id", "Name")
+            };
+            return PartialView(model);
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public JsonResult AddBankInfo(BankInfoViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                model.BankUser.BankId = model.BankId;
+                model.BankUser.UserId = User.Id;
+
+                Regex regex = new Regex("\\p{IsCombiningDiacriticalMarks}+");
+                string temp = model.BankUser.AccountName.Normalize(NormalizationForm.FormD);
+                model.BankUser.AccountName = regex.Replace(temp, String.Empty).Replace('\u0111', 'd').Replace('\u0110', 'D').ToUpper();
+
+                var count = _unitOfWork.BankUserRepository.GetQuery(a => a.UserId == User.Id && a.Default && a.BankId != model.BankUser.BankId).Count();
+
+                if (count > 0)
+                {
+                    model.BankUser.Default = false;
+                }
+
+                _unitOfWork.BankUserRepository.AddOrUpdate(model.BankUser);
+                _unitOfWork.Save();
+                return Json(new { status = 0 });
+            }
+            return Json(new { status = 1 });
+        }
 
         [Route("cap-bac-thanh-vien")]
         public PartialViewResult Membership()
@@ -627,6 +663,25 @@ namespace Doris.Controllers
             };
 
             return PartialView(model);
+        }
+
+        public PartialViewResult GetBank(int bankId)
+        {
+            var bankUser = _unitOfWork.BankUserRepository.GetQuery(a => a.BankId == bankId && a.UserId == User.Id).FirstOrDefault();
+            if (bankUser == null)
+            {
+                return null;
+            }
+
+            bankUser.Default = true;
+            var bankUsers = _unitOfWork.BankUserRepository.GetQuery(a => a.BankId != bankId && a.UserId == User.Id, o => o.OrderBy(a => a.BankId));
+            foreach (var bank in bankUsers)
+            {
+                bank.Default = false;
+            }
+            _unitOfWork.Save();
+
+            return PartialView(bankUser);
         }
 
         protected override void Dispose(bool disposing)

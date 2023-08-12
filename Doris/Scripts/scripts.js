@@ -179,7 +179,7 @@ function brand() {
         dots: false,
         infinite: true,
         slidesToShow: 9,
-        slidesToScroll: 2,
+        slidesToScroll: 4,
         speed: 1000,
         autoplay: false,
         autoplaySpeed: 3000,
@@ -234,6 +234,34 @@ function checkout() {
     $('.btn-back').click(function (e) {
         $('.address-default').removeClass('active');
         $('.list-address').removeClass('active');
+    });
+
+    $('.bill-info').click(function () {
+        var check = $('input[name="Bill"]:checked').length > 0;
+        var type = $('.nav-link.active').attr('data-bill');
+        if (check) {
+            $('.box-bill').show();
+            if (type == "Business") {
+                $('#typeBill').val(1);
+            }
+            else if (type == "Personal") {
+                $('#typeBill').val(2);
+            }
+        }
+        else {
+            $('.box-bill').hide();
+            $('#typeBill').val(0);
+        }
+    });
+
+    $('.nav-link').click(function () {
+        var type = $(this).attr("data-bill");
+        if (type == "Business") {
+            $('#typeBill').val(1);
+        }
+        else if (type == "Personal") {
+            $('#typeBill').val(2);
+        }
     });
 }
 
@@ -465,6 +493,19 @@ $(function () {
         }
     });
 });
+
+function cart() {
+    $(".cart-quantity .btn-light").click(function () {
+        var quantity = $(this).siblings(".input-number").val();
+        var cartId = $(this).parents(".cart-id").attr("data-cart-id");
+
+        $.post("/ShoppingCart/UpdateCart", { cartId: cartId, quantity: quantity }, function (data) {
+            if (data.result === 1) {
+                location.reload();
+            }
+        });
+    });
+}
 
 function Sort(action) {
     $("[data-filter]").on("change", function () {

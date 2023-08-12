@@ -34,6 +34,7 @@ namespace Doris.Models
                 {
                     ProductId = proId,
                     Price = price,
+                    PriceUser = price,
                     CartId = ShoppingCartId,
                     Count = quantity,
                     DateCreated = DateTime.Now
@@ -86,6 +87,14 @@ namespace Doris.Models
 
             return Convert.ToDecimal(total);
         }
+        public decimal GetTotalUser()
+        {
+            var total = (from cartItems in _unitOfWork.CartRepository.Get()
+                         where cartItems.CartId == ShoppingCartId
+                         select (int?)cartItems.Count * cartItems.PriceUser).Sum();
+
+            return Convert.ToDecimal(total);
+        }
         public decimal GetTotalShipFee()
         {
             decimal totalShipFee = 0;
@@ -93,6 +102,15 @@ namespace Doris.Models
             {
                 totalShipFee = GetTotal() + 30000;
 
+            }
+            return totalShipFee;
+        }
+        public decimal GetTotalUserShipFee()
+        {
+            decimal totalShipFee = 0;
+            if (GetTotalUser() > 0)
+            {
+                totalShipFee = GetTotalUser() + 30000;
             }
             return totalShipFee;
         }

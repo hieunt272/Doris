@@ -39,6 +39,7 @@
                 {
                     percent = (decimal)Model.PriceDiamond / (decimal)Model.Price;
                     discount = 100 - Math.Truncate(percent * 100);
+                    <div class="price-sale">@Convert.ToDecimal(Model.Price).ToString("N0")đ</div>
                     <div class="price">@Convert.ToDecimal(Model.PriceDiamond).ToString("N0")đ</div>
                     <div class="discount">-@discount%</div>
                 }
@@ -46,6 +47,7 @@
                 {
                     percent = (decimal)Model.PricePlatinum / (decimal)Model.Price;
                     discount = 100 - Math.Truncate(percent * 100);
+                    <div class="price-sale">@Convert.ToDecimal(Model.Price).ToString("N0")đ</div>
                     <div class="price">@Convert.ToDecimal(Model.PricePlatinum).ToString("N0")đ</div>
                     <div class="discount">-@discount%</div>
                 }
@@ -53,6 +55,7 @@
                 {
                     percent = (decimal)Model.PriceGold / (decimal)Model.Price;
                     discount = 100 - Math.Truncate(percent * 100);
+                    <div class="price-sale">@Convert.ToDecimal(Model.Price).ToString("N0")đ</div>
                     <div class="price">@Convert.ToDecimal(Model.PriceGold).ToString("N0")đ</div>
                     <div class="discount">-@discount%</div>
                 }
@@ -60,6 +63,7 @@
                 {
                     percent = (decimal)Model.PriceSilver / (decimal)Model.Price;
                     discount = 100 - Math.Truncate(percent * 100);
+                    <div class="price-sale">@Convert.ToDecimal(Model.Price).ToString("N0")đ</div>
                     <div class="price">@Convert.ToDecimal(Model.PriceSilver).ToString("N0")đ</div>
                     <div class="discount">-@discount%</div>
                 }
@@ -67,6 +71,7 @@
                 {
                     percent = (decimal)Model.PriceBronze / (decimal)Model.Price;
                     discount = 100 - Math.Truncate(percent * 100);
+                    <div class="price-sale">@Convert.ToDecimal(Model.Price).ToString("N0")đ</div>
                     <div class="price">@Convert.ToDecimal(Model.PriceBronze).ToString("N0")đ</div>
                     <div class="discount">-@discount%</div>
                 }

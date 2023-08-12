@@ -5,17 +5,28 @@
     switch (Model.Order.TypePay)
     {
         case 1:
-            typepay = "Chuyển khoản";
+            typepay = "Tiền mặt";
             break;
         case 2:
-            typepay = "Tiền mặt";
+            typepay = "Chuyển khoản";
+            break;
+    }
+    var typebill = "doanh nghiệp";
+    switch (Model.Order.TypeBill)
+    {
+        case 1:
+            typebill = "doanh nghiệp";
+            break;
+        case 2:
+            typebill = "cá nhân";
             break;
     }
 }
 <style>
     .avatar-pro {
         width: 130px;
-        height: auto;
+        aspect-ratio: 1;
+        object-fit: contain;
     }
 </style>
 <div class="load-order-view shadow-border">
@@ -26,20 +37,34 @@
             <th>Hình ảnh</th>
             <th>Tên sản phẩm</th>
             <th>Số lượng</th>
-            <th>Giá</th>
+            <th style="width: 180px">Giá</th>
             <th>Thành tiền</th>
         </tr>
         @foreach (var detail in Model.Order.OrderDetails)
         {
             var sotien = detail.Quantity * detail.Price;
+            var comission = detail.Price - detail.Product.Price;
             <tr>
                 <td>@i</td>
-                <td><img class="img-fluid" src="@Path.Combine("/images/products/", detail.Product.ListImage.Split(',')[0])?w=50" /></td>
+                <td><img class="img-fluid avatar-pro" src="@Path.Combine("/images/products/", detail.Product.ListImage.Split(',')[0])?w=50" /></td>
                 <td>@detail.Product.Name</td>
                 <td>
                     @detail.Quantity
                 </td>
-                <td>@Html.DisplayFor(a => detail.Price) đ</td>
+                @if (detail.Order.Transport == 2)
+                {
+                    <td class="text-left">
+                        <p>Giá bán lẻ: @Html.DisplayFor(a => detail.Product.Price) đ</p>
+                        <p>Giá bán cho khách: @Html.DisplayFor(a => detail.Price) đ</p>
+                        <p>Hoa hồng: @Convert.ToDecimal(comission).ToString("N0") đ</p>
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        @Html.DisplayFor(a => detail.Price) đ
+                    </td>
+                }
                 <td>@Convert.ToDecimal(sotien).ToString("N0") đ</td>
             </tr>
             i++;
@@ -74,7 +99,14 @@
             </tr>
             <tr>
                 <td>Địa chỉ</td>
-                <td>@Model.Order.CustomerInfo.Address, @Model.Order.District.Name, @Model.Order.City.Name</td>
+                @if (Model.Order.Transport == 2)
+                {
+                    <td>@Model.Order.CustomerInfo.Address</td>
+                }
+                else
+                {
+                    <td>@Model.Order.CustomerInfo.Address, @Model.Order.District.Name, @Model.Order.District.Name, @Model.Order.City.Name</td>
+                }
             </tr>
             <tr>
                 <td colspan="2" style="font-weight: bold">Yêu cầu thêm</td>
@@ -84,6 +116,50 @@
             </tr>
         </table>
     </div>
+    @if (Model.Order.TypeBill > 0)
+    {
+        <h2>Thông tin xuất hóa đơn @typebill</h2>
+        <div style="overflow: hidden">
+            @if (Model.Order.TypeBill == 1)
+            {
+                <table class="form_table table order-view">
+                    <tr>
+                        <td>Tên cơ sở kinh doanh</td>
+                        <td>@Model.Order.CustomerInfo.BusinessName</td>
+                    </tr>
+                    <tr>
+                        <td>Mã số thuế</td>
+                        <td>@Model.Order.CustomerInfo.TaxCode</td>
+                    </tr>
+                    <tr>
+                        <td>Địa chỉ xuất hóa đơn GTGT</td>
+                        <td>@Model.Order.CustomerInfo.BillAddress</td>
+                    </tr>
+                    <tr>
+                        <td>Email nhận hóa đơn</td>
+                        <td>@Model.Order.CustomerInfo.BillEmail</td>
+                    </tr>
+                </table>
+            }
+            else if (Model.Order.TypeBill == 2)
+            {
+                <table class="form_table table order-view">
+                    <tr>
+                        <td>Email</td>
+                        <td>@Model.Order.CustomerInfo.PersonEmail</td>
+                    </tr>
+                    <tr>
+                        <td>Họ và tên</td>
+                        <td>@Model.Order.CustomerInfo.PersonName</td>
+                    </tr>
+                    <tr>
+                        <td>Địa chỉ</td>
+                        <td>@Model.Order.CustomerInfo.PersonAddress</td>
+                    </tr>
+                </table>
+            }
+        </div>
+    }
     <h2>Thanh toán</h2>
     <div class="box_content mt-0">
         <p class="mb-1">Hình thức thanh toán: <strong>@typepay</strong></p>

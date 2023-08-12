@@ -112,8 +112,8 @@ namespace Doris.Controllers
                     var productUser = _unitOfWork.ProductUserRepository.GetQuery(a => a.ProductId == item.ProductId && a.UserId == User.Id).FirstOrDefault();
                     if (productUser != null && cartItem != null)
                     {
-                        item.Price = productUser.UserPrice;
-                        cartItem.Price = productUser.UserPrice;
+                        item.PriceUser = productUser.UserPrice;
+                        cartItem.PriceUser = productUser.UserPrice;
                         _unitOfWork.Save();
                     }
                 }
@@ -142,6 +142,13 @@ namespace Doris.Controllers
             {
                 model.BankSelectList = new SelectList(_unitOfWork.BankRepository.Get(a => a.Active, o => o.OrderBy(a => a.Sort)), "Id", "Name");
                 model.Transport = transport;
+                if (transport == 2)
+                {
+                    var bankUsers = _unitOfWork.BankUserRepository.GetQuery(a => a.UserId == User.Id, o => o.OrderBy(a => a.BankId));
+                    model.CartTotal = cart.GetTotalUserShipFee();
+                    model.BankUser = bankUsers.FirstOrDefault(a => a.Default);
+                    model.BankUsers = bankUsers;
+                }
                 return PartialView("CheckoutMobile", model);
             }
 
@@ -179,18 +186,35 @@ namespace Doris.Controllers
                 _unitOfWork.Save();
 
                 model.Order.MaDonHang = DateTime.Now.ToString("yyyyMMddHHmm") + "C" + model.Order.Id;
-
-                foreach (var odetails in from cart1 in item
-                                         let product = _unitOfWork.ProductRepository.GetById(cart1.ProductId)
-                                         select new OrderDetail
-                                         {
-                                             OrderId = model.Order.Id,
-                                             ProductId = cart1.ProductId,
-                                             Quantity = cart1.Count,
-                                             Price = cart1.Price,
-                                         })
+                if (model.Transport == 2)
                 {
-                    _unitOfWork.OrderDetailRepository.Insert(odetails);
+                    foreach (var odetails in from cart1 in item
+                                             let product = _unitOfWork.ProductRepository.GetById(cart1.ProductId)
+                                             select new OrderDetail
+                                             {
+                                                 OrderId = model.Order.Id,
+                                                 ProductId = cart1.ProductId,
+                                                 Quantity = cart1.Count,
+                                                 Price = cart1.PriceUser,
+                                             })
+                    {
+                        _unitOfWork.OrderDetailRepository.Insert(odetails);
+                    }
+                }
+                else
+                {
+                    foreach (var odetails in from cart1 in item
+                                             let product = _unitOfWork.ProductRepository.GetById(cart1.ProductId)
+                                             select new OrderDetail
+                                             {
+                                                 OrderId = model.Order.Id,
+                                                 ProductId = cart1.ProductId,
+                                                 Quantity = cart1.Count,
+                                                 Price = cart1.Price,
+                                             })
+                    {
+                        _unitOfWork.OrderDetailRepository.Insert(odetails);
+                    }
                 }
                 _unitOfWork.Save();
 
@@ -201,16 +225,23 @@ namespace Doris.Controllers
                 switch (model.Order.TypePay)
                 {
                     case 1:
-                        typepay = "Chuyển khoản";
-                        break;
-                    case 2:
                         typepay = "Tiền mặt";
                         break;
+                    case 2:
+                        typepay = "Chuyển khoản";
+                        break;
+                }
+                var tamtinh = carts.GetTotal().ToString("N0");
+                var addressCustomer = model.Order.CustomerInfo.Address + ", " + ward?.Name + ", " + ward?.District.Name + ", " + ward?.District.City.Name;
+                if (model.Transport == 2)
+                {
+                    tamtinh = carts.GetTotalUser().ToString("N0");
+                    addressCustomer = model.Order.CustomerInfo.Address;
                 }
                 var sb = "<p style='font-size:16px'>Thông tin đơn hàng gửi từ website " + Request.Url?.Host + "</p>";
                 sb += "<p>Mã đơn hàng: <strong>" + model.Order.MaDonHang + "</strong></p>";
                 sb += "<p>Họ và tên: <strong>" + model.Order.CustomerInfo.Fullname + "</strong></p>";
-                sb += "<p>Địa chỉ: <strong>" + model.Order.CustomerInfo.Address + ", " + ward?.Name + ", " + ward?.District.Name + ", " + ward?.District.City.Name + "</strong></p>";
+                sb += "<p>Địa chỉ: <strong>" + addressCustomer + "</strong></p>";
                 sb += "<p>Email: <strong>" + model.Order.CustomerInfo.Email + "</strong></p>";
                 sb += "<p>Điện thoại: <strong>" + model.Order.CustomerInfo.Mobile + "</strong></p>";
                 sb += "<p>Yêu cầu thêm: <strong>" + model.Order.CustomerInfo.Body + "</strong></p>";
@@ -228,7 +259,6 @@ namespace Doris.Controllers
                 foreach (var odetails in model.Order.OrderDetails)
                 {
                     var thanhtien = Convert.ToDecimal(odetails.Price * odetails.Quantity);
-
                     var img = "NO PICTURE";
                     if (odetails.Product.ListImage != null)
                     {
@@ -245,7 +275,7 @@ namespace Doris.Controllers
                           "</tr>";
                 }
 
-                sb += "<tr><td colspan='6' style='text-align:right'><strong>Tạm tính: " + carts.GetTotal().ToString("N0") + " đ</strong></td></tr>";
+                sb += "<tr><td colspan='6' style='text-align:right'><strong>Tạm tính: " + tamtinh + " đ</strong></td></tr>";
                 sb += "<tr><td colspan='6' style='text-align:right'><strong>Giao hàng: " + model.Order.ShipFee.ToString("N0") + " đ</strong></td></tr>";
                 sb += "<tr><td colspan='6' style='text-align:right'><strong>Tổng tiền: " + model.Order.TotalFee().ToString("N0") + " đ</strong></td></tr>";
                 sb += "</table>";
@@ -264,6 +294,10 @@ namespace Doris.Controllers
             if (model.CityId > 0)
             {
                 model.DistrictSelectList = DistrictSelectList(model.CityId);
+            }
+            if (model.DistrictId > 0)
+            {
+                model.WardSelectList = WardSelectList(model.DistrictId);
             }
             return View(model);
         }

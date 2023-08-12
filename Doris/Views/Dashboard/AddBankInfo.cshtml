@@ -1,0 +1,42 @@
+﻿@model Doris.ViewModel.BankInfoViewModel
+
+<div class="card card-red p-0">
+    <div class="card-header">Thông tin thanh toán</div>
+    <div class="card-body">
+        <form id="addBankForm">
+            @Html.AntiForgeryToken()
+            @if (Model.BankUser != null)
+            {
+                @Html.HiddenFor(a => a.BankUser.BankId)
+                <div class="form-group">
+                    @Html.LabelFor(m => m.BankId)
+                    @Html.DropDownListFor(m => m.BankId, Model.BankSelectList, "Chọn ngân hàng", new { @class = "form-control form-control-sm" })
+                    @Html.ValidationMessageFor(m => m.BankId)
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.BankUser.AccountName)
+                    @Html.TextBoxFor(m => m.BankUser.AccountName, new { @class = "form-control form-control-sm" })
+                    @Html.ValidationMessageFor(m => m.BankUser.AccountName)
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.BankUser.Name)
+                    @Html.TextBoxFor(m => m.BankUser.Name, new { @class = "form-control form-control-sm" })
+                    @Html.ValidationMessageFor(m => m.BankUser.Name)
+                </div>
+                <button type="submit" class="btn-add">Lưu</button>
+            }
+        </form>
+    </div>
+    <script>
+        $("#addBankForm").on("submit", function (e) {
+            e.preventDefault();
+            if ($(this).valid()) {
+                $.post("/Dashboard/AddBankInfo", $(this).serialize(), function (data) {
+                    if (data.status === 0) {
+                        window.location.reload();
+                    }
+                });
+            }
+        });
+    </script>
+</div>
