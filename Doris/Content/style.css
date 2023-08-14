@@ -3443,6 +3443,112 @@ input::-webkit-inner-spin-button {
   font-weight: 500;
 }
 
+.card-discount {
+  width: 500px;
+  z-index: 100;
+}
+.card-discount .card-header {
+  text-align: center;
+  text-transform: uppercase;
+  background: #fff;
+  font-size: 1rem;
+  border-bottom: 0;
+}
+.card-discount .card-header img {
+  width: 25px;
+  margin-bottom: 5px;
+}
+.card-discount .card-body {
+  padding: 10px 3px 20px;
+}
+
+#discountForm button {
+  width: 250px;
+  height: 40px;
+  border: 1px solid #f17173;
+  color: #f17173;
+  background: #fff;
+  font-size: 0.75rem;
+  border-radius: 6px;
+  margin-top: 10px;
+}
+
+.discount-list {
+  overflow-y: auto;
+  height: 300px;
+  padding: 10px;
+}
+
+.discount-item {
+  position: relative;
+  padding: 10px 10px;
+  background: #F2F2F2;
+  border-radius: 15px;
+  margin-bottom: 15px;
+  display: block;
+  opacity: 0.5;
+  pointer-events: none;
+}
+.discount-item.show {
+  opacity: 1;
+  pointer-events: unset;
+}
+.discount-item .price-off {
+  color: #8C8C8C;
+  font-size: 0.75rem;
+}
+.discount-item .discount-name {
+  text-transform: uppercase;
+  font-size: 0.75rem;
+}
+.discount-item .desc {
+  color: #8C8C8C;
+  font-size: 0.75rem;
+}
+.discount-item .discount {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  visibility: hidden;
+}
+.discount-item .discount:checked ~ .checkmark,
+.discount-item .discount:checked ~ .line {
+  display: block;
+}
+.discount-item .checkmark {
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  width: 15px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #f17173;
+  outline: 2px solid #fff;
+  display: none;
+}
+.discount-item .checkmark::after {
+  font-family: "Font Awesome 6 Pro";
+  content: "\f00c";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #fff;
+  font-size: 0.5rem;
+  padding-top: 1px;
+}
+.discount-item .line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 1px solid #f17173;
+  border-radius: 15px;
+  display: none;
+}
+
 #addressForm, #bankInfoForm {
   font-size: 0.75rem;
 }
@@ -5005,5 +5111,14 @@ input::-webkit-inner-spin-button {
   }
   .actions-info .update-info {
     margin: 0 12px;
+  }
+  .box-bill {
+    margin-top: 10px;
+  }
+  .box-bill .nav-item {
+    width: 50%;
+  }
+  .box-bill .nav-link {
+    margin-right: 0;
   }
 }

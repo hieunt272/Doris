@@ -8,6 +8,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
+using System.Collections.Generic;
 
 namespace Doris.Controllers
 {
@@ -50,6 +51,22 @@ namespace Doris.Controllers
                     };
                     _unitOfWork.UserRepository.Insert(user);
                     _unitOfWork.Save();
+
+                    List<Discount> discounts = _unitOfWork.DiscountRepository.GetQuery().ToList();
+                    if (discounts.Any())
+                    {
+                        foreach (var discount in discounts)
+                        {
+                            var discountUser = new DiscountUser
+                            {
+                                DiscountId = discount.Id,
+                                UserId = user.Id
+                            };
+                            _unitOfWork.DiscountUserRepository.Insert(discountUser);
+                            _unitOfWork.Save();
+                        }
+                    }
+
                     var userData = user.FullName + "|" + user.Level + "|" + user.ShopCode + "|" + user.Avatar;
                     var ticket = new FormsAuthenticationTicket(2, model.PhoneNumber.ToLower(), DateTime.Now, DateTime.Now.AddDays(30), true,
                         userData, FormsAuthentication.FormsCookiePath);

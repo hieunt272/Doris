@@ -171,6 +171,10 @@
     <Compile Include="Migrations\202308120201486_AddCustomerInfoBill.designer.cs">
       <DependentUpon>202308120201486_AddCustomerInfoBill.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202308141125036_AddDiscountClass.cs" />
+    <Compile Include="Migrations\202308141125036_AddDiscountClass.designer.cs">
+      <DependentUpon>202308141125036_AddDiscountClass.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Address.cs" />
     <Compile Include="Models\Admin.cs" />
@@ -183,6 +187,8 @@
     <Compile Include="Models\City.cs" />
     <Compile Include="Models\ConfigSite.cs" />
     <Compile Include="Models\Contact.cs" />
+    <Compile Include="Models\Discount.cs" />
+    <Compile Include="Models\DiscountUser.cs" />
     <Compile Include="Models\District.cs" />
     <Compile Include="Models\Order.cs" />
     <Compile Include="Models\OrderDetail.cs" />
@@ -705,6 +711,10 @@
     <Content Include="Views\Dashboard\GetOrderMobile.cshtml" />
     <Content Include="Views\Dashboard\GetBank.cshtml" />
     <Content Include="Views\Dashboard\AddBankInfo.cshtml" />
+    <Content Include="Views\ProductVcms\ListDiscount.cshtml" />
+    <Content Include="Views\ProductVcms\Discount.cshtml" />
+    <Content Include="Views\ProductVcms\UpdateDiscount.cshtml" />
+    <Content Include="Views\ShoppingCart\AddDiscount.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
@@ -721,6 +731,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202308120201486_AddCustomerInfoBill.resx">
       <DependentUpon>202308120201486_AddCustomerInfoBill.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202308141125036_AddDiscountClass.resx">
+      <DependentUpon>202308141125036_AddDiscountClass.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

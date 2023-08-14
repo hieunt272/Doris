@@ -1,0 +1,70 @@
+﻿@model Doris.ViewModel.InsertDiscountViewModel
+@{
+    ViewBag.Title = "Thêm ưu đãi";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<h2>Thêm ưu đãi</h2>
+@if (ViewBag.ArticleCat == "success")
+{
+    <div id="AlertBox" class="alert alert-success"><strong>Thêm mới ưu đãi thành công</strong></div>
+}
+@if (ViewBag.ArticleCat == "update")
+{
+    <div id="AlertBox" class="alert alert-success"><strong>Cập nhật ưu đãi thành công</strong></div>
+}
+<a class="btn quick-link" id="create-cat" href="#list-cat"><i class="far fa-list mr-1"></i> Danh sách ưu đãi</a>
+<div class="box_content">
+    <div class="row">
+        <div class="col-sm-12 col-lg-12">
+            @using (Html.BeginForm("Discount", "ProductVcms", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                @Html.ValidationSummary(true)
+                <table class="form_table form-table-cat">
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(a => Model.Discount.Name)</td>
+                        <td class="form_text">@Html.EditorFor(a => Model.Discount.Name)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(a => Model.Discount.ShowName)</td>
+                        <td class="form_text">@Html.EditorFor(a => Model.Discount.ShowName)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(a => Model.Discount.Description)</td>
+                        <td class="form_text">
+                            @Html.EditorFor(a => Model.Discount.Description)
+                            @Html.ValidationMessageFor(a => Model.Discount.Description)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.PriceOff)</td>
+                        <td class="form_text">@Html.EditorFor(model => model.PriceOff)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name">@Html.LabelFor(model => model.TotalOrder)</td>
+                        <td class="form_text">@Html.EditorFor(model => model.TotalOrder)</td>
+                    </tr>
+                    <tr>
+                        <td class="form_name"></td>
+                        <td class="form_text">
+                            <input type="submit" class="btn quick-link" value="Thêm mới" />
+                        </td>
+                    </tr>
+                </table>
+            }
+        </div>
+        <div class="col-sm-12 col-lg-12">
+            @Html.Action("ListDiscount", "ProductVcms")
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script src="~/Scripts/jquery.maskMoney.min.js"></script>
+    <script>
+        $(function () {
+            $(".input-number").maskMoney({
+                precision: 0,
+                thousands: ','
+            });
+        });
+    </script>
+}

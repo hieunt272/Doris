@@ -10,6 +10,7 @@ using System.Data.Entity;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Web.Mvc;
 
 namespace Doris.Controllers
@@ -653,6 +654,126 @@ namespace Doris.Controllers
             brand.Home = home;
             brand.Hot = hot;
 
+            _unitOfWork.Save();
+            return true;
+        }
+        #endregion
+
+        #region Discount
+        [ChildActionOnly]
+        public ActionResult ListDiscount()
+        {
+            var discounts = _unitOfWork.DiscountRepository.Get(orderBy: q => q.OrderBy(a => a.CreateDate));
+            return PartialView(discounts);
+        }
+        public ActionResult Discount(string result = "")
+        {
+            ViewBag.ArticleCat = result;
+            var model = new InsertDiscountViewModel
+            {
+                Discount = new Discount { }
+            };
+            return View(model);
+        }
+        [HttpPost, ValidateInput(false)]
+        public ActionResult Discount(InsertDiscountViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                if (model.PriceOff != null)
+                {
+                    model.Discount.PriceOff = Convert.ToDecimal(model.PriceOff.Replace(",", ""));
+                }
+                if (model.TotalOrder != null)
+                {
+                    model.Discount.TotalOrder = Convert.ToDecimal(model.TotalOrder.Replace(",", ""));
+                }
+
+                _unitOfWork.DiscountRepository.Insert(model.Discount);
+                _unitOfWork.Save();
+
+                List<User> users = _unitOfWork.UserRepository.GetQuery().ToList();
+                if (users.Any())
+                {
+                    foreach (var user in users)
+                    {
+                        var discountUser = new DiscountUser
+                        {
+                            DiscountId = model.Discount.Id,
+                            UserId = user.Id
+                        };
+                        _unitOfWork.DiscountUserRepository.Insert(discountUser);
+                        _unitOfWork.Save();
+                    }
+                }
+
+                return RedirectToAction("Discount", new { result = "success" });
+            }
+            return View(model);
+        }
+        public ActionResult UpdateDiscount(int discountId = 0)
+        {
+            var discount = _unitOfWork.DiscountRepository.GetById(discountId);
+            if (discount == null)
+            {
+                return RedirectToAction("Discount");
+            }
+
+            var model = new InsertDiscountViewModel
+            {
+                Discount = discount,
+                PriceOff = discount.PriceOff?.ToString("N0"),
+                TotalOrder = discount.TotalOrder?.ToString("N0")
+            };
+            return View(model);
+        }
+        [HttpPost, ValidateInput(false)]
+        public ActionResult UpdateDiscount(InsertDiscountViewModel model)
+        {
+            var discount = _unitOfWork.DiscountRepository.GetById(model.Discount.Id);
+            if (discount == null)
+            {
+                return RedirectToAction("Discount");
+            }
+
+            if (ModelState.IsValid)
+            {
+                if (model.PriceOff != null)
+                {
+                    discount.PriceOff = Convert.ToDecimal(model.PriceOff.Replace(",", ""));
+                }
+                else
+                {
+                    discount.PriceOff = null;
+                }
+                if (model.TotalOrder != null)
+                {
+                    discount.TotalOrder = Convert.ToDecimal(model.TotalOrder.Replace(",", ""));
+                }
+                else
+                {
+                    discount.TotalOrder = null;
+                }
+
+                discount.Name = model.Discount.Name;
+                discount.Description = model.Discount.Description;
+                discount.ShowName = model.Discount.ShowName;
+
+                _unitOfWork.Save();
+                return RedirectToAction("Discount", new { result = "update" });
+            }
+            return View(discount);
+        }
+        [HttpPost]
+        public bool DeleteDiscount(int discountId = 0)
+        {
+
+            var discount = _unitOfWork.DiscountRepository.GetById(discountId);
+            if (discount == null)
+            {
+                return false;
+            }
+            _unitOfWork.DiscountRepository.Delete(discount);
             _unitOfWork.Save();
             return true;
         }

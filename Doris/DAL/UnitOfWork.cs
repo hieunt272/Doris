@@ -32,7 +32,13 @@ namespace Doris.DAL
         private GenericRepository<Bank> _bankRepository;
         private GenericRepository<BankUser> _bankUserRepository;
         private GenericRepository<ProductUser> _productUserRepository;
+        private GenericRepository<Discount> _discountRepository;
+        private GenericRepository<DiscountUser> _discountUserRepository;
 
+        public GenericRepository<DiscountUser> DiscountUserRepository =>
+            _discountUserRepository ?? (_discountUserRepository = new GenericRepository<DiscountUser>(_context));
+        public GenericRepository<Discount> DiscountRepository =>
+            _discountRepository ?? (_discountRepository = new GenericRepository<Discount>(_context));
         public GenericRepository<ProductUser> ProductUserRepository =>
             _productUserRepository ?? (_productUserRepository = new GenericRepository<ProductUser>(_context));
         public GenericRepository<Bank> BankRepository =>

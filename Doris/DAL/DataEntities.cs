@@ -32,5 +32,7 @@ namespace Doris.DAL
         public DbSet<Bank> Banks { get; set; }
         public DbSet<BankUser> BankUsers { get; set; }
         public DbSet<ProductUser> ProductUsers { get; set; }
+        public DbSet<Discount> Discounts { get; set; }
+        public DbSet<DiscountUser> DiscountUsers { get; set; }
     }
 }

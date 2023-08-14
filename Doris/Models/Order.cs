@@ -67,6 +67,7 @@ namespace Doris.Models
         }
 
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
+        public virtual ICollection<Discount> Discounts { get; set; }
 
         public int UserId { get; set; }
         public int? CityId { get; set; }

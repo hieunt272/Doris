@@ -1,0 +1,61 @@
+﻿@model Doris.ViewModel.AddDiscountViewModel
+@using Helpers
+
+<div class="card card-discount p-0">
+    <div class="card-header">
+        <img src="~/Content/images/img-main/discount.png" alt="Discount" /><br />
+        <span>Mã ưu đãi khả dụng</span>
+    </div>
+    <div class="card-body">
+        <form id="discountForm">
+            @Html.AntiForgeryToken()
+            <div class="discount-list">
+                @if (Model.Discounts.Any())
+                {
+                    var fd = Model.Discounts.FirstOrDefault();
+                    <label class="discount-item @if (Model.CartTotal >= fd.TotalOrder) { @Html.Raw("show") }" data-id="@fd.Id">
+                        @if (fd.PriceOff > 0)
+                        {
+                            <span class="price-off">-@Html.DisplayFor(a => fd.PriceOff)</span><br />
+                        }
+                        <span class="discount-name">@fd.Name</span><br />
+                        <span class="desc">@Html.Raw(HtmlHelpers.ReplaceLine(fd.Description))</span>
+                        <input type="radio" name="Discount" class="discount" />
+                        <span class="line"></span>
+                        <span class="checkmark"></span>
+                    </label>
+                    foreach (var item in Model.Discounts.Skip(1))
+                    {
+                        <label class="discount-item @if (Model.CartTotal >= item.TotalOrder) { @Html.Raw("show") }" data-id="@item.Id">
+                            @if (item.PriceOff > 0)
+                            {
+                                <span class="price-off">-@Html.DisplayFor(a => item.PriceOff)</span><br />
+                            }
+                            <span class="discount-name">@item.Name</span><br />
+                            <span class="desc">@Html.Raw(HtmlHelpers.ReplaceLine(item.Description))</span>
+                            <input type="radio" name="Discount" class="discount" />
+                            <span class="line"></span>
+                            <span class="checkmark"></span>
+                        </label>
+                    }
+                }
+            </div>
+            <div class="text-center">
+                <button type="submit" class="add-discount">Hoàn tất</button>
+            </div>
+        </form>
+    </div>
+    <script>
+        discount();
+        $("#discountForm").on("submit", function (e) {
+            e.preventDefault();
+            if ($(this).valid()) {
+                $.post("/ShoppingCart/AddDiscount", $(this).serialize(), function (data) {
+                    if (data.status === 0) {
+                        window.location.reload();
+                    }
+                });
+            }
+        });
+    </script>
+</div>

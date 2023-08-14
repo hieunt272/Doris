@@ -235,8 +235,10 @@ function checkout() {
         $('.address-default').removeClass('active');
         $('.list-address').removeClass('active');
     });
+}
 
-    $('.bill-info').click(function () {
+function bill() {
+    $('.bill-label').click(function () {
         var check = $('input[name="Bill"]:checked').length > 0;
         var type = $('.nav-link.active').attr('data-bill');
         if (check) {
@@ -275,6 +277,19 @@ function checkoutMb() {
         $('#addressModal').modal('hide');
     });
 };
+
+function discount() {
+    $('.discount-item').click(function () {
+        var id = $(this).attr("data-id");
+        var check = $(this).find('input[name="Discount"]:checked').length > 0;
+        if (check) {
+            $(this).append("<input type='hidden' name='DiscountId' value='" + id + "' />");
+        }
+        else {
+            $(this).find("input[name='DiscountId'][type=hidden]").remove();
+        }
+    });
+}
 
 function alertBox() {
     $("#AlertBox").fadeOut(1000);

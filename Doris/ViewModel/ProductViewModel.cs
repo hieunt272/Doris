@@ -68,4 +68,13 @@ namespace Doris.ViewModel
         public PagedList.IPagedList<Brand> Brands { get; set; }
         public string Name { get; set; }
     }
+
+    public class InsertDiscountViewModel
+    {
+        [Display(Name = "Giảm giá"), UIHint("MoneyBox"), DisplayFormat(DataFormatString = "{0:N0}đ")]
+        public string PriceOff { get; set; }
+        [Display(Name = "Tổng tiền đơn"), UIHint("MoneyBox"), DisplayFormat(DataFormatString = "{0:N0}đ")]
+        public string TotalOrder { get; set; }
+        public Discount Discount { get; set; }
+    }
 }

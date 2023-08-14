@@ -13,6 +13,8 @@ namespace Doris.ViewModel
         public int CartCount { get; set; }
         public decimal CartTotalShipFee { get; set; }
         public decimal TotalFreeShip { get; set; }
+        public int DiscountCount { get; set; }
+        public IEnumerable<Discount> Discounts { get; set; }
     }
     public class ShoppingCartRemoveViewModel
     {
@@ -57,6 +59,7 @@ namespace Doris.ViewModel
         public BankUser BankUser { get; set; }
         public IEnumerable<Address> Addresses { get; set; }
         public IEnumerable<BankUser> BankUsers { get; set; }
+        public IEnumerable<Discount> Discounts { get; set; }
         public CheckOutViewModel()
         {
             DistrictSelectList = new SelectList(new List<District>(), "Id", "Name");
@@ -69,5 +72,11 @@ namespace Doris.ViewModel
         public List<Cart> Carts { get; set; }
         public decimal TotalMoney { get; set; }
         public int Count { get; set; }
+    }
+
+    public class AddDiscountViewModel
+    {
+        public IEnumerable<Discount> Discounts { get; set; }
+        public decimal CartTotal { get; set; }
     }
 }

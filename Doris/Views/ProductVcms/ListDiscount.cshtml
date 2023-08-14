@@ -1,0 +1,50 @@
+﻿@model IEnumerable<Doris.Models.Discount>
+@using Helpers
+<table class="list_table tablecenter mb-4" id="list-cat">
+    <tr>
+        <th style="width: 100px">Ngày đăng</th>
+        <th>Tên ưu đãi</th>
+        <th>Mô tả</th>
+        <th>Giảm giá</th>
+        <th>Tổng tiền đơn</th>
+        <th style="width: 160px"></th>
+    </tr>
+    <tbody id="sortable-cat">
+        @foreach (var discount in Model)
+        {
+            <tr data-id="@discount.Id" style="background: #ededed;">
+                <td>@Html.DisplayFor(model => discount.CreateDate)</td>
+                <td class="left"><strong>@discount.Name</strong></td>
+                <td class="left">@Html.Raw(HtmlHelpers.ReplaceLine(discount.Description))</td>
+                <td>@Html.DisplayFor(m => discount.PriceOff)</td>
+                <td>@Html.DisplayFor(m => discount.TotalOrder)</td>
+                <td>
+                    @Html.ActionLink("Sửa", "UpdateDiscount", new { discountId = discount.Id }) -
+                    <a href="javascript:;" onclick="deleteDiscount('@discount.Id')" style="color: red">Xóa</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<script type="text/javascript">
+    function deleteDiscount(id) {
+        if (confirm("Bạn có chắc chắn xóa ưu đãi này không?")) {
+            $.post("/ProductVcms/DeleteDiscount", { discountId: id }, function (data) {
+                if (data) {
+                    $.toast({
+                        text: 'Xóa ưu đãi thành công',
+                        position: 'bottom-right',
+                        icon: 'success',
+                    })
+                    $("tr[data-id='" + id + "']").fadeOut();
+                } else {
+                    $.toast({
+                        text: 'Quá trình thực hiện không thành công. Hãy thử lại',
+                        icon: 'error',
+                    })
+                }
+            });
+        }
+    }
+
+</script>
