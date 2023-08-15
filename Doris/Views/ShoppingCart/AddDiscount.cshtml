@@ -14,10 +14,6 @@
                 {
                     var fd = Model.Discounts.FirstOrDefault();
                     <label class="discount-item @if (Model.CartTotal >= fd.TotalOrder) { @Html.Raw("show") }" data-id="@fd.Id">
-                        @if (fd.PriceOff > 0)
-                        {
-                            <span class="price-off">-@Html.DisplayFor(a => fd.PriceOff)</span><br />
-                        }
                         <span class="discount-name">@fd.Name</span><br />
                         <span class="desc">@Html.Raw(HtmlHelpers.ReplaceLine(fd.Description))</span>
                         <input type="checkbox" name="Discount" class="discount" />
