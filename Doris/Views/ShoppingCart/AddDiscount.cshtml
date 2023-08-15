@@ -26,14 +26,14 @@
                     </label>
                     foreach (var item in Model.Discounts.Skip(1))
                     {
-                        <label class="discount-item @if (Model.CartTotal >= item.TotalOrder) { @Html.Raw("show") }" data-id="@item.Id">
+                        <label class="discount-item discount-order @if (Model.CartTotal >= item.TotalOrder) { @Html.Raw("show") }" data-id="@item.Id">
                             @if (item.PriceOff > 0)
                             {
                                 <span class="price-off">-@Html.DisplayFor(a => item.PriceOff)</span><br />
                             }
                             <span class="discount-name">@item.Name</span><br />
                             <span class="desc">@Html.Raw(HtmlHelpers.ReplaceLine(item.Description))</span>
-                            <input type="radio" name="Discount" class="discount" />
+                            <input type="checkbox" name="Discount" class="discount" />
                             <span class="line"></span>
                             <span class="checkmark"></span>
                         </label>

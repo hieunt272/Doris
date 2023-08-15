@@ -289,6 +289,13 @@ function discount() {
             $(this).find("input[name='DiscountId'][type=hidden]").remove();
         }
     });
+
+    $('.discount-order').click(function () {
+        var check = $(this).find('input[name="Discount"]:checked').length > 0;
+        if (check) {
+            $(this).siblings(".discount-order").find('.discount').prop('checked', false);
+        }
+    });
 }
 
 function alertBox() {
