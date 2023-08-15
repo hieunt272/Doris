@@ -51,8 +51,28 @@
                             </div>
                         }
                         <div class="deliver">
-                            <span class="bold">Giao hàng:</span>
-                            <span class="ship-fee">30.000đ</span>
+                            <div class="deliver-item">
+                                <span class="bold">Giao hàng:</span>
+                                <span class="ship-fee">30.000đ</span>
+                            </div>
+                            @if (Model.Discounts != null)
+                            {
+                                foreach (var item in Model.Discounts)
+                                {
+                                    <div class="deliver-item">
+                                        @if (item.PriceOff == 30000)
+                                        {
+                                            <input type="hidden" name="Freeship" value="1" />
+                                        }
+                                        else if (item.PriceOff > 30000)
+                                        {
+                                            <input type="hidden" name="Discount" value="@item.Id" />
+                                        }
+                                        <span class="bold">@item.ShowName</span>
+                                        <span class="ship-fee">-@Convert.ToDecimal(item.PriceOff).ToString("N0") đ</span>
+                                    </div>
+                                }
+                            }
                         </div>
                     </div>
                     @if (Model.Addresses.Any())

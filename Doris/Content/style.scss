@@ -1903,6 +1903,23 @@ input::-webkit-inner-spin-button {
     .order-info {
         @include flex-item(space-between, center);
         margin-bottom: 15px;
+
+        img {
+            width: 30px;
+        }
+
+        button {
+            padding: 0;
+            border: 0;
+            font-size: 1rem;
+            text-decoration: underline;
+            color: #212529;
+            background: transparent;
+
+            &:hover {
+                color: $red;
+            }
+        }
     }
 
     .line {
@@ -2775,10 +2792,13 @@ input::-webkit-inner-spin-button {
 }
 
 .deliver {
-    display: flex;
-    justify-content: space-between;
-    padding: 15px 25px;
+    padding: 15px 25px 5px;
     border-top: 1px solid #0000001f;
+
+    .deliver-item {
+        @include flex-item(space-between, center);
+        margin-bottom: 10px;
+    }
 }
 
 .box-payment {

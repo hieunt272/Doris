@@ -49,6 +49,7 @@ namespace Doris.ViewModel
         public string BankNumber { get; set; }
         [Display(Name = "Ngân hàng thụ hưởng")]
         public int? BankId { get; set; }
+        public decimal? DiscountAmount { get; set; }
 
         public SelectList CitySelectList { get; set; }
         public SelectList DistrictSelectList { get; set; }

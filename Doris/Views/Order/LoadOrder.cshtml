@@ -74,6 +74,10 @@
             <td>@Model.Order.ShipFee.ToString("N0")đ</td>
         </tr>
         <tr>
+            <td colspan="5">Giảm giá:</td>
+            <td>@Model.Order.DiscountAmount.ToString("N0")đ</td>
+        </tr>
+        <tr>
             <td colspan="5">Tổng tiền:</td>
             <td>@Model.Order.TotalFee().ToString("N0")đ</td>
         </tr>

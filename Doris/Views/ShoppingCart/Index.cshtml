@@ -78,6 +78,24 @@
                                 <span class="info">0đ</span>
                             }
                         </div>
+                        @if (Model.Discounts != null)
+                        {
+                            foreach (var item in Model.Discounts)
+                            {
+                                <div class="order-info">
+                                    <span class="name">@item.ShowName</span>
+                                    <span class="info">-@Convert.ToDecimal(item.PriceOff).ToString("N0") đ</span>
+                                </div>
+                            }
+                        }
+                        <div class="order-info">
+                            <div class="name">
+                                <img src="~/Content/images/img-main/discount.png" /> @Model.DiscountCount mã giảm giá khả dụng
+                            </div>
+                            <button type="button" data-fancybox data-type="ajax" data-touch="false" data-src="@Url.Action("AddDiscount")">
+                                Xem thêm
+                            </button>
+                        </div>
                         <div class="line"></div>
                         <div class="order-info">
                             <div class="name">Tổng cộng</div>

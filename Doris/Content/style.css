@@ -1631,6 +1631,20 @@ input::-webkit-inner-spin-button {
   align-items: center;
   margin-bottom: 15px;
 }
+.box-order .order-info img {
+  width: 30px;
+}
+.box-order .order-info button {
+  padding: 0;
+  border: 0;
+  font-size: 1rem;
+  text-decoration: underline;
+  color: #212529;
+  background: transparent;
+}
+.box-order .order-info button:hover {
+  color: #f17173;
+}
 .box-order .line {
   border-top: 2px dashed rgba(0, 0, 0, 0.4);
   margin: 20px 0 25px;
@@ -2391,10 +2405,14 @@ input::-webkit-inner-spin-button {
 }
 
 .deliver {
+  padding: 15px 25px 5px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1215686275);
+}
+.deliver .deliver-item {
   display: flex;
   justify-content: space-between;
-  padding: 15px 25px;
-  border-top: 1px solid rgba(0, 0, 0, 0.1215686275);
+  align-items: center;
+  margin-bottom: 10px;
 }
 
 .box-payment {

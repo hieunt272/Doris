@@ -11,6 +11,7 @@ using System.Web.Security;
 using System.Web;
 using System.Web.UI.WebControls;
 using System.Net;
+using System.Collections.Generic;
 
 namespace Doris.Controllers
 {
@@ -39,20 +40,25 @@ namespace Doris.Controllers
                 CartItems = cart.GetCartItems(),
                 CartTotal = cart.GetTotal(),
                 CartCount = cart.GetCount(),
-                CartTotalShipFee = cart.GetTotalShipFee()
+                CartTotalShipFee = cart.GetTotalShipFee(),
+                DiscountCount = _unitOfWork.DiscountRepository.GetQuery(a => a.DiscountUsers.Any(p => p.Active && p.UserId == User.Id)).Count()
             };
             ViewBag.ReturnUrl = returnUrl;
             if (cookie != null)
             {
-                var discounts = _unitOfWork.DiscountRepository.GetQuery(orderBy: o => o.OrderBy(a => a.CreateDate));
+                List<Discount> discounts = new List<Discount>();
                 var ticketInfo = FormsAuthentication.Decrypt(cookie.Value);
                 var ids = ticketInfo.UserData.Split('-');
                 foreach (var item in ids)
                 {
-                    if  (item != "")
+                    if (item != "")
                     {
                         var id = Convert.ToInt32(item);
-                        discounts = discounts.Where(a => a.Id == id);
+                        var discount = _unitOfWork.DiscountRepository.GetById(id);
+                        if (discount != null)
+                        {
+                            discounts.Add(discount);
+                        }
                     }
                 }
                 viewModel.Discounts = discounts;
@@ -63,7 +69,6 @@ namespace Doris.Controllers
             if (Request.Browser.IsMobileDevice)
             {
                 viewModel.TotalFreeShip = 2000000 - viewModel.CartTotal;
-                viewModel.DiscountCount = _unitOfWork.DiscountRepository.GetQuery(a => a.DiscountUsers.Any(p => p.Active && p.UserId == User.Id)).Count();
 
                 return PartialView("IndexCartMobile", viewModel);
             }
@@ -152,7 +157,6 @@ namespace Doris.Controllers
                 {
                     TypePay = 1,
                     ShipFee = 30000,
-
                 },
                 CartTotal = cart.GetTotalShipFee(),
                 Addresses = addresses,
@@ -165,7 +169,7 @@ namespace Doris.Controllers
 
             if (cookie != null)
             {
-                var discounts = _unitOfWork.DiscountRepository.GetQuery(orderBy: o => o.OrderBy(a => a.CreateDate));
+                List<Discount> discounts = new List<Discount>();
                 var ticketInfo = FormsAuthentication.Decrypt(cookie.Value);
                 var ids = ticketInfo.UserData.Split('-');
                 foreach (var item in ids)
@@ -173,11 +177,16 @@ namespace Doris.Controllers
                     if (item != "")
                     {
                         var id = Convert.ToInt32(item);
-                        discounts = discounts.Where(a => a.Id == id);
+                        var discount = _unitOfWork.DiscountRepository.GetById(id);
+                        if (discount != null)
+                        {
+                            discounts.Add(discount);
+                        }
                     }
                 }
                 model.Discounts = discounts;
                 var total = Convert.ToDecimal(discounts.Sum(a => a.PriceOff));
+                model.DiscountAmount = total;
                 model.CartTotal = cart.GetTotalShipFee() - Convert.ToDecimal(discounts.Sum(a => a.PriceOff));
             }
 
@@ -199,15 +208,15 @@ namespace Doris.Controllers
         }
         [Route("thanh-toan")]
         [HttpPost, ValidateAntiForgeryToken]
-        public ActionResult CheckOut(CheckOutViewModel model)
+        public ActionResult CheckOut(CheckOutViewModel model, FormCollection fc)
         {
             if (ModelState.IsValid)
             {
                 var carts = ShoppingCart.GetCart(HttpContext);
-                HttpCookie cookie = HttpContext.Request.Cookies["DiscountIds"];
                 var item = carts.GetCartItems();
+                var freeShip = Convert.ToInt32(fc["Freeship"]);
+                var discount = Convert.ToInt32(fc["Discount"]);
 
-                model.Order.ShipFee = 30000;
                 model.Order.UserId = model.UserId;
                 model.Order.CityId = model.CityId;
                 model.Order.DistrictId = model.DistrictId;
@@ -260,6 +269,11 @@ namespace Doris.Controllers
                         _unitOfWork.OrderDetailRepository.Insert(odetails);
                     }
                 }
+                var discountUser = _unitOfWork.DiscountUserRepository.GetQuery(a => a.DiscountId == discount && a.UserId == User.Id).FirstOrDefault();
+                if (discountUser != null)
+                {
+                    discountUser.Active = false;
+                }
                 _unitOfWork.Save();
 
                 //Thanh toán CK
@@ -283,21 +297,11 @@ namespace Doris.Controllers
                     addressCustomer = model.Order.CustomerInfo.Address;
                 }
                 var total = model.Order.TotalFee();
-                if (cookie != null)
+                if (model.DiscountAmount > 0)
                 {
-                    var discounts = _unitOfWork.DiscountRepository.GetQuery(orderBy: o => o.OrderBy(a => a.CreateDate));
-                    var ticketInfo = FormsAuthentication.Decrypt(cookie.Value);
-                    var ids = ticketInfo.UserData.Split('-');
-                    foreach (var itemId in ids)
-                    {
-                        if (itemId != "")
-                        {
-                            var id = Convert.ToInt32(itemId);
-                            discounts = discounts.Where(a => a.Id == id);
-                        }
-                    }
-                    var discountTotal = Convert.ToDecimal(discounts.Sum(a => a.PriceOff));
-                    total = (long)(total - discountTotal);
+                    total = (long)(total - model.DiscountAmount);
+                    model.Order.DiscountAmount = Convert.ToInt32(model.DiscountAmount);
+                    _unitOfWork.Save();
                 }
                 var sb = "<p style='font-size:16px'>Thông tin đơn hàng gửi từ website " + Request.Url?.Host + "</p>";
                 sb += "<p>Mã đơn hàng: <strong>" + model.Order.MaDonHang + "</strong></p>";
@@ -338,11 +342,22 @@ namespace Doris.Controllers
 
                 sb += "<tr><td colspan='6' style='text-align:right'><strong>Tạm tính: " + tamtinh + " đ</strong></td></tr>";
                 sb += "<tr><td colspan='6' style='text-align:right'><strong>Giao hàng: " + model.Order.ShipFee.ToString("N0") + " đ</strong></td></tr>";
+                if (model.DiscountAmount > 0)
+                {
+                    sb += "<tr><td colspan='6' style='text-align:right'><strong>Giảm giá: " + Convert.ToDecimal(model.DiscountAmount).ToString("N0") + " đ</strong></td></tr>";
+                }
                 sb += "<tr><td colspan='6' style='text-align:right'><strong>Tổng tiền: " + total.ToString("N0") + " đ</strong></td></tr>";
                 sb += "</table>";
                 sb += "<p>Cảm ơn bạn đã tin tưởng và mua hàng của chúng tôi.</p>";
 
                 Task.Run(() => HtmlHelpers.SendEmail("gmail", "[" + model.Order.MaDonHang + "] Đơn đặt hàng từ website Doris", sb, model.Order.CustomerInfo.Email, Email, Email, Password, "Doris", model.Order.CustomerInfo.Email, ConfigSite.Email));
+
+                var cookie = Request.Cookies["DiscountIds"];
+                if (cookie != null)
+                {
+                    cookie.Expires = DateTime.Now.AddDays(-1);
+                    Response.Cookies.Add(cookie);
+                }
 
                 return RedirectToAction("CheckOutComplete", new { orderId = model.Order.MaDonHang });
             }
